@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { ScanBarcode } from 'lucide-react';
 
 interface ScannerPreviewProps {
-  onScanComplete?: () => void;
+  onScanComplete?: (barcode: string) => void;
 }
 
 const ScannerPreview = ({ onScanComplete }: ScannerPreviewProps) => {
@@ -16,8 +16,13 @@ const ScannerPreview = ({ onScanComplete }: ScannerPreviewProps) => {
         setScanLine((prev) => {
           if (prev >= 100) {
             setScanning(false);
+            // Simulate a random barcode for the demo
+            // In a real app, this would come from the camera
+            const simulatedBarcodes = ["12345678", "87654321", "98765432"];
+            const randomBarcode = simulatedBarcodes[Math.floor(Math.random() * simulatedBarcodes.length)];
+            
             if (onScanComplete) {
-              onScanComplete();
+              onScanComplete(randomBarcode);
             }
             return 0;
           }
