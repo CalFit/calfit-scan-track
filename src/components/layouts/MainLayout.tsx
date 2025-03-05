@@ -2,6 +2,7 @@
 import { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import BottomNavigation from './BottomNavigation';
+import { Toaster } from '@/components/ui/toaster';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -18,6 +19,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         </div>
       </main>
       <BottomNavigation currentPath={location.pathname} />
+      <Toaster />
     </div>
   );
 };

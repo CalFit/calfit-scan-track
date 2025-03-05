@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
 import { Settings } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
 interface MacroTargets {
   calories: number;
@@ -20,6 +21,11 @@ const SettingsPage = () => {
 
   const [name, setName] = useState("Utilisateur");
   const [notifications, setNotifications] = useState(true);
+  const [initialValues, setInitialValues] = useState({
+    name,
+    macroTargets,
+    notifications
+  });
 
   const handleTargetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -27,6 +33,35 @@ const SettingsPage = () => {
       ...prev,
       [name]: Number(value)
     }));
+  };
+
+  const handleSaveChanges = () => {
+    // On sauvegarderait normalement dans une base de données
+    // Mais pour cette démo, on met simplement à jour les valeurs initiales
+    setInitialValues({
+      name,
+      macroTargets,
+      notifications
+    });
+    
+    // Afficher une notification de succès
+    toast({
+      title: "Modifications sauvegardées",
+      description: "Vos paramètres ont été mis à jour avec succès.",
+      duration: 3000,
+    });
+  };
+
+  // Vérifier si des modifications ont été apportées
+  const hasChanges = () => {
+    return (
+      name !== initialValues.name ||
+      notifications !== initialValues.notifications ||
+      macroTargets.calories !== initialValues.macroTargets.calories ||
+      macroTargets.protein !== initialValues.macroTargets.protein ||
+      macroTargets.fat !== initialValues.macroTargets.fat ||
+      macroTargets.carbs !== initialValues.macroTargets.carbs
+    );
   };
 
   return (
@@ -141,7 +176,11 @@ const SettingsPage = () => {
         </div>
         
         <div className="text-center mt-4">
-          <button className="calfit-button-primary">
+          <button 
+            className={`calfit-button-primary ${!hasChanges() ? 'opacity-50 cursor-not-allowed' : ''}`}
+            onClick={handleSaveChanges}
+            disabled={!hasChanges()}
+          >
             Enregistrer les modifications
           </button>
         </div>
