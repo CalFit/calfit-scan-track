@@ -47,7 +47,7 @@ const ManualFoodEntry = ({ initialBarcode, onSubmit, onCancel }: ManualFoodEntry
     
     // Basic validation
     if (!foodData.name) {
-      alert('Le nom de l'aliment est requis');
+      alert("Le nom de l'aliment est requis");
       return;
     }
     
