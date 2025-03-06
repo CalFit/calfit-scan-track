@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Dumbbell, Meat, Wheat } from 'lucide-react';
+import { Dumbbell, Nut, Wheat } from 'lucide-react';
 
 interface CircularMacroGaugeProps {
   label: string;
@@ -54,7 +54,7 @@ const CircularMacroGauge = ({
     if (label.toLowerCase().includes('protéine')) {
       return <Dumbbell className="w-4 h-4 mr-1" />;
     } else if (label.toLowerCase().includes('lipide')) {
-      return <Meat className="w-4 h-4 mr-1" />;
+      return <Nut className="w-4 h-4 mr-1" />;
     } else if (label.toLowerCase().includes('glucide')) {
       return <Wheat className="w-4 h-4 mr-1" />;
     }

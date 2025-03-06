@@ -1,8 +1,9 @@
 
 import { useState } from 'react';
+import React from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
 import MacroProgressBar from '@/components/ui/MacroProgressBar';
-import { Dumbbell, Avocado, Wheat, ChevronRight, Calendar } from 'lucide-react';
+import { Dumbbell, Nut, Wheat, ChevronRight, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip } from 'recharts';
 
@@ -73,7 +74,7 @@ const MacrosPage = () => {
   const macroLabels = {
     calories: { name: 'Calories', unit: 'kcal', icon: Calendar },
     protein: { name: 'Protéines', unit: 'g', icon: Dumbbell },
-    fat: { name: 'Lipides', unit: 'g', icon: Avocado },
+    fat: { name: 'Lipides', unit: 'g', icon: Nut },
     carbs: { name: 'Glucides', unit: 'g', icon: Wheat },
   };
 
