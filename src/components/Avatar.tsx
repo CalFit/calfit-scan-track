@@ -31,16 +31,16 @@ const CalfitAvatar = ({ calories, protein, className }: CalfitAvatarProps) => {
   }, [caloriePercentage, proteinPercentage]);
 
   const avatarColors = {
-    tired: 'text-gray-400',
-    overweight: 'text-orange-400',
-    muscular: 'text-calfit-blue',
-    balanced: 'text-calfit-green',
+    tired: 'text-gray-400 border-gray-400 shadow-[0_0_15px_rgba(156,163,175,0.5)]',
+    overweight: 'text-orange-400 border-orange-400 shadow-[0_0_15px_rgba(251,146,60,0.5)]',
+    muscular: 'text-calfit-blue border-calfit-blue shadow-[0_0_15px_rgba(77,151,255,0.5)]',
+    balanced: 'text-calfit-green border-calfit-green shadow-[0_0_15px_rgba(88,204,2,0.5)]',
   };
 
   return (
     <div className={cn("relative flex items-center justify-center", className)}>
       <div className={cn(
-        "w-48 h-48 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center border-4", 
+        "w-48 h-48 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center border-4 transition-all duration-500", 
         avatarColors[avatarState]
       )}>
         <div className="floating-avatar">

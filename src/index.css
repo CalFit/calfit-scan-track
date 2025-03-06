@@ -123,11 +123,11 @@
   }
 
   .calfit-button-primary {
-    @apply calfit-button bg-calfit-green text-white hover:bg-calfit-green/90 h-10 px-4 py-2;
+    @apply calfit-button bg-calfit-green text-white hover:bg-calfit-green/90 hover:scale-105 transition-transform duration-300 h-10 px-4 py-2;
   }
 
   .calfit-button-secondary {
-    @apply calfit-button bg-calfit-blue text-white hover:bg-calfit-blue/90 h-10 px-4 py-2;
+    @apply calfit-button bg-calfit-blue text-white hover:bg-calfit-blue/90 hover:scale-105 transition-transform duration-300 h-10 px-4 py-2;
   }
 
   .page-transition {

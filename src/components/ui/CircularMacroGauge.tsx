@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { Dumbbell, Avocado, Wheat } from 'lucide-react';
 
 interface CircularMacroGaugeProps {
   label: string;
@@ -20,7 +21,7 @@ const CircularMacroGauge = ({
   const [percentage, setPercentage] = useState(0);
   
   useEffect(() => {
-    // Nous utilisons un délai pour créer une animation
+    // We use a setTimeout to create an animation
     const timer = setTimeout(() => {
       setPercentage(Math.min(Math.round((current / target) * 100), 100));
     }, 100);
@@ -28,31 +29,46 @@ const CircularMacroGauge = ({
     return () => clearTimeout(timer);
   }, [current, target]);
   
-  // Détermine la couleur du statut
+  // Determine status color
   const getStatusColor = () => {
-    if (percentage > 100) return "text-red-500"; // Dépassement
-    if (percentage > 85) return "text-green-500"; // Bon
-    if (percentage > 60) return "text-yellow-500"; // Moyen
-    return "text-gray-400"; // Faible
+    if (percentage > 100) return "text-red-500"; // Excess
+    if (percentage > 85) return "text-green-500"; // Good
+    if (percentage > 60) return "text-yellow-500"; // Medium
+    return "text-gray-400"; // Low
   };
   
-  // Style pour le cercle de progression
+  // Style for progress circle
   const circleRadius = 35;
   const circleCircumference = 2 * Math.PI * circleRadius;
   const strokeDashoffset = circleCircumference - (percentage / 100) * circleCircumference;
 
-  // Animation de l'arc de cercle
+  // Circle animation
   const strokeTransition = {
     strokeDashoffset: {
       transition: 'stroke-dashoffset 0.8s ease-in-out'
     }
   };
+
+  // Get the appropriate icon based on label
+  const getIcon = () => {
+    if (label.toLowerCase().includes('protéine')) {
+      return <Dumbbell className="w-4 h-4 mr-1" />;
+    } else if (label.toLowerCase().includes('lipide')) {
+      return <Avocado className="w-4 h-4 mr-1" />;
+    } else if (label.toLowerCase().includes('glucide')) {
+      return <Wheat className="w-4 h-4 mr-1" />;
+    }
+    return null;
+  };
+
+  // Determine if we should show the glow effect
+  const showGlow = percentage >= 85 && percentage <= 110;
   
   return (
     <div className="flex flex-col items-center">
       <div className="relative flex items-center justify-center mb-2">
-        <svg width="100" height="100" viewBox="0 0 100 100" className="transform -rotate-90">
-          {/* Cercle de fond */}
+        <svg width="90" height="90" viewBox="0 0 100 100" className="transform -rotate-90">
+          {/* Background circle */}
           <circle 
             cx="50" 
             cy="50" 
@@ -63,14 +79,18 @@ const CircularMacroGauge = ({
             strokeWidth="6"
           />
           
-          {/* Cercle de progression */}
+          {/* Progress circle */}
           <circle 
             cx="50" 
             cy="50" 
             r={circleRadius} 
             fill="none" 
             stroke="currentColor" 
-            className={cn("transition-all duration-1000", color.replace('bg-', 'text-'))} 
+            className={cn(
+              "transition-all duration-1000", 
+              color.replace('bg-', 'text-'),
+              percentage > 100 ? "animate-pulse" : ""
+            )} 
             strokeWidth="6" 
             strokeDasharray={circleCircumference} 
             strokeDashoffset={strokeDashoffset} 
@@ -78,12 +98,18 @@ const CircularMacroGauge = ({
             style={strokeTransition.strokeDashoffset}
           />
         </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <div className={cn(
+          "absolute inset-0 flex flex-col items-center justify-center transition-all duration-300",
+          showGlow ? `${color.replace('bg-', 'text-')} drop-shadow-[0_0_3px_currentColor]` : ""
+        )}>
           <span className={`text-xl font-bold ${getStatusColor()}`}>{percentage}%</span>
           <span className="text-xs text-muted-foreground">{current}/{target}{unit}</span>
         </div>
       </div>
-      <span className="text-sm font-medium">{label}</span>
+      <div className="flex items-center justify-center">
+        {getIcon()}
+        <span className="text-sm font-medium">{label}</span>
+      </div>
     </div>
   );
 };
