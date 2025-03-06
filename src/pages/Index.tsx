@@ -1,13 +1,12 @@
-
 import { useState } from 'react';
 import CalfitAvatar from '@/components/Avatar';
 import CircularMacroGauge from '@/components/ui/CircularMacroGauge';
 import MainLayout from '@/components/layouts/MainLayout';
 import MealSection from '@/components/MealSection';
+import AddFoodModal from '@/components/AddFoodModal';
 import { Plus } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
-// Données fictives pour cette démo
 const initialData = {
   calories: { current: 1800, target: 2200 },
   protein: { current: 80, target: 120 },
@@ -15,7 +14,6 @@ const initialData = {
   carbs: { current: 220, target: 250 }
 };
 
-// Données fictives des repas
 const initialMeals = {
   breakfast: {
     title: "Petit-déjeuner",
@@ -48,14 +46,90 @@ const Index = () => {
     setShowAddFood(true);
   };
 
-  const handleAddFood = (mealType: 'breakfast' | 'lunch' | 'dinner', food: any) => {
-    // Dans une version réelle, ce serait l'endroit où vous ajouteriez vraiment l'aliment
+  const handleAddFood = (food: any) => {
+    if (!activeMeal) return;
+
+    const newFood = {
+      ...food,
+      id: Math.random()
+    };
+
+    setMeals(prev => ({
+      ...prev,
+      [activeMeal]: {
+        ...prev[activeMeal],
+        items: [...prev[activeMeal].items, newFood]
+      }
+    }));
+
+    setNutritionData(prev => ({
+      calories: {
+        ...prev.calories,
+        current: prev.calories.current + food.calories
+      },
+      protein: {
+        ...prev.protein,
+        current: prev.protein.current + food.protein
+      },
+      fat: {
+        ...prev.fat,
+        current: prev.fat.current + food.fat
+      },
+      carbs: {
+        ...prev.carbs,
+        current: prev.carbs.current + food.carbs
+      }
+    }));
+
+    const mealNames = {
+      breakfast: 'petit-déjeuner',
+      lunch: 'déjeuner',
+      dinner: 'dîner'
+    };
+
     toast({
       title: "Aliment ajouté !",
-      description: `${food.name} ajouté à votre ${mealType === 'breakfast' ? 'petit-déjeuner' : mealType === 'lunch' ? 'déjeuner' : 'dîner'}`,
+      description: `${food.name} ajouté à votre ${mealNames[activeMeal]}`,
     });
     
     setShowAddFood(false);
+  };
+
+  const handleRemoveFood = (mealType: 'breakfast' | 'lunch' | 'dinner', foodId: number) => {
+    const foodToRemove = meals[mealType].items.find(item => item.id === foodId);
+    if (!foodToRemove) return;
+
+    setMeals(prev => ({
+      ...prev,
+      [mealType]: {
+        ...prev[mealType],
+        items: prev[mealType].items.filter(item => item.id !== foodId)
+      }
+    }));
+
+    setNutritionData(prev => ({
+      calories: {
+        ...prev.calories,
+        current: prev.calories.current - foodToRemove.calories
+      },
+      protein: {
+        ...prev.protein,
+        current: prev.protein.current - foodToRemove.protein
+      },
+      fat: {
+        ...prev.fat,
+        current: prev.fat.current - foodToRemove.fat
+      },
+      carbs: {
+        ...prev.carbs,
+        current: prev.carbs.current - foodToRemove.carbs
+      }
+    }));
+
+    toast({
+      title: "Aliment supprimé",
+      description: `${foodToRemove.name} a été retiré de votre journal`,
+    });
   };
 
   return (
@@ -101,11 +175,11 @@ const Index = () => {
         </div>
 
         <div className="space-y-6">
-          {/* Sections des repas */}
           <MealSection 
             title={meals.breakfast.title}
             items={meals.breakfast.items}
             onAddFood={() => handleAddFoodClick('breakfast')}
+            onRemoveFood={(foodId) => handleRemoveFood('breakfast', foodId)}
             dailyTarget={{
               protein: nutritionData.protein.target * 0.25,
               fat: nutritionData.fat.target * 0.25,
@@ -117,6 +191,7 @@ const Index = () => {
             title={meals.lunch.title}
             items={meals.lunch.items}
             onAddFood={() => handleAddFoodClick('lunch')}
+            onRemoveFood={(foodId) => handleRemoveFood('lunch', foodId)}
             dailyTarget={{
               protein: nutritionData.protein.target * 0.4,
               fat: nutritionData.fat.target * 0.4,
@@ -128,6 +203,7 @@ const Index = () => {
             title={meals.dinner.title}
             items={meals.dinner.items}
             onAddFood={() => handleAddFoodClick('dinner')}
+            onRemoveFood={(foodId) => handleRemoveFood('dinner', foodId)}
             dailyTarget={{
               protein: nutritionData.protein.target * 0.35,
               fat: nutritionData.fat.target * 0.35,
@@ -146,6 +222,13 @@ const Index = () => {
           </button>
         </div>
       </div>
+
+      <AddFoodModal 
+        isOpen={showAddFood}
+        onClose={() => setShowAddFood(false)}
+        onAddFood={handleAddFood}
+        mealType={activeMeal || 'breakfast'}
+      />
     </MainLayout>
   );
 };

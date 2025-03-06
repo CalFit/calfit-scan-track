@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, ChevronDown, ChevronUp, X } from 'lucide-react';
 import MacroProgressBar from '@/components/ui/MacroProgressBar';
 
 interface FoodItem {
@@ -23,9 +23,10 @@ interface MealSectionProps {
   items: FoodItem[];
   dailyTarget: DailyTarget;
   onAddFood: () => void;
+  onRemoveFood: (id: number) => void;
 }
 
-const MealSection = ({ title, items, dailyTarget, onAddFood }: MealSectionProps) => {
+const MealSection = ({ title, items, dailyTarget, onAddFood, onRemoveFood }: MealSectionProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
   
   // Calcule les totaux pour ce repas
@@ -89,13 +90,21 @@ const MealSection = ({ title, items, dailyTarget, onAddFood }: MealSectionProps)
           <div className="space-y-2">
             {items.length > 0 ? (
               items.map((item) => (
-                <div key={item.id} className="flex justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div key={item.id} className="flex justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg group">
                   <span className="font-medium">{item.name}</span>
-                  <div className="flex space-x-3 text-sm">
-                    <span className="text-calfit-blue">{item.protein}g</span>
-                    <span className="text-calfit-purple">{item.fat}g</span>
-                    <span className="text-calfit-green">{item.carbs}g</span>
-                    <span>{item.calories} kcal</span>
+                  <div className="flex items-center space-x-3">
+                    <div className="flex space-x-3 text-sm">
+                      <span className="text-calfit-blue">{item.protein}g</span>
+                      <span className="text-calfit-purple">{item.fat}g</span>
+                      <span className="text-calfit-green">{item.carbs}g</span>
+                      <span>{item.calories} kcal</span>
+                    </div>
+                    <button
+                      onClick={() => onRemoveFood(item.id)}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-100 dark:hover:bg-red-900/20 rounded"
+                    >
+                      <X className="w-4 h-4 text-red-500" />
+                    </button>
                   </div>
                 </div>
               ))
