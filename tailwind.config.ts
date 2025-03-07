@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -28,11 +27,15 @@ export default {
 				calfit: {
 					blue: '#4D97FF',
 					green: '#58CC02',
-					orange: '#F1C40F', // Updated to softer yellow as requested
+					orange: '#F1C40F', 
 					purple: '#8352F2',
 					gray: '#E5E7EB',
 					'light-blue': '#EBF4FF',
 					'light-green': '#E6F9E6',
+					'dark-blue': '#2E86C1',
+					'dark-green': '#27AE60',
+					'dark-purple': '#6B3FA0',
+					'bright-orange': '#F39C12',
 				},
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
@@ -111,15 +114,6 @@ export default {
 					'0%': { transform: 'translateX(0)' },
 					'100%': { transform: 'translateX(100%)' }
 				},
-				'pulse-soft': {
-					'0%, 100%': { opacity: '1' },
-					'50%': { opacity: '0.7' }
-				},
-				'float': {
-					'0%': { transform: 'translateY(0)' },
-					'50%': { transform: 'translateY(-10px)' },
-					'100%': { transform: 'translateY(0)' }
-				},
 				'progress': {
 					'0%': { width: '0%' },
 					'100%': { width: 'var(--progress-width, 100%)' }
@@ -139,6 +133,15 @@ export default {
 				'versement': {
 					'0%': { height: '0%', opacity: '0' },
 					'100%': { height: '100%', opacity: '1' }
+				},
+				'pulse-soft': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.7' }
+				},
+				'float': {
+					'0%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' },
+					'100%': { transform: 'translateY(0)' }
 				}
 			},
 			animation: {
@@ -150,13 +153,13 @@ export default {
 				'scale-out': 'scale-out 0.2s ease-out',
 				'slide-in': 'slide-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
 				'slide-out': 'slide-out 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-				'pulse-soft': 'pulse-soft 2s infinite ease-in-out',
-				'float': 'float 3s infinite ease-in-out',
 				'progress': 'progress 1s ease-out',
 				'swipe-out': 'swipe-out 0.3s ease-out forwards',
 				'bounce-subtle': 'bounce-subtle 2s infinite ease-in-out',
 				'glow': 'glow 2s infinite ease-in-out',
-				'versement': 'versement 1s ease-out'
+				'versement': 'versement 1s ease-out',
+				'pulse-soft': 'pulse-soft 2s infinite ease-in-out',
+				'float': 'float 3s infinite ease-in-out'
 			},
 			transitionProperty: {
 				'height': 'height',

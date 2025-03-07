@@ -39,19 +39,28 @@ const CircularMacroGauge = ({
     return "text-gray-400"; // Low
   };
   
+  // Get darker background color for better contrast
+  const getDarkerBgColor = () => {
+    if (color.includes('calfit-blue')) return 'text-[#2E86C1]';
+    if (color.includes('calfit-purple')) return 'text-[#6B3FA0]';
+    if (color.includes('calfit-green')) return 'text-[#27AE60]';
+    return color.replace('bg-', 'text-');
+  };
+  
   // Style for progress circle
-  const circleRadius = smallSize ? 30 : 35;
+  // Increase size by 20%
+  const circleRadius = smallSize ? 36 : 42; // Increased from 30/35
   const circleCircumference = 2 * Math.PI * circleRadius;
   const strokeDashoffset = circleCircumference - (percentage / 100) * circleCircumference;
 
   // Get the appropriate icon based on label
   const getIcon = () => {
     if (label.toLowerCase().includes('protéine')) {
-      return <Dumbbell className={`${smallSize ? 'w-3.5 h-3.5' : 'w-4 h-4'} mr-1`} />;
+      return <Dumbbell className={`${smallSize ? 'w-4 h-4' : 'w-5 h-5'} mr-1`} />;
     } else if (label.toLowerCase().includes('lipide')) {
-      return <Nut className={`${smallSize ? 'w-3.5 h-3.5' : 'w-4 h-4'} mr-1`} />;
+      return <Nut className={`${smallSize ? 'w-4 h-4' : 'w-5 h-5'} mr-1`} />;
     } else if (label.toLowerCase().includes('glucide')) {
-      return <Wheat className={`${smallSize ? 'w-3.5 h-3.5' : 'w-4 h-4'} mr-1`} />;
+      return <Wheat className={`${smallSize ? 'w-4 h-4' : 'w-5 h-5'} mr-1`} />;
     }
     return null;
   };
@@ -63,27 +72,27 @@ const CircularMacroGauge = ({
   return (
     <div className={cn(
       "flex flex-col items-center p-1 hover:scale-105 transition-transform duration-300",
-      smallSize ? "w-[90px]" : ""
+      smallSize ? "w-[108px]" : "" // Increased from 90px
     )}>
       <div className="relative flex items-center justify-center mb-2">
         <svg 
-          width={smallSize ? "76" : "96"} 
-          height={smallSize ? "76" : "96"} 
+          width={smallSize ? "92" : "115"} // Increased from 76/96
+          height={smallSize ? "92" : "115"} // Increased from 76/96
           viewBox="0 0 100 100" 
           className="transform -rotate-90"
         >
-          {/* Background circle */}
+          {/* Background circle - lighter for better contrast */}
           <circle 
             cx="50" 
             cy="50" 
             r={circleRadius} 
             fill="none" 
             stroke="currentColor" 
-            className="text-gray-200 dark:text-gray-700" 
+            className="text-gray-100 dark:text-gray-800" 
             strokeWidth={smallSize ? "8" : "6"}
           />
           
-          {/* Progress circle with animation */}
+          {/* Progress circle with animation and darker color */}
           <circle 
             cx="50" 
             cy="50" 
@@ -92,7 +101,7 @@ const CircularMacroGauge = ({
             stroke="currentColor" 
             className={cn(
               "transition-all duration-1000 ease-out", 
-              color.replace('bg-', 'text-'),
+              getDarkerBgColor(),
               isOverTarget ? "animate-pulse" : ""
             )} 
             strokeWidth={smallSize ? "8" : "6"} 
@@ -109,15 +118,15 @@ const CircularMacroGauge = ({
           "absolute inset-0 flex flex-col items-center justify-center transition-all duration-500",
           isOverTarget ? "animate-pulse-soft" : ""
         )}>
-          <span className={`${smallSize ? 'text-lg' : 'text-xl'} font-bold ${getStatusColor()}`}>{percentage}%</span>
-          <span className={`${smallSize ? 'text-[10px]' : 'text-xs'} text-muted-foreground`}>
+          <span className={`${smallSize ? 'text-xl' : 'text-2xl'} font-bold ${getStatusColor()}`}>{percentage}%</span>
+          <span className={`${smallSize ? 'text-xs' : 'text-sm'} text-muted-foreground`}>
             {current}/{target} {unit}
           </span>
         </div>
       </div>
       <div className="flex items-center justify-center">
         {getIcon()}
-        <span className={`${smallSize ? 'text-xs' : 'text-sm'} font-medium`}>{label}</span>
+        <span className={`${smallSize ? 'text-sm' : 'text-base'} font-medium`}>{label}</span>
       </div>
     </div>
   );

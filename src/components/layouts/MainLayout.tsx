@@ -13,7 +13,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <main className="flex-1 container max-w-md mx-auto px-4 py-6 pb-20">
+      <main className="flex-1 container max-w-md mx-auto px-4 py-6 pb-24">
         <div className="page-transition">
           {children}
         </div>

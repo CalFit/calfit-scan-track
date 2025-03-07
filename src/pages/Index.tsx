@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
 import AddFoodModal from '@/components/AddFoodModal';
@@ -153,24 +152,17 @@ const Index = () => {
           fat={nutritionData.fat}
           carbs={nutritionData.carbs}
           pulseAvatar={avatarPulse}
+          isPerfectBalance={isPerfectBalance()}
         />
 
-        {/* Overall progress bar */}
-        <div className="px-2 mb-2">
+        {/* Overall progress bar with date */}
+        <div className="px-2 mb-6">
           <ProgressBar 
             percentage={overallProgress()} 
             label={`${overallProgress()}% de vos macros atteintes aujourd'hui !`} 
             color="bg-calfit-orange"
+            showDate={true}
           />
-          
-          {isPerfectBalance() && (
-            <div className="flex items-center justify-center mt-2 text-calfit-orange animate-bounce-subtle">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="mr-1.5">
-                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-              </svg>
-              <span className="text-sm font-medium">Équilibre parfait !</span>
-            </div>
-          )}
         </div>
 
         <MealList 
@@ -183,12 +175,12 @@ const Index = () => {
         />
       </div>
 
-      {/* Floating add button */}
+      {/* Floating add button - larger and more visible */}
       <button 
-        className="fixed bottom-20 right-6 w-14 h-14 bg-calfit-orange text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300 z-30"
+        className="fixed bottom-20 right-6 w-16 h-16 bg-[#F39C12] text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300 z-30 animate-pulse-soft"
         onClick={() => handleAddFoodClick('breakfast')}
       >
-        <Plus size={24} />
+        <Plus size={28} />
       </button>
 
       <AddFoodModal 
