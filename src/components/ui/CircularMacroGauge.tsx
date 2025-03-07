@@ -41,26 +41,26 @@ const CircularMacroGauge = ({
   
   // Get darker background color for better contrast
   const getDarkerBgColor = () => {
-    if (color.includes('calfit-blue')) return 'text-[#2E86C1]';
-    if (color.includes('calfit-purple')) return 'text-[#6B3FA0]';
-    if (color.includes('calfit-green')) return 'text-[#27AE60]';
+    if (color.includes('calfit-blue')) return 'text-[#2874A6]'; // Darker blue
+    if (color.includes('calfit-purple') || color.includes('calfit-yellow')) return 'text-[#D4A017]'; // Darker yellow
+    if (color.includes('calfit-green') || color.includes('calfit-red')) return 'text-[#C0392B]'; // Darker red
     return color.replace('bg-', 'text-');
   };
   
   // Style for progress circle
-  // Increase size by 20%
-  const circleRadius = smallSize ? 36 : 42; // Increased from 30/35
+  // Reduce size by 10%
+  const circleRadius = smallSize ? 32 : 38; // Reduced from 36/42
   const circleCircumference = 2 * Math.PI * circleRadius;
   const strokeDashoffset = circleCircumference - (percentage / 100) * circleCircumference;
 
   // Get the appropriate icon based on label
   const getIcon = () => {
     if (label.toLowerCase().includes('protéine')) {
-      return <Dumbbell className={`${smallSize ? 'w-4 h-4' : 'w-5 h-5'} mr-1`} />;
+      return <Dumbbell className={`${smallSize ? 'w-4 h-4' : 'w-5 h-5'} mr-1 text-[#E74C3C]`} />;
     } else if (label.toLowerCase().includes('lipide')) {
-      return <Nut className={`${smallSize ? 'w-4 h-4' : 'w-5 h-5'} mr-1`} />;
+      return <Nut className={`${smallSize ? 'w-4 h-4' : 'w-5 h-5'} mr-1 text-[#F1C40F]`} />;
     } else if (label.toLowerCase().includes('glucide')) {
-      return <Wheat className={`${smallSize ? 'w-4 h-4' : 'w-5 h-5'} mr-1`} />;
+      return <Wheat className={`${smallSize ? 'w-4 h-4' : 'w-5 h-5'} mr-1 text-[#3498DB]`} />;
     }
     return null;
   };
@@ -72,12 +72,12 @@ const CircularMacroGauge = ({
   return (
     <div className={cn(
       "flex flex-col items-center p-1 hover:scale-105 transition-transform duration-300",
-      smallSize ? "w-[108px]" : "" // Increased from 90px
+      smallSize ? "w-[96px]" : "" // Reduced from 108px
     )}>
       <div className="relative flex items-center justify-center mb-2">
         <svg 
-          width={smallSize ? "92" : "115"} // Increased from 76/96
-          height={smallSize ? "92" : "115"} // Increased from 76/96
+          width={smallSize ? "84" : "105"} // Reduced from 92/115
+          height={smallSize ? "84" : "105"} // Reduced from 92/115
           viewBox="0 0 100 100" 
           className="transform -rotate-90"
         >

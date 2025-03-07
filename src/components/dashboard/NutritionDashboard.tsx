@@ -35,7 +35,7 @@ const NutritionDashboard = ({
           label="Protéines" 
           current={protein.current} 
           target={protein.target} 
-          color="bg-calfit-blue"
+          color="bg-calfit-red" // Changed to red
           unit="g"
         />
         
@@ -43,7 +43,7 @@ const NutritionDashboard = ({
           label="Lipides" 
           current={fat.current} 
           target={fat.target} 
-          color="bg-calfit-purple"
+          color="bg-calfit-yellow" // Changed to yellow
           unit="g"
         />
         
@@ -51,7 +51,7 @@ const NutritionDashboard = ({
           label="Glucides" 
           current={carbs.current} 
           target={carbs.target} 
-          color="bg-calfit-green"
+          color="bg-calfit-blue" // Changed to blue
           unit="g"
         />
       </div>

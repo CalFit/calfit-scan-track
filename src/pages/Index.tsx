@@ -7,6 +7,7 @@ import MealList from '@/components/meals/MealList';
 import { initialNutritionData, initialMeals } from '@/data/initialNutritionData';
 import { Plus } from 'lucide-react';
 import ProgressBar from '@/components/ui/ProgressBar';
+
 const Index = () => {
   const {
     toast
@@ -17,28 +18,30 @@ const Index = () => {
   const [activeMeal, setActiveMeal] = useState<'breakfast' | 'lunch' | 'dinner' | null>(null);
   const [avatarPulse, setAvatarPulse] = useState(false);
 
-  // Calculate overall macro percentage for the progress bar
   const overallProgress = () => {
     const caloriePercentage = nutritionData.calories.current / nutritionData.calories.target;
     const proteinPercentage = nutritionData.protein.current / nutritionData.protein.target;
     const fatPercentage = nutritionData.fat.current / nutritionData.fat.target;
     const carbsPercentage = nutritionData.carbs.current / nutritionData.carbs.target;
 
-    // Average of all percentages, capped at 100%
     return Math.min(Math.round((caloriePercentage + proteinPercentage + fatPercentage + carbsPercentage) / 4 * 100), 100);
   };
+
   const isPerfectBalance = () => {
     const proteinPercentage = nutritionData.protein.current / nutritionData.protein.target;
     const fatPercentage = nutritionData.fat.current / nutritionData.fat.target;
     const carbsPercentage = nutritionData.carbs.current / nutritionData.carbs.target;
 
-    // Check if all macros are between 85% and 105% of targets
-    return proteinPercentage >= 0.85 && proteinPercentage <= 1.05 && fatPercentage >= 0.85 && fatPercentage <= 1.05 && carbsPercentage >= 0.85 && carbsPercentage <= 1.05;
+    return proteinPercentage >= 0.85 && proteinPercentage <= 1.05 && 
+           fatPercentage >= 0.85 && fatPercentage <= 1.05 && 
+           carbsPercentage >= 0.85 && carbsPercentage <= 1.05;
   };
+
   const handleAddFoodClick = (mealType: 'breakfast' | 'lunch' | 'dinner') => {
     setActiveMeal(mealType);
     setShowAddFood(true);
   };
+
   const handleAddFood = (food: any) => {
     if (!activeMeal) return;
     const newFood = {
@@ -71,7 +74,6 @@ const Index = () => {
       }
     }));
 
-    // Animate avatar on food add
     setAvatarPulse(true);
     setTimeout(() => setAvatarPulse(false), 1500);
     const mealNames = {
@@ -85,6 +87,7 @@ const Index = () => {
     });
     setShowAddFood(false);
   };
+
   const handleRemoveFood = (mealType: 'breakfast' | 'lunch' | 'dinner', foodId: number) => {
     const foodToRemove = meals[mealType].items.find(item => item.id === foodId);
     if (!foodToRemove) return;
@@ -118,27 +121,60 @@ const Index = () => {
       description: `${foodToRemove.name} a été retiré de votre journal`
     });
   };
-  return <MainLayout>
+
+  return (
+    <MainLayout>
       <div className="space-y-6">
         <header className="text-center mb-2">
           <h1 className="text-2xl md:text-3xl font-bold mb-1">CalFit</h1>
           <p className="text-muted-foreground text-sm">Votre assistant nutritionnel</p>
         </header>
 
-        <NutritionDashboard calories={nutritionData.calories} protein={nutritionData.protein} fat={nutritionData.fat} carbs={nutritionData.carbs} pulseAvatar={avatarPulse} isPerfectBalance={isPerfectBalance()} />
+        <NutritionDashboard 
+          calories={nutritionData.calories} 
+          protein={nutritionData.protein} 
+          fat={nutritionData.fat} 
+          carbs={nutritionData.carbs} 
+          pulseAvatar={avatarPulse} 
+          isPerfectBalance={isPerfectBalance()} 
+        />
 
-        {/* Overall progress bar with date */}
         <div className="px-2 mb-6">
-          <ProgressBar percentage={overallProgress()} label={`${overallProgress()}% de vos macros atteintes aujourd'hui !`} color="bg-calfit-orange" showDate={true} />
+          <ProgressBar 
+            percentage={overallProgress()} 
+            label={`${overallProgress()}% de vos macros atteintes aujourd'hui !`} 
+            color="bg-[#F1C40F]" 
+            showDate={true} 
+          />
         </div>
 
-        <MealList meals={meals} proteinTarget={nutritionData.protein.target} fatTarget={nutritionData.fat.target} carbsTarget={nutritionData.carbs.target} onAddFoodClick={handleAddFoodClick} onRemoveFood={handleRemoveFood} />
+        <MealList 
+          meals={meals} 
+          proteinTarget={nutritionData.protein.target} 
+          fatTarget={nutritionData.fat.target} 
+          carbsTarget={nutritionData.carbs.target} 
+          onAddFoodClick={handleAddFoodClick} 
+          onRemoveFood={handleRemoveFood} 
+        />
       </div>
 
-      {/* Floating add button - larger and more visible */}
-      
+      <div className="fixed bottom-20 right-4">
+        <button 
+          onClick={() => setShowAddFood(true)} 
+          className="w-14 h-14 bg-[#F39C12] hover:bg-[#F39C12]/90 rounded-full flex items-center justify-center shadow-lg text-white hover:scale-110 transition-all duration-300 btn-bounce"
+        >
+          <Plus size={28} />
+        </button>
+      </div>
 
-      <AddFoodModal isOpen={showAddFood} onClose={() => setShowAddFood(false)} onAddFood={handleAddFood} mealType={activeMeal || 'breakfast'} />
-    </MainLayout>;
+      <AddFoodModal 
+        isOpen={showAddFood} 
+        onClose={() => setShowAddFood(false)} 
+        onAddFood={handleAddFood} 
+        mealType={activeMeal || 'breakfast'} 
+      />
+    </MainLayout>
+  );
 };
+
 export default Index;

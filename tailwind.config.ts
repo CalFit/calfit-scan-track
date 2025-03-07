@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -25,15 +26,19 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				calfit: {
-					blue: '#4D97FF',
+					blue: '#3498DB', // Changed to blue
 					green: '#58CC02',
 					orange: '#F1C40F', 
 					purple: '#8352F2',
 					gray: '#E5E7EB',
+					red: '#E74C3C', // Added red
+					yellow: '#F1C40F', // Added yellow
 					'light-blue': '#EBF4FF',
 					'light-green': '#E6F9E6',
-					'dark-blue': '#2E86C1',
+					'dark-blue': '#2874A6', // Darker blue
 					'dark-green': '#27AE60',
+					'dark-red': '#C0392B', // Darker red
+					'dark-yellow': '#D4A017', // Darker yellow
 					'dark-purple': '#6B3FA0',
 					'bright-orange': '#F39C12',
 				},

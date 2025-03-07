@@ -1,4 +1,3 @@
-
 import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { Star } from 'lucide-react';
@@ -35,18 +34,19 @@ const CalfitAvatar = ({ calories, protein, className, showPerfectBalanceBadge = 
     }
   }, [caloriePercentage, proteinPercentage]);
 
+  // Removing the green circle, just keeping colors for different avatar states
   const avatarColors = {
-    tired: 'text-gray-400 border-gray-400 shadow-[0_0_15px_rgba(156,163,175,0.5)]',
-    overweight: 'text-orange-400 border-orange-400 shadow-[0_0_15px_rgba(251,146,60,0.5)]',
-    muscular: 'text-calfit-blue border-calfit-blue shadow-[0_0_15px_rgba(77,151,255,0.5)]',
-    balanced: 'text-calfit-green border-calfit-green shadow-[0_0_15px_rgba(88,204,2,0.5)]',
+    tired: 'text-gray-400 shadow-[0_0_15px_rgba(156,163,175,0.5)]',
+    overweight: 'text-orange-400 shadow-[0_0_15px_rgba(251,146,60,0.5)]',
+    muscular: 'text-[#E74C3C] shadow-[0_0_15px_rgba(231,76,60,0.5)]',
+    balanced: 'text-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]',
   };
 
-  // Calorie ring styles
+  // Calorie ring styles - changed colors per new requirements
   const calorieRingColor = useMemo(() => {
     if (caloriePercentage > 1.0) return 'text-red-500'; // Over target
     if (caloriePercentage > 0.8) return 'text-orange-400'; // Near target
-    return 'text-calfit-green'; // Good
+    return 'text-blue-500'; // Good - changed from green to blue
   }, [caloriePercentage]);
 
   // Calculate ring parameters
@@ -59,17 +59,17 @@ const CalfitAvatar = ({ calories, protein, className, showPerfectBalanceBadge = 
   const statusLabelColor = useMemo(() => {
     if (caloriesRemaining < 0) return 'bg-red-500';
     if (caloriePercentage > 0.8) return 'bg-orange-400';
-    return 'bg-calfit-green';
+    return 'bg-blue-500'; // Changed from green to blue
   }, [caloriesRemaining, caloriePercentage]);
 
   return (
     <div className={cn("relative flex items-center justify-center", className)}>
-      {/* Calorie ring */}
+      {/* Calorie ring - now goes clockwise */}
       <svg 
         width="130" 
         height="130" 
         viewBox="0 0 100 100" 
-        className="absolute transform -rotate-90"
+        className="absolute"
       >
         {/* Background ring */}
         <circle 
@@ -82,7 +82,7 @@ const CalfitAvatar = ({ calories, protein, className, showPerfectBalanceBadge = 
           strokeWidth="4"
         />
         
-        {/* Progress ring */}
+        {/* Progress ring - changed rotation for clockwise motion */}
         <circle 
           cx="50" 
           cy="50" 
@@ -100,7 +100,9 @@ const CalfitAvatar = ({ calories, protein, className, showPerfectBalanceBadge = 
           strokeLinecap="round"
           style={{ 
             transition: 'stroke-dashoffset 1s ease-in-out',
-            filter: ringProgress >= 85 ? 'drop-shadow(0 0 3px currentColor)' : 'none'
+            filter: ringProgress >= 85 ? 'drop-shadow(0 0 3px currentColor)' : 'none',
+            transform: 'rotate(-90deg)',
+            transformOrigin: 'center'
           }}
         />
       </svg>
@@ -112,14 +114,14 @@ const CalfitAvatar = ({ calories, protein, className, showPerfectBalanceBadge = 
       
       {/* Perfect balance badge */}
       {showPerfectBalanceBadge && (
-        <div className="absolute -right-2 -top-1 bg-calfit-orange text-white p-1 rounded-full shadow-lg animate-bounce-subtle">
+        <div className="absolute -right-2 -top-1 bg-[#F1C40F] text-white p-1 rounded-full shadow-lg animate-bounce-subtle">
           <Star size={16} fill="currentColor" />
         </div>
       )}
 
-      {/* Avatar */}
+      {/* Avatar - removed the border */}
       <div className={cn(
-        "w-40 h-40 md:w-44 md:h-44 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center border-4 transition-all duration-500", 
+        "w-40 h-40 md:w-44 md:h-44 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center transition-all duration-500", 
         avatarColors[avatarState]
       )}>
         <div className="floating-avatar">
@@ -138,13 +140,13 @@ const CalfitAvatar = ({ calories, protein, className, showPerfectBalanceBadge = 
         </div>
       </div>
 
-      {/* Calories remaining label (replacing "Équilibré") */}
+      {/* Calories remaining label - made smaller */}
       <div className={cn(
-        "absolute -bottom-2 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full shadow-lg border border-gray-200 dark:border-gray-800",
+        "absolute -bottom-1 left-1/2 transform -translate-x-1/2 px-3 py-0.5 rounded-full shadow-md",
         statusLabelColor,
-        "text-white font-medium"
+        "text-white font-medium text-sm"
       )}>
-        <span className="text-sm">
+        <span className="text-xs">
           {caloriesRemaining > 0 
             ? `${caloriesRemaining} kcal restantes` 
             : `${Math.abs(caloriesRemaining)} kcal en excès`}
