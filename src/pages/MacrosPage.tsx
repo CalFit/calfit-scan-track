@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import React from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
@@ -82,7 +81,12 @@ const MacrosPage = () => {
     return Math.min(Math.round((nutritionData[key].current / nutritionData[key].target) * 100), 100);
   };
 
-  const CustomTooltip = ({ active, payload, label }) => {
+  // Fix the CustomTooltip component to properly type its props
+  const CustomTooltip = ({ active, payload, label }: {
+    active?: boolean;
+    payload?: any[];
+    label?: string;
+  }) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-3 rounded-md shadow-lg border border-gray-200 text-sm">
@@ -189,6 +193,7 @@ const MacrosPage = () => {
                       tickLine={false}
                       tick={{ fontSize: 12 }}
                     />
+                    {/* Fix: Pass the CustomTooltip component directly without empty object */}
                     <Tooltip content={<CustomTooltip />} />
                     <Bar 
                       dataKey="value" 
