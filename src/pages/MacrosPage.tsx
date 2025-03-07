@@ -5,7 +5,7 @@ import MainLayout from '@/components/layouts/MainLayout';
 import MacroProgressBar from '@/components/ui/MacroProgressBar';
 import { Dumbbell, Nut, Wheat, ChevronRight, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip, CartesianGrid } from 'recharts';
 
 // Mock data for the demo
 const mockData = {
@@ -19,13 +19,13 @@ const mockData = {
       { id: 4, name: "Dîner", value: 500 },
     ],
     weekly: [
-      { day: "Lun", value: 1900 },
-      { day: "Mar", value: 2100 },
-      { day: "Mer", value: 1800 },
-      { day: "Jeu", value: 2000 },
-      { day: "Ven", value: 2300 },
-      { day: "Sam", value: 1700 },
-      { day: "Dim", value: 1800 },
+      { day: "Lun", value: 1900, target: 2200 },
+      { day: "Mar", value: 2100, target: 2200 },
+      { day: "Mer", value: 1800, target: 2200 },
+      { day: "Jeu", value: 2000, target: 2200 },
+      { day: "Ven", value: 2300, target: 2200 },
+      { day: "Sam", value: 1700, target: 2200 },
+      { day: "Dim", value: 1800, target: 2200 },
     ]
   },
   protein: { 
@@ -82,11 +82,28 @@ const MacrosPage = () => {
     return Math.min(Math.round((nutritionData[key].current / nutritionData[key].target) * 100), 100);
   };
 
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-3 rounded-md shadow-lg border border-gray-200 text-sm">
+          <p className="font-semibold mb-1">{label}</p>
+          <p className="text-calfit-orange">
+            Calories: {payload[0].value} kcal
+          </p>
+          <p className="text-gray-500 text-xs mt-1">
+            Objectif: {payload[0].payload.target} kcal
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 pb-4">
         <header>
-          <h1 className="text-3xl font-bold mb-2">Macronutriments</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">Macronutriments</h1>
           <p className="text-muted-foreground">
             Suivez votre consommation quotidienne
           </p>
@@ -142,7 +159,7 @@ const MacrosPage = () => {
 
         <div className="calfit-card p-5 space-y-4">
           <h3 className="text-xl font-semibold flex items-center">
-            <span className={`mr-2 w-6 h-6 rounded-full ${macroColors[selectedMacro]} flex items-center justify-center`}>
+            <span className={`mr-2.5 w-7 h-7 rounded-full ${macroColors[selectedMacro]} flex items-center justify-center animate-pulse-soft`}>
               {React.createElement(macroLabels[selectedMacro].icon, { className: "w-4 h-4 text-white" })}
             </span>
             Détail: {macroLabels[selectedMacro].name}
@@ -157,26 +174,28 @@ const MacrosPage = () => {
           />
 
           {selectedMacro === 'calories' && (
-            <div className="pt-4 mb-6">
+            <div className="pt-4 mb-3">
               <h4 className="text-sm font-medium text-muted-foreground mb-4">Évolution sur 7 jours</h4>
-              <div className="h-40">
+              <div className="h-48 md:h-56">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={nutritionData.calories.weekly}>
-                    <XAxis dataKey="day" />
-                    <Tooltip 
-                      formatter={(value) => [`${value} kcal`, 'Calories']}
-                      contentStyle={{ 
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        border: '1px solid #e5e7eb',
-                        borderRadius: '0.5rem',
-                        padding: '0.5rem'
-                      }}
+                  <BarChart 
+                    data={nutritionData.calories.weekly}
+                    margin={{ top: 10, right: 10, left: -20, bottom: 10 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.2} />
+                    <XAxis 
+                      dataKey="day" 
+                      axisLine={false} 
+                      tickLine={false}
+                      tick={{ fontSize: 12 }}
                     />
+                    <Tooltip content={<CustomTooltip />} />
                     <Bar 
                       dataKey="value" 
                       fill="#FF9600" 
                       radius={[4, 4, 0, 0]}
                       animationDuration={1000}
+                      maxBarSize={40}
                     />
                   </BarChart>
                 </ResponsiveContainer>
@@ -187,15 +206,15 @@ const MacrosPage = () => {
           <div className="pt-4">
             <h4 className="text-sm font-medium text-muted-foreground mb-3">Répartition par repas</h4>
             
-            <div className="space-y-3">
+            <div className="space-y-2">
               {nutritionData[selectedMacro].meals.map((meal) => (
                 <button 
                   key={meal.id} 
-                  className="flex justify-between items-center text-sm p-2.5 w-full hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors group"
+                  className="flex justify-between items-center text-sm p-3 w-full hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors group border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
                 >
                   <span className="font-medium">{meal.name}</span>
                   <div className="flex items-center">
-                    <span className="mr-1">
+                    <span className="mr-2 font-medium">
                       {meal.value} {macroLabels[selectedMacro].unit}
                     </span>
                     <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-all opacity-0 group-hover:opacity-100 group-hover:translate-x-1" />
