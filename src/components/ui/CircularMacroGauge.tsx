@@ -9,6 +9,7 @@ interface CircularMacroGaugeProps {
   target: number;
   color: string;
   unit?: string;
+  smallSize?: boolean;
 }
 
 const CircularMacroGauge = ({
@@ -16,7 +17,8 @@ const CircularMacroGauge = ({
   current,
   target,
   color,
-  unit = 'g'
+  unit = 'g',
+  smallSize = false
 }: CircularMacroGaugeProps) => {
   const [percentage, setPercentage] = useState(0);
   
@@ -38,18 +40,18 @@ const CircularMacroGauge = ({
   };
   
   // Style for progress circle
-  const circleRadius = 35;
+  const circleRadius = smallSize ? 30 : 35;
   const circleCircumference = 2 * Math.PI * circleRadius;
   const strokeDashoffset = circleCircumference - (percentage / 100) * circleCircumference;
 
   // Get the appropriate icon based on label
   const getIcon = () => {
     if (label.toLowerCase().includes('protéine')) {
-      return <Dumbbell className="w-4 h-4 mr-1" />;
+      return <Dumbbell className={`${smallSize ? 'w-3.5 h-3.5' : 'w-4 h-4'} mr-1`} />;
     } else if (label.toLowerCase().includes('lipide')) {
-      return <Nut className="w-4 h-4 mr-1" />;
+      return <Nut className={`${smallSize ? 'w-3.5 h-3.5' : 'w-4 h-4'} mr-1`} />;
     } else if (label.toLowerCase().includes('glucide')) {
-      return <Wheat className="w-4 h-4 mr-1" />;
+      return <Wheat className={`${smallSize ? 'w-3.5 h-3.5' : 'w-4 h-4'} mr-1`} />;
     }
     return null;
   };
@@ -59,9 +61,17 @@ const CircularMacroGauge = ({
   const isOverTarget = percentage > 100;
   
   return (
-    <div className="flex flex-col items-center p-2 hover:scale-105 transition-transform duration-300">
-      <div className="relative flex items-center justify-center mb-3">
-        <svg width="96" height="96" viewBox="0 0 100 100" className="transform -rotate-90">
+    <div className={cn(
+      "flex flex-col items-center p-1 hover:scale-105 transition-transform duration-300",
+      smallSize ? "w-[90px]" : ""
+    )}>
+      <div className="relative flex items-center justify-center mb-2">
+        <svg 
+          width={smallSize ? "76" : "96"} 
+          height={smallSize ? "76" : "96"} 
+          viewBox="0 0 100 100" 
+          className="transform -rotate-90"
+        >
           {/* Background circle */}
           <circle 
             cx="50" 
@@ -70,7 +80,7 @@ const CircularMacroGauge = ({
             fill="none" 
             stroke="currentColor" 
             className="text-gray-200 dark:text-gray-700" 
-            strokeWidth="6"
+            strokeWidth={smallSize ? "8" : "6"}
           />
           
           {/* Progress circle with animation */}
@@ -85,7 +95,7 @@ const CircularMacroGauge = ({
               color.replace('bg-', 'text-'),
               isOverTarget ? "animate-pulse" : ""
             )} 
-            strokeWidth="6" 
+            strokeWidth={smallSize ? "8" : "6"} 
             strokeDasharray={circleCircumference} 
             strokeDashoffset={strokeDashoffset} 
             strokeLinecap="round"
@@ -99,13 +109,15 @@ const CircularMacroGauge = ({
           "absolute inset-0 flex flex-col items-center justify-center transition-all duration-500",
           isOverTarget ? "animate-pulse-soft" : ""
         )}>
-          <span className={`text-xl font-bold ${getStatusColor()}`}>{percentage}%</span>
-          <span className="text-xs text-muted-foreground">{current}/{target} {unit}</span>
+          <span className={`${smallSize ? 'text-lg' : 'text-xl'} font-bold ${getStatusColor()}`}>{percentage}%</span>
+          <span className={`${smallSize ? 'text-[10px]' : 'text-xs'} text-muted-foreground`}>
+            {current}/{target} {unit}
+          </span>
         </div>
       </div>
       <div className="flex items-center justify-center">
         {getIcon()}
-        <span className="text-sm font-medium">{label}</span>
+        <span className={`${smallSize ? 'text-xs' : 'text-sm'} font-medium`}>{label}</span>
       </div>
     </div>
   );

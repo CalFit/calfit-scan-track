@@ -41,7 +41,7 @@ const MealList = ({
   onRemoveFood 
 }: MealListProps) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <MealSection 
         title={meals.breakfast.title}
         items={meals.breakfast.items}
@@ -78,9 +78,9 @@ const MealList = ({
         }}
       />
 
-      <div className="text-center mt-10">
+      <div className="text-center mt-6 mb-10">
         <button 
-          className="calfit-button-primary flex items-center justify-center gap-2 mx-auto"
+          className="calfit-button-primary flex items-center justify-center gap-2 mx-auto bg-calfit-orange hover:bg-calfit-orange/90"
           onClick={() => onAddFoodClick('breakfast')}
         >
           <Plus size={18} />

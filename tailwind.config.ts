@@ -28,7 +28,7 @@ export default {
 				calfit: {
 					blue: '#4D97FF',
 					green: '#58CC02',
-					orange: '#FF9600',
+					orange: '#F1C40F', // Updated to softer yellow as requested
 					purple: '#8352F2',
 					gray: '#E5E7EB',
 					'light-blue': '#EBF4FF',
@@ -122,7 +122,7 @@ export default {
 				},
 				'progress': {
 					'0%': { width: '0%' },
-					'100%': { width: '100%' }
+					'100%': { width: 'var(--progress-width, 100%)' }
 				},
 				'swipe-out': {
 					'0%': { transform: 'translateX(0)' },
@@ -135,6 +135,10 @@ export default {
 				'glow': {
 					'0%, 100%': { filter: 'drop-shadow(0 0 2px currentColor)' },
 					'50%': { filter: 'drop-shadow(0 0 5px currentColor)' }
+				},
+				'versement': {
+					'0%': { height: '0%', opacity: '0' },
+					'100%': { height: '100%', opacity: '1' }
 				}
 			},
 			animation: {
@@ -151,13 +155,17 @@ export default {
 				'progress': 'progress 1s ease-out',
 				'swipe-out': 'swipe-out 0.3s ease-out forwards',
 				'bounce-subtle': 'bounce-subtle 2s infinite ease-in-out',
-				'glow': 'glow 2s infinite ease-in-out'
+				'glow': 'glow 2s infinite ease-in-out',
+				'versement': 'versement 1s ease-out'
 			},
 			transitionProperty: {
 				'height': 'height',
 				'spacing': 'margin, padding',
 				'width': 'width',
 				'transform': 'transform',
+			},
+			scale: {
+				'115': '1.15',
 			}
 		}
 	},

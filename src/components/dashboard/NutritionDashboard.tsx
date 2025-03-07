@@ -7,26 +7,34 @@ interface NutritionDashboardProps {
   protein: { current: number; target: number };
   fat: { current: number; target: number };
   carbs: { current: number; target: number };
+  pulseAvatar?: boolean;
 }
 
-const NutritionDashboard = ({ calories, protein, fat, carbs }: NutritionDashboardProps) => {
+const NutritionDashboard = ({ 
+  calories, 
+  protein, 
+  fat, 
+  carbs,
+  pulseAvatar = false
+}: NutritionDashboardProps) => {
   return (
     <>
-      <div className="flex justify-center mb-6">
+      <div className="flex justify-center mb-5 relative">
         <CalfitAvatar 
           calories={calories} 
           protein={protein}
-          className="scale-110 transform"
+          className={`transform ${pulseAvatar ? 'scale-115 animate-pulse-soft' : 'scale-110'} transition-all duration-300`}
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="flex justify-center space-x-3 mb-5 px-2">
         <CircularMacroGauge 
           label="Protéines" 
           current={protein.current} 
           target={protein.target} 
           color="bg-calfit-blue"
           unit="g"
+          smallSize
         />
         
         <CircularMacroGauge 
@@ -35,6 +43,7 @@ const NutritionDashboard = ({ calories, protein, fat, carbs }: NutritionDashboar
           target={fat.target} 
           color="bg-calfit-purple"
           unit="g"
+          smallSize
         />
         
         <CircularMacroGauge 
@@ -43,6 +52,7 @@ const NutritionDashboard = ({ calories, protein, fat, carbs }: NutritionDashboar
           target={carbs.target} 
           color="bg-calfit-green"
           unit="g"
+          smallSize
         />
       </div>
     </>

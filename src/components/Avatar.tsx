@@ -1,6 +1,7 @@
 
 import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
+import { Star } from 'lucide-react';
 
 interface CalfitAvatarProps {
   calories: {
@@ -40,21 +41,21 @@ const CalfitAvatar = ({ calories, protein, className }: CalfitAvatarProps) => {
   return (
     <div className={cn("relative flex items-center justify-center", className)}>
       <div className={cn(
-        "w-48 h-48 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center border-4 transition-all duration-500", 
+        "w-40 h-40 md:w-44 md:h-44 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center border-4 transition-all duration-500", 
         avatarColors[avatarState]
       )}>
         <div className="floating-avatar">
           {avatarState === 'tired' && (
-            <div className="text-8xl">😴</div>
+            <div className="text-7xl">😴</div>
           )}
           {avatarState === 'overweight' && (
-            <div className="text-8xl">🍔</div>
+            <div className="text-7xl">🍔</div>
           )}
           {avatarState === 'muscular' && (
-            <div className="text-8xl">💪</div>
+            <div className="text-7xl">💪</div>
           )}
           {avatarState === 'balanced' && (
-            <div className="text-8xl">😊</div>
+            <div className="text-7xl">😊</div>
           )}
         </div>
       </div>
