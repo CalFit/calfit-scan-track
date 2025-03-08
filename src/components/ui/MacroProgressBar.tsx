@@ -43,7 +43,7 @@ const MacroProgressBar = ({
     return color;
   };
   return <div className="space-y-1.5">
-      <div className="flex justify-between items-center my-0 mx-[20px] px-0 py-0">
+      <div className="flex justify-between items-center my-0 mx-[20px] py-0 px-[2px]">
         <div className="flex items-center">
           {getIcon()}
           
