@@ -2,7 +2,6 @@ import { useState, useRef } from 'react';
 import { Plus, ChevronDown, ChevronUp, X, Sun, Coffee, Utensils, Moon, MoreHorizontal } from 'lucide-react';
 import MacroProgressBar from '@/components/ui/MacroProgressBar';
 import { cn } from '@/lib/utils';
-
 interface FoodItem {
   id: number;
   name: string;
@@ -12,13 +11,11 @@ interface FoodItem {
   carbs: number;
   isUnbalanced?: boolean;
 }
-
 interface DailyTarget {
   protein: number;
   fat: number;
   carbs: number;
 }
-
 interface MealSectionProps {
   title: string;
   items: FoodItem[];
@@ -26,7 +23,6 @@ interface MealSectionProps {
   onAddFood: () => void;
   onRemoveFood: (id: number) => void;
 }
-
 const foodIcons: Record<string, string> = {
   "yaourt grec": "🥄",
   "yaourt": "🥄",
@@ -54,19 +50,15 @@ const foodIcons: Record<string, string> = {
   "orange": "🍊",
   "fraise": "🍓"
 };
-
 const getFoodEmoji = (foodName: string): string => {
   const lowerName = foodName.toLowerCase();
-
   for (const [key, emoji] of Object.entries(foodIcons)) {
     if (lowerName.includes(key)) {
       return emoji;
     }
   }
-
   return "🍽️";
 };
-
 const MealSection = ({
   title,
   items,
@@ -78,7 +70,6 @@ const MealSection = ({
   const [swipingItemId, setSwipingItemId] = useState<number | null>(null);
   const [showContextMenu, setShowContextMenu] = useState(false);
   const touchStartXRef = useRef<number | null>(null);
-
   const mealTotals = items.reduce((acc, item) => {
     return {
       calories: acc.calories + item.calories,
@@ -92,11 +83,9 @@ const MealSection = ({
     fat: 0,
     carbs: 0
   });
-
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
-
   const getMealIcon = () => {
     const lowerTitle = title.toLowerCase();
     if (lowerTitle.includes('petit-déjeuner') || lowerTitle.includes('petit déjeuner')) {
@@ -108,33 +97,27 @@ const MealSection = ({
     }
     return <Utensils className="w-5 h-5 mr-2.5 text-gray-500" aria-label="Repas" />;
   };
-
   const handleTouchStart = (e: React.TouchEvent, id: number) => {
     touchStartXRef.current = e.touches[0].clientX;
     setSwipingItemId(id);
   };
-
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!touchStartXRef.current || swipingItemId === null) return;
     const touchCurrentX = e.touches[0].clientX;
     const deltaX = touchCurrentX - touchStartXRef.current;
-
     if (deltaX < 0) {
       const element = e.currentTarget as HTMLElement;
       element.style.transform = `translateX(${deltaX}px)`;
     }
   };
-
   const handleTouchEnd = (e: React.TouchEvent, id: number) => {
     if (!touchStartXRef.current || swipingItemId === null) return;
     const element = e.currentTarget as HTMLElement;
     const touchEndX = e.changedTouches[0].clientX;
     const deltaX = touchEndX - touchStartXRef.current;
-
     if (deltaX < -100) {
       element.style.transform = 'translateX(-100%)';
       element.style.opacity = '0';
-
       setTimeout(() => {
         onRemoveFood(id);
       }, 300);
@@ -144,15 +127,10 @@ const MealSection = ({
     touchStartXRef.current = null;
     setSwipingItemId(null);
   };
-
   const isUnbalancedFood = (item: FoodItem): boolean => {
-    return item.carbs > (item.protein * 2) || item.isUnbalanced || false;
+    return item.carbs > item.protein * 2 || item.isUnbalanced || false;
   };
-
-  return <div className={cn("calfit-card overflow-hidden transition-all duration-300 border-l-4", 
-    title.toLowerCase().includes('petit-déjeuner') ? "border-l-orange-400" : 
-    title.toLowerCase().includes('déjeuner') ? "border-l-yellow-500" : 
-    "border-l-indigo-400")}>
+  return <div className={cn("calfit-card overflow-hidden transition-all duration-300 border-l-4", title.toLowerCase().includes('petit-déjeuner') ? "border-l-orange-400" : title.toLowerCase().includes('déjeuner') ? "border-l-yellow-500" : "border-l-indigo-400")}>
       <div className="flex items-center justify-between p-4 cursor-pointer" onClick={toggleExpand}>
         <div className="flex items-center">
           {getMealIcon()}
@@ -165,9 +143,9 @@ const MealSection = ({
         </div>
         <div className="flex items-center">
           <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-2 mr-1" onClick={e => {
-            e.stopPropagation();
-            setShowContextMenu(!showContextMenu);
-          }}>
+          e.stopPropagation();
+          setShowContextMenu(!showContextMenu);
+        }}>
             <MoreHorizontal size={18} />
           </button>
           <button className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors p-2">
@@ -187,47 +165,16 @@ const MealSection = ({
       
       {isExpanded && <div className="p-4 pt-0 space-y-5 animate-fade-in">
           <div className="grid grid-cols-3 gap-3 p-3.5 bg-muted/30 rounded-lg">
-            <MacroProgressBar 
-              label="Protéines" 
-              current={mealTotals.protein} 
-              target={dailyTarget.protein} 
-              color="bg-[#E74C3C]" 
-              compact 
-            />
+            <MacroProgressBar label="Protéines" current={mealTotals.protein} target={dailyTarget.protein} color="bg-[#E74C3C]" compact />
             
-            <MacroProgressBar 
-              label="Lipides" 
-              current={mealTotals.fat} 
-              target={dailyTarget.fat} 
-              color="bg-[#F1C40F]" 
-              compact 
-            />
+            <MacroProgressBar label="Lipides" current={mealTotals.fat} target={dailyTarget.fat} color="bg-[#F1C40F]" compact />
             
-            <MacroProgressBar 
-              label="Glucides" 
-              current={mealTotals.carbs} 
-              target={dailyTarget.carbs} 
-              color="bg-[#3498DB]" 
-              compact 
-            />
+            <MacroProgressBar label="Glucides" current={mealTotals.carbs} target={dailyTarget.carbs} color="bg-[#3498DB]" compact />
           </div>
           
           <div className="space-y-3.5">
-            {items.length > 0 ? items.map(item => (
-              <div 
-                key={item.id} 
-                className={`relative overflow-hidden transition-all duration-300 ${swipingItemId === item.id ? 'z-10' : ''}`} 
-                onTouchStart={e => handleTouchStart(e, item.id)} 
-                onTouchMove={handleTouchMove} 
-                onTouchEnd={e => handleTouchEnd(e, item.id)}
-              >
-                <div 
-                  className={cn(
-                    "flex justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300",
-                    isUnbalancedFood(item) ? "bg-orange-50 dark:bg-orange-900/20" : ""
-                  )}
-                  title={isUnbalancedFood(item) ? "Aliment déséquilibré: excès de glucides" : ""}
-                >
+            {items.length > 0 ? items.map(item => <div key={item.id} className={`relative overflow-hidden transition-all duration-300 ${swipingItemId === item.id ? 'z-10' : ''}`} onTouchStart={e => handleTouchStart(e, item.id)} onTouchMove={handleTouchMove} onTouchEnd={e => handleTouchEnd(e, item.id)}>
+                <div className={cn("flex justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300", isUnbalancedFood(item) ? "bg-orange-50 dark:bg-orange-900/20" : "")} title={isUnbalancedFood(item) ? "Aliment déséquilibré: excès de glucides" : ""}>
                   <div className="flex items-center">
                     <span className="mr-2.5 text-lg">{getFoodEmoji(item.name)}</span>
                     <span className="font-medium">{item.name}</span>
@@ -242,23 +189,17 @@ const MealSection = ({
                   </div>
                 </div>
                 
-                <div className="swipe-hint">Glisser pour supprimer</div>
-              </div>
-            )) : (
-              <div className="text-center py-6 text-muted-foreground">
+                
+              </div>) : <div className="text-center py-6 text-muted-foreground">
                 Aucun aliment ajouté
-              </div>
-            )}
+              </div>}
           </div>
           
           <div className="mt-3">
-            <button 
-              onClick={e => {
-                e.stopPropagation();
-                onAddFood();
-              }} 
-              className="flex items-center gap-1.5 text-sm px-4 py-3 rounded-md bg-[#F39C12]/20 hover:bg-[#F39C12]/30 text-[#F39C12] dark:bg-gray-800 dark:hover:bg-gray-700 transition-all w-full justify-center hover:scale-105 duration-300 hover:shadow-md btn-bounce"
-            >
+            <button onClick={e => {
+          e.stopPropagation();
+          onAddFood();
+        }} className="flex items-center gap-1.5 text-sm px-4 py-3 rounded-md bg-[#F39C12]/20 hover:bg-[#F39C12]/30 text-[#F39C12] dark:bg-gray-800 dark:hover:bg-gray-700 transition-all w-full justify-center hover:scale-105 duration-300 hover:shadow-md btn-bounce">
               <Plus size={16} className="animate-pulse-soft" />
               Ajouter un aliment
             </button>
@@ -266,5 +207,4 @@ const MealSection = ({
         </div>}
     </div>;
 };
-
 export default MealSection;
