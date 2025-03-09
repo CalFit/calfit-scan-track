@@ -56,7 +56,7 @@ const MacroProgressBar = ({
       <div className={`macro-progress-bar ${compact ? 'h-2' : 'h-3'} rounded-full overflow-hidden`}>
         <div className={cn("macro-progress-fill transition-all duration-700", getBackgroundColor(), "")} style={{
         width: `${percentage}%`,
-        box: percentage >= 85 && percentage <= 110 ? '0 0 10px currentColor' : 'none'
+        boxShadow: percentage >= 85 && percentage <= 110 ? '0 0 10px currentColor' : 'none'
       }} />
       </div>
     </div>;
