@@ -114,7 +114,7 @@ const Index = () => {
       <div className="space-y-6">
         <header className="text-center mb-2">
           <h1 className="text-2xl md:text-3xl font-bold mb-1">CalFit</h1>
-          <p className="text-muted-foreground text-sm">Votre assistant nutritionnel</p>
+          
         </header>
 
         <NutritionDashboard calories={nutritionData.calories} protein={nutritionData.protein} fat={nutritionData.fat} carbs={nutritionData.carbs} pulseAvatar={avatarPulse} isPerfectBalance={isPerfectBalance()} />
