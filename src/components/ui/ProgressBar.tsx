@@ -1,4 +1,3 @@
-
 import { cn } from '@/lib/utils';
 interface ProgressBarProps {
   percentage: number;
@@ -27,19 +26,9 @@ const ProgressBar = ({
     });
   };
   return <div className="w-full space-y-1.5">
-      {label && <div className="flex flex-col items-center">
-          <div className="text-base font-medium">{label}</div>
-          {showDate && <div className="text-xs text-muted-foreground mb-1">
-              {getCurrentDate()}
-            </div>}
-        </div>}
+      {label}
       
-      <div className={cn("relative w-full overflow-hidden bg-gray-200 dark:bg-gray-700 rounded-full", height)}>
-        <div className={cn("transition-all ease-out duration-1000", animate ? "animate-versement" : "", color)} style={{
-        width: `${percentage}%`,
-        height: '100%'
-      }} />
-      </div>
+      
     </div>;
 };
 export default ProgressBar;
