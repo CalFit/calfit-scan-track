@@ -36,10 +36,10 @@ const CalfitAvatar = ({ calories, protein, className, showPerfectBalanceBadge = 
 
   // Removing the green circle, just keeping colors for different avatar states
   const avatarColors = {
-    tired: 'text-gray-400 shadow-[0_0_15px_rgba(156,163,175,0.5)]',
-    overweight: 'text-orange-400 shadow-[0_0_15px_rgba(251,146,60,0.5)]',
-    muscular: 'text-[#E74C3C] shadow-[0_0_15px_rgba(231,76,60,0.5)]',
-    balanced: 'text-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]',
+    tired: 'text-gray-400',
+    overweight: 'text-orange-400',
+    muscular: 'text-[#E74C3C]',
+    balanced: 'text-blue-500',
   };
 
   // Calorie ring styles - changed colors per new requirements
