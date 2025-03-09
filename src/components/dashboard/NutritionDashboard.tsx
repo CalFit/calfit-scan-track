@@ -39,18 +39,18 @@ const NutritionDashboard = ({
         />
         
         <CircularMacroGauge 
-          label="Lipides" 
-          current={fat.current} 
-          target={fat.target} 
-          color="bg-calfit-yellow" // Changed to yellow
-          unit="g"
-        />
-        
-        <CircularMacroGauge 
           label="Glucides" 
           current={carbs.current} 
           target={carbs.target} 
           color="bg-calfit-blue" // Changed to blue
+          unit="g"
+        />
+        
+        <CircularMacroGauge 
+          label="Lipides" 
+          current={fat.current} 
+          target={fat.target} 
+          color="bg-calfit-yellow" // Changed to yellow
           unit="g"
         />
       </div>

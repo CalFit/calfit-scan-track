@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+
+import { useMemo, useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Star } from 'lucide-react';
 
@@ -13,12 +14,58 @@ interface CalfitAvatarProps {
   };
   className?: string;
   showPerfectBalanceBadge?: boolean;
+  onCalorieChange?: () => void;
 }
 
-const CalfitAvatar = ({ calories, protein, className, showPerfectBalanceBadge = false }: CalfitAvatarProps) => {
-  const caloriePercentage = calories.current / calories.target;
+const CalfitAvatar = ({ calories, protein, className, showPerfectBalanceBadge = false, onCalorieChange }: CalfitAvatarProps) => {
+  const [animatedCalories, setAnimatedCalories] = useState(calories.current);
+  const [showIndicator, setShowIndicator] = useState(false);
+  
+  // Mettre à jour les calories animées lorsque les calories réelles changent
+  useEffect(() => {
+    if (calories.current !== animatedCalories) {
+      // Montrer l'indicateur lorsque les calories changent
+      setShowIndicator(true);
+      
+      // Animation de déplacement des calories
+      const startValue = animatedCalories;
+      const endValue = calories.current;
+      const duration = 1000; // 1 seconde
+      const startTime = Date.now();
+      
+      const animateCalories = () => {
+        const currentTime = Date.now();
+        const elapsed = currentTime - startTime;
+        
+        if (elapsed < duration) {
+          const progress = elapsed / duration;
+          // Fonction d'ease-out pour une animation plus naturelle
+          const easeOutProgress = 1 - Math.pow(1 - progress, 3);
+          const currentValue = startValue + (endValue - startValue) * easeOutProgress;
+          setAnimatedCalories(Math.round(currentValue));
+          requestAnimationFrame(animateCalories);
+        } else {
+          setAnimatedCalories(endValue);
+          
+          // Masquer l'indicateur après un délai
+          setTimeout(() => {
+            setShowIndicator(false);
+          }, 2000);
+          
+          // Déclencher l'événement de changement de calories
+          if (onCalorieChange) {
+            onCalorieChange();
+          }
+        }
+      };
+      
+      requestAnimationFrame(animateCalories);
+    }
+  }, [calories.current, animatedCalories, onCalorieChange]);
+  
+  const caloriePercentage = animatedCalories / calories.target;
   const proteinPercentage = protein.current / protein.target;
-  const caloriesRemaining = calories.target - calories.current;
+  const caloriesRemaining = calories.target - animatedCalories;
   
   const avatarState = useMemo(() => {
     if (caloriePercentage > 1.0) {
@@ -61,6 +108,21 @@ const CalfitAvatar = ({ calories, protein, className, showPerfectBalanceBadge = 
     if (caloriePercentage > 0.8) return 'bg-orange-400';
     return 'bg-blue-500'; // Changed from green to blue
   }, [caloriesRemaining, caloriePercentage]);
+  
+  // Calculer la position de l'indicateur dynamique
+  const calculateIndicatorPosition = () => {
+    const angle = (ringProgress / 100) * 2 * Math.PI - (Math.PI / 2); // Commencer à midi (-90°)
+    const radius = 50; // Milieu de l'avatar en unités SVG
+    const indicatorRadius = 55; // Légèrement plus grand que le rayon de l'anneau
+    
+    // Calculer les coordonnées x et y
+    const x = radius + indicatorRadius * Math.cos(angle);
+    const y = radius + indicatorRadius * Math.sin(angle);
+    
+    return { x, y };
+  };
+  
+  const indicatorPosition = calculateIndicatorPosition();
 
   return (
     <div className={cn("relative flex items-center justify-center", className)}>
@@ -104,6 +166,51 @@ const CalfitAvatar = ({ calories, protein, className, showPerfectBalanceBadge = 
             transformOrigin: 'center'
           }}
         />
+        
+        {/* Indicateur dynamique */}
+        {showIndicator && (
+          <g 
+            className="animate-bounce-once"
+            style={{
+              filter: 'drop-shadow(0 0 3px rgba(255, 255, 255, 0.7))',
+              transform: `translate(${indicatorPosition.x - 4}px, ${indicatorPosition.y - 4}px)`,
+              transition: 'transform 0.5s ease-out'
+            }}
+          >
+            <circle 
+              cx="4" 
+              cy="4" 
+              r="4" 
+              fill="white" 
+              className="animate-pulse"
+            />
+            <circle 
+              cx="4" 
+              cy="4" 
+              r="2.5" 
+              fill={calorieRingColor.replace('text-', '')} 
+            />
+          </g>
+        )}
+        
+        {/* Calories display at indicator position */}
+        {showIndicator && (
+          <text 
+            x={indicatorPosition.x} 
+            y={indicatorPosition.y - 8} 
+            textAnchor="middle" 
+            fill="currentColor" 
+            className={cn(
+              calorieRingColor,
+              "text-xs font-bold animate-fade-in"
+            )}
+            style={{
+              filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3))'
+            }}
+          >
+            {animatedCalories} kcal
+          </text>
+        )}
       </svg>
 
       

@@ -30,6 +30,7 @@ interface MealListProps {
   carbsTarget: number;
   onAddFoodClick: (mealType: 'breakfast' | 'lunch' | 'dinner') => void;
   onRemoveFood: (mealType: 'breakfast' | 'lunch' | 'dinner', foodId: number) => void;
+  onEditFood?: (mealType: 'breakfast' | 'lunch' | 'dinner', food: FoodItem) => void;
 }
 
 const MealList = ({ 
@@ -38,7 +39,8 @@ const MealList = ({
   fatTarget, 
   carbsTarget, 
   onAddFoodClick, 
-  onRemoveFood 
+  onRemoveFood,
+  onEditFood
 }: MealListProps) => {
   return (
     <div className="space-y-4">
@@ -47,6 +49,7 @@ const MealList = ({
         items={meals.breakfast.items}
         onAddFood={() => onAddFoodClick('breakfast')}
         onRemoveFood={(foodId) => onRemoveFood('breakfast', foodId)}
+        onEditFood={onEditFood ? (food) => onEditFood('breakfast', food) : undefined}
         dailyTarget={{
           protein: proteinTarget * 0.25,
           fat: fatTarget * 0.25,
@@ -59,6 +62,7 @@ const MealList = ({
         items={meals.lunch.items}
         onAddFood={() => onAddFoodClick('lunch')}
         onRemoveFood={(foodId) => onRemoveFood('lunch', foodId)}
+        onEditFood={onEditFood ? (food) => onEditFood('lunch', food) : undefined}
         dailyTarget={{
           protein: proteinTarget * 0.4,
           fat: fatTarget * 0.4,
@@ -71,6 +75,7 @@ const MealList = ({
         items={meals.dinner.items}
         onAddFood={() => onAddFoodClick('dinner')}
         onRemoveFood={(foodId) => onRemoveFood('dinner', foodId)}
+        onEditFood={onEditFood ? (food) => onEditFood('dinner', food) : undefined}
         dailyTarget={{
           protein: proteinTarget * 0.35,
           fat: fatTarget * 0.35,

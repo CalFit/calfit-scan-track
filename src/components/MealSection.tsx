@@ -1,3 +1,4 @@
+
 import { useState, useRef } from 'react';
 import { Plus, ChevronDown, ChevronUp, X, Sun, Coffee, Utensils, Moon, MoreHorizontal } from 'lucide-react';
 import MacroProgressBar from '@/components/ui/MacroProgressBar';
@@ -22,6 +23,7 @@ interface MealSectionProps {
   dailyTarget: DailyTarget;
   onAddFood: () => void;
   onRemoveFood: (id: number) => void;
+  onEditFood?: (food: FoodItem) => void;
 }
 const foodIcons: Record<string, string> = {
   "yaourt grec": "🥄",
@@ -64,7 +66,8 @@ const MealSection = ({
   items,
   dailyTarget,
   onAddFood,
-  onRemoveFood
+  onRemoveFood,
+  onEditFood
 }: MealSectionProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [swipingItemId, setSwipingItemId] = useState<number | null>(null);
@@ -130,6 +133,13 @@ const MealSection = ({
   const isUnbalancedFood = (item: FoodItem): boolean => {
     return item.carbs > item.protein * 2 || item.isUnbalanced || false;
   };
+  
+  const handleFoodClick = (food: FoodItem) => {
+    if (onEditFood) {
+      onEditFood(food);
+    }
+  };
+  
   return <div className={cn("calfit-card overflow-hidden transition-all duration-300 border-l-4", title.toLowerCase().includes('petit-déjeuner') ? "border-l-orange-400" : title.toLowerCase().includes('déjeuner') ? "border-l-yellow-500" : "border-l-indigo-400")}>
       <div className="flex items-center justify-between p-4 cursor-pointer" onClick={toggleExpand}>
         <div className="flex items-center">
@@ -167,14 +177,22 @@ const MealSection = ({
           <div className="grid grid-cols-3 gap-3 p-3.5 bg-muted/30 rounded-lg">
             <MacroProgressBar label="Protéines" current={mealTotals.protein} target={dailyTarget.protein} color="bg-[#E74C3C]" compact />
             
-            <MacroProgressBar label="Lipides" current={mealTotals.fat} target={dailyTarget.fat} color="bg-[#F1C40F]" compact />
-            
             <MacroProgressBar label="Glucides" current={mealTotals.carbs} target={dailyTarget.carbs} color="bg-[#3498DB]" compact />
+            
+            <MacroProgressBar label="Lipides" current={mealTotals.fat} target={dailyTarget.fat} color="bg-[#F1C40F]" compact />
           </div>
           
           <div className="space-y-3.5">
             {items.length > 0 ? items.map(item => <div key={item.id} className={`relative overflow-hidden transition-all duration-300 ${swipingItemId === item.id ? 'z-10' : ''}`} onTouchStart={e => handleTouchStart(e, item.id)} onTouchMove={handleTouchMove} onTouchEnd={e => handleTouchEnd(e, item.id)}>
-                <div className={cn("flex justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300", isUnbalancedFood(item) ? "bg-orange-50 dark:bg-orange-900/20" : "")} title={isUnbalancedFood(item) ? "Aliment déséquilibré: excès de glucides" : ""}>
+                <div 
+                  className={cn(
+                    "flex justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300", 
+                    isUnbalancedFood(item) ? "bg-orange-50 dark:bg-orange-900/20" : "",
+                    "cursor-pointer"
+                  )} 
+                  title={isUnbalancedFood(item) ? "Aliment déséquilibré: excès de glucides" : "Cliquez pour modifier"}
+                  onClick={() => handleFoodClick(item)}
+                >
                   <div className="flex items-center">
                     <span className="mr-2.5 text-lg">{getFoodEmoji(item.name)}</span>
                     <span className="font-medium">{item.name}</span>
@@ -182,8 +200,8 @@ const MealSection = ({
                   <div className="flex items-center space-x-4">
                     <div className="flex space-x-3 text-sm">
                       <span className="text-[#E74C3C] font-medium">{item.protein}g</span>
-                      <span className="text-[#F1C40F] font-medium">{item.fat}g</span>
                       <span className="text-[#3498DB] font-medium">{item.carbs}g</span>
+                      <span className="text-[#F1C40F] font-medium">{item.fat}g</span>
                       <span className="font-medium">{item.calories} kcal</span>
                     </div>
                   </div>
