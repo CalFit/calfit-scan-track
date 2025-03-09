@@ -36,7 +36,7 @@ const MacroCard = ({
     <button
       onClick={onClick}
       className={cn(
-        "calfit-card p-4 text-center transition-all hover:shadow-md",
+        "calfit-card p-4 text-center transition-all hover:-md",
         isSelected ? 'ring-2 ring-calfit-blue scale-105' : '',
         isOverTarget ? 'relative' : ''
       )}
@@ -62,7 +62,7 @@ const MacroCard = ({
           className={cn(
             "macro-progress-fill", 
             color,
-            percentage >= 85 && percentage <= 110 ? "shadow-[0_0_8px_currentColor]" : "",
+            percentage >= 85 && percentage <= 110 ? "-[0_0_8px_currentColor]" : "",
             isOverTarget ? "animate-pulse" : ""
           )}
           style={{ width: `${percentage}%` }}

@@ -18,7 +18,7 @@ const CustomTooltip = ({ active, payload, label }: {
 }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-3 rounded-md shadow-lg border border-gray-200 text-sm">
+      <div className="bg-white p-3 rounded-md -lg border border-gray-200 text-sm">
         <p className="font-semibold mb-1">{label}</p>
         <p className="text-calfit-orange">
           Calories: {payload[0].value} kcal

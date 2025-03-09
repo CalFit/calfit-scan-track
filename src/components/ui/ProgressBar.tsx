@@ -35,7 +35,7 @@ const ProgressBar = ({
       <div className={cn("w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden", height)}>
         <div className={cn(color, "transition-all duration-1000 ease-out rounded-full relative", animate && "animate-versement")} style={{
         width: `${percentage}%`,
-        boxShadow: percentage >= 85 ? '0 0 8px currentColor' : 'none'
+        box: percentage >= 85 ? '0 0 8px currentColor' : 'none'
       }} />
       </div>
     </div>;

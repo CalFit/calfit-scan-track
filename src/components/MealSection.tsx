@@ -153,7 +153,7 @@ const MealSection = ({
           </button>
         </div>
         
-        {showContextMenu && <div className="absolute right-12 mt-2 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-10 border border-gray-200 dark:border-gray-700" onClick={e => e.stopPropagation()}>
+        {showContextMenu && <div className="absolute right-12 mt-2 bg-white dark:bg-gray-800 rounded-md -lg py-1 z-10 border border-gray-200 dark:border-gray-700" onClick={e => e.stopPropagation()}>
             <button className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setShowContextMenu(false)}>
               Renommer
             </button>
@@ -199,7 +199,7 @@ const MealSection = ({
             <button onClick={e => {
           e.stopPropagation();
           onAddFood();
-        }} className="flex items-center gap-1.5 text-sm px-4 py-3 rounded-md bg-[#F39C12]/20 hover:bg-[#F39C12]/30 text-[#F39C12] dark:bg-gray-800 dark:hover:bg-gray-700 transition-all w-full justify-center hover:scale-105 duration-300 hover:shadow-md btn-bounce">
+        }} className="flex items-center gap-1.5 text-sm px-4 py-3 rounded-md bg-[#F39C12]/20 hover:bg-[#F39C12]/30 text-[#F39C12] dark:bg-gray-800 dark:hover:bg-gray-700 transition-all w-full justify-center hover:scale-105 duration-300 hover:-md btn-bounce">
               <Plus size={16} className="animate-pulse-soft" />
               Ajouter un aliment
             </button>

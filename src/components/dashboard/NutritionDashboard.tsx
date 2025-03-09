@@ -25,7 +25,6 @@ const NutritionDashboard = ({
         <CalfitAvatar 
           calories={calories} 
           protein={protein}
-          className={`transform ${pulseAvatar ? 'scale-115 animate-pulse-soft' : 'scale-110'} transition-all duration-300`}
           showPerfectBalanceBadge={isPerfectBalance}
         />
       </div>

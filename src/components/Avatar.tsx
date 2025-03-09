@@ -90,9 +90,8 @@ const CalfitAvatar = ({ calories, protein, className, showPerfectBalanceBadge = 
           fill="none" 
           stroke="currentColor" 
           className={cn(
-            "transition-all duration-1000 ease-out",
             calorieRingColor,
-            ringProgress >= 100 ? "animate-pulse" : ""
+            ""
           )} 
           strokeWidth="4" 
           strokeDasharray={ringCircumference} 

@@ -28,8 +28,8 @@ const CircularMacroGauge = ({
 
   // Determine status color based on percentage
   const getStatusColor = () => {
-    if (percentage > 100) return "text-red-500 drop-shadow-[0_0_3px_rgba(239,68,68,0.7)]"; // Excess
-    if (percentage > 85) return "text-green-500 drop-shadow-[0_0_2px_rgba(34,197,94,0.6)]"; // Good
+    if (percentage > 100) return "text-red-500 drop--[0_0_3px_rgba(239,68,68,0.7)]"; // Excess
+    if (percentage > 85) return "text-green-500 drop--[0_0_2px_rgba(34,197,94,0.6)]"; // Good
     if (percentage > 60) return "text-yellow-500"; // Medium
     return "text-gray-400"; // Low
   };
@@ -75,7 +75,7 @@ const CircularMacroGauge = ({
           {/* Progress circle with animation and darker color */}
           <circle cx="50" cy="50" r={circleRadius} fill="none" stroke="currentColor" className={cn("transition-all duration-1000 ease-out", getDarkerBgColor(), isOverTarget ? "animate-pulse" : "")} strokeWidth={smallSize ? "8" : "6"} strokeDasharray={circleCircumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round" style={{
           transition: 'stroke-dashoffset 1s ease-in-out',
-          filter: showGlow ? 'drop-shadow(0 0 3px currentColor)' : 'none'
+          filter: showGlow ? 'drop-(0 0 3px currentColor)' : 'none'
         }} />
         </svg>
         <div className={cn("absolute inset-0 flex flex-col items-center justify-center transition-all duration-500", isOverTarget ? "animate-pulse-soft" : "")}>
