@@ -100,7 +100,7 @@ const CalfitAvatar = ({ calories, protein, className, showPerfectBalanceBadge = 
           strokeLinecap="round"
           style={{ 
             transition: 'stroke-dashoffset 1s ease-in-out',
-            filter: ringProgress >= 85 ? 'drop-shadow(0 0 3px currentColor)' : 'none',
+            filter: 'none',
             transform: 'rotate(-90deg)',
             transformOrigin: 'center'
           }}
@@ -114,14 +114,14 @@ const CalfitAvatar = ({ calories, protein, className, showPerfectBalanceBadge = 
       
       {/* Perfect balance badge */}
       {showPerfectBalanceBadge && (
-        <div className="absolute -right-2 -top-1 bg-[#F1C40F] text-white p-1 rounded-full shadow-lg animate-bounce-subtle">
+        <div className="absolute -right-2 -top-1 bg-[#F1C40F] text-white p-1 rounded-full animate-bounce-subtle">
           <Star size={16} fill="currentColor" />
         </div>
       )}
 
       {/* Avatar - removed the border */}
       <div className={cn(
-        "w-40 h-40 md:w-44 md:h-44 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center transition-all duration-500", 
+        "w-40 h-40 md:w-44 md:h-44 rounded-full flex items-center justify-center transition-all duration-500", 
         avatarColors[avatarState]
       )}>
         <div className="floating-avatar">
@@ -142,7 +142,7 @@ const CalfitAvatar = ({ calories, protein, className, showPerfectBalanceBadge = 
 
       {/* Calories remaining label - made smaller */}
       <div className={cn(
-        "absolute -bottom-1 left-1/2 transform -translate-x-1/2 px-3 py-0.5 rounded-full shadow-md",
+        "absolute -bottom-1 left-1/2 transform -translate-x-1/2 px-3 py-0.5 rounded-full",
         statusLabelColor,
         "text-white font-medium text-sm"
       )}>
