@@ -106,10 +106,6 @@ const CalfitAvatar = ({ calories, protein, className, showPerfectBalanceBadge = 
         />
       </svg>
 
-      {/* Calories taken display */}
-      <div className="absolute top-0 mt-1 text-xs font-medium">
-        {calories.current} kcal
-      </div>
       
       {/* Perfect balance badge */}
       {showPerfectBalanceBadge && (
@@ -139,18 +135,7 @@ const CalfitAvatar = ({ calories, protein, className, showPerfectBalanceBadge = 
         </div>
       </div>
 
-      {/* Calories remaining label - made smaller */}
-      <div className={cn(
-        "absolute -bottom-1 left-1/2 transform -translate-x-1/2 px-3 py-0.5 rounded-full",
-        statusLabelColor,
-        "text-white font-medium text-sm"
-      )}>
-        <span className="text-xs">
-          {caloriesRemaining > 0 
-            ? `${caloriesRemaining} kcal restantes` 
-            : `${Math.abs(caloriesRemaining)} kcal en excès`}
-        </span>
-      </div>
+      
     </div>
   );
 };
