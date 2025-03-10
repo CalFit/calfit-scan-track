@@ -23,11 +23,19 @@ const NutritionDashboard = ({
 }: NutritionDashboardProps) => {
   return (
     <>
-      <div className="flex justify-center mb-8 relative">
+      <div className="flex justify-center mb-4 relative">
         <CalfitAvatar 
           calories={calories} 
           protein={protein}
           showPerfectBalanceBadge={isPerfectBalance}
+        />
+      </div>
+
+      {/* Calories card below avatar */}
+      <div className="flex justify-center mb-4">
+        <CaloriesCard 
+          current={calories.current} 
+          target={calories.target} 
         />
       </div>
 
@@ -46,11 +54,6 @@ const NutritionDashboard = ({
           target={carbs.target} 
           color="bg-calfit-blue" 
           unit="g"
-        />
-        
-        <CaloriesCard 
-          current={calories.current} 
-          target={calories.target} 
         />
         
         <CircularMacroGauge 
