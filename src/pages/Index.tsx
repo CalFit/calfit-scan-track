@@ -9,7 +9,6 @@ import NutritionDashboard from '@/components/dashboard/NutritionDashboard';
 import MealList from '@/components/meals/MealList';
 import { initialNutritionData, initialMeals } from '@/data/initialNutritionData';
 import { Plus } from 'lucide-react';
-import ProgressBar from '@/components/ui/ProgressBar';
 
 const Index = () => {
   const { toast } = useToast();
@@ -22,13 +21,7 @@ const Index = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [foodToEdit, setFoodToEdit] = useState<any>(null);
   
-  const overallProgress = () => {
-    const caloriePercentage = nutritionData.calories.current / nutritionData.calories.target;
-    const proteinPercentage = nutritionData.protein.current / nutritionData.protein.target;
-    const fatPercentage = nutritionData.fat.current / nutritionData.fat.target;
-    const carbsPercentage = nutritionData.carbs.current / nutritionData.carbs.target;
-    return Math.min(Math.round((caloriePercentage + proteinPercentage + fatPercentage + carbsPercentage) / 4 * 100), 100);
-  };
+  // Removed overallProgress function as it's no longer needed
   
   const isPerfectBalance = () => {
     const proteinPercentage = nutritionData.protein.current / nutritionData.protein.target;
@@ -183,14 +176,7 @@ const Index = () => {
           isPerfectBalance={isPerfectBalance()} 
         />
 
-        <div className="px-2 mb-6">
-          <ProgressBar 
-            percentage={overallProgress()} 
-            label={`${overallProgress()}% de vos macros atteintes aujourd'hui !`} 
-            color="bg-[#F1C40F]" 
-            showDate={true} 
-          />
-        </div>
+        {/* Removed the ProgressBar component and container div */}
 
         <MealList 
           meals={meals} 
