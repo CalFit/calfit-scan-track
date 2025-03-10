@@ -1,29 +1,22 @@
 
-import { useState } from 'react';
-import { X, Search, ScanBarcode } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Search, ScanBarcode, Clock } from 'lucide-react';
 import ManualFoodEntry from '@/components/ManualFoodEntry';
 import ScannerPreview from '@/components/ScannerPreview';
 import { useToast } from '@/hooks/use-toast';
-
-interface FoodItem {
-  name: string;
-  calories: number;
-  protein: number;
-  fat: number;
-  carbs: number;
-  barcode?: string;
-}
+import { FoodItem } from '@/components/meals/MealList';
 
 interface AddFoodModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddFood: (food: FoodItem) => void;
   mealType: 'breakfast' | 'lunch' | 'dinner';
+  recentFoods?: FoodItem[];
 }
 
-const AddFoodModal = ({ isOpen, onClose, onAddFood, mealType }: AddFoodModalProps) => {
+const AddFoodModal = ({ isOpen, onClose, onAddFood, mealType, recentFoods = [] }: AddFoodModalProps) => {
   const { toast } = useToast();
-  const [mode, setMode] = useState<'initial' | 'scan' | 'manual'>('initial');
+  const [mode, setMode] = useState<'initial' | 'scan' | 'manual' | 'recent'>('initial');
   const [scannedBarcode, setScannedBarcode] = useState<string | null>(null);
   const [cameraActive, setCameraActive] = useState(false);
 
@@ -77,6 +70,16 @@ const AddFoodModal = ({ isOpen, onClose, onAddFood, mealType }: AddFoodModalProp
     onClose();
   };
 
+  const handleRecentFoodSelect = (food: FoodItem) => {
+    // Clone the food object to generate a new ID when adding
+    const clonedFood = {
+      ...food,
+      id: Math.random() // This will be replaced when added to the meals state
+    };
+    onAddFood(clonedFood);
+    onClose();
+  };
+
   const getMealTitle = () => {
     switch (mealType) {
       case 'breakfast': return 'petit-déjeuner';
@@ -111,6 +114,27 @@ const AddFoodModal = ({ isOpen, onClose, onAddFood, mealType }: AddFoodModalProp
             <h2 className="text-xl font-semibold text-center">
               Ajouter un aliment à votre {getMealTitle()}
             </h2>
+            
+            {recentFoods.length > 0 && (
+              <div className="mb-4">
+                <div className="flex items-center gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
+                  <Clock className="w-4 h-4" />
+                  <span>Récemment ajoutés</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {recentFoods.slice(0, 4).map((food) => (
+                    <button
+                      key={food.id}
+                      onClick={() => handleRecentFoodSelect(food)}
+                      className="calfit-card p-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                    >
+                      <div className="font-medium text-sm truncate">{food.name}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">{food.calories} cal</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             
             <div className="grid grid-cols-2 gap-4">
               <button 

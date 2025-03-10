@@ -160,6 +160,13 @@ const Index = () => {
     });
   };
 
+  // Function to get recent foods for the selected meal
+  const getRecentFoodsForMeal = () => {
+    if (!activeMeal) return [];
+    // Return the current meal items for the active meal type
+    return meals[activeMeal]?.items || [];
+  };
+
   return <MainLayout>
       <div className="space-y-6">
         <header className="text-center mb-2">
@@ -198,6 +205,7 @@ const Index = () => {
         onClose={() => setShowAddFood(false)} 
         onAddFood={handleAddFood} 
         mealType={activeMeal || 'breakfast'} 
+        recentFoods={getRecentFoodsForMeal()}
       />
       
       <EditFoodModal 
