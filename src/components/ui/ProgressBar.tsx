@@ -26,9 +26,9 @@ const ProgressBar = ({
     });
   };
   return <div className="w-full space-y-1.5">
-      {label && <p className="text-sm font-medium">{label}</p>}
+      {label}
       
-      {showDate && <p className="text-xs text-gray-500 dark:text-gray-400 text-right">{getCurrentDate()}</p>}
+      {showDate}
     </div>;
 };
 export default ProgressBar;
