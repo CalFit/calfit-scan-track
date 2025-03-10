@@ -1,6 +1,7 @@
 
 import { cn } from '@/lib/utils';
 import { Dumbbell, Nut, Wheat } from 'lucide-react';
+
 interface MacroProgressBarProps {
   label: string;
   current: number;
@@ -9,6 +10,7 @@ interface MacroProgressBarProps {
   unit?: string;
   compact?: boolean;
 }
+
 const MacroProgressBar = ({
   label,
   current,
@@ -43,6 +45,7 @@ const MacroProgressBar = ({
     }
     return color;
   };
+  
   return <div className="space-y-1.5">
       <div className="flex justify-between items-center my-0 mx-[20px] py-0 px-[2px]">
         <div className="flex items-center">
@@ -55,10 +58,11 @@ const MacroProgressBar = ({
       </div>
       <div className={`macro-progress-bar ${compact ? 'h-2' : 'h-3'} rounded-full overflow-hidden`}>
         <div className={cn("macro-progress-fill transition-all duration-700", getBackgroundColor(), "")} style={{
-        width: `${percentage}%`,
-        boxShadow: percentage >= 85 && percentage <= 110 ? '0 0 10px currentColor' : 'none'
-      }} />
+          width: `${percentage}%`,
+          boxShadow: percentage >= 85 && percentage <= 110 ? '0 0 10px currentColor' : 'none'
+        }} />
       </div>
     </div>;
 };
+
 export default MacroProgressBar;

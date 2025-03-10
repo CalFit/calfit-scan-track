@@ -1,6 +1,8 @@
 
 import CalfitAvatar from '@/components/Avatar';
 import CircularMacroGauge from '@/components/ui/CircularMacroGauge';
+import { Badge } from '@/components/ui/badge';
+import { CaloriesCard } from '@/components/dashboard/CaloriesCard';
 
 interface NutritionDashboardProps {
   calories: { current: number; target: number };
@@ -34,7 +36,7 @@ const NutritionDashboard = ({
           label="Protéines" 
           current={protein.current} 
           target={protein.target} 
-          color="bg-calfit-red" // Changed to red
+          color="bg-calfit-red" 
           unit="g"
         />
         
@@ -42,15 +44,20 @@ const NutritionDashboard = ({
           label="Glucides" 
           current={carbs.current} 
           target={carbs.target} 
-          color="bg-calfit-blue" // Changed to blue
+          color="bg-calfit-blue" 
           unit="g"
+        />
+        
+        <CaloriesCard 
+          current={calories.current} 
+          target={calories.target} 
         />
         
         <CircularMacroGauge 
           label="Lipides" 
           current={fat.current} 
           target={fat.target} 
-          color="bg-calfit-yellow" // Changed to yellow
+          color="bg-calfit-yellow" 
           unit="g"
         />
       </div>
