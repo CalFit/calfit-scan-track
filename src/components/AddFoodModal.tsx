@@ -144,7 +144,7 @@ const AddFoodModal = ({ isOpen, onClose, onAddFood, mealType, recentFoods = [] }
                 <div className="p-3 bg-white dark:bg-gray-800 rounded-full">
                   <Search className="w-6 h-6 text-calfit-blue" />
                 </div>
-                <span className="font-medium">Saisie manuelle</span>
+                <span className="font-medium texte-white">Saisie manuelle</span>
               </button>
               
               <button 
@@ -154,7 +154,7 @@ const AddFoodModal = ({ isOpen, onClose, onAddFood, mealType, recentFoods = [] }
                 <div className="p-3 bg-white dark:bg-gray-800 rounded-full">
                   <ScanBarcode className="w-6 h-6 text-calfit-green" />
                 </div>
-                <span className="font-medium">Scanner un code</span>
+                <span className="font-medium texte-white">Scanner un code</span>
               </button>
             </div>
           </div>
