@@ -19,7 +19,7 @@ const SettingsPage = () => {
     carbs: 250
   });
 
-  const [name, setName] = useState("Utilisateur");
+  const [name, setName] = useState("Alexandre");
   const [notifications, setNotifications] = useState(true);
   const [initialValues, setInitialValues] = useState({
     name,
