@@ -13,7 +13,7 @@ interface ProgressBarProps {
 const ProgressBar = ({
   percentage,
   label,
-  color = 'bg-calfit-orange',
+  color = 'bg-calfit-blue',
   height = 'h-2.5',
   animate = true,
   showDate = false
