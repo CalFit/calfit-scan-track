@@ -12,9 +12,9 @@ export const CaloriesCard = ({ current, target }: CaloriesCardProps) => {
   
   // Determine color based on calories consumed
   const getCaloriesColor = () => {
-    if (percentage > 100) return 'text-red-500 dark:text-brown-400';
-    if (percentage > 80) return 'text-orange-500 dark:text-red-400';
-    return 'text-blue-500 dark:text-red-400';
+    if (percentage > 100) return 'text-red-500 dark:text-red-400';
+    if (percentage > 80) return 'text-orange-500 dark:text-orange-400';
+    return 'text-blue-500 dark:text-blue-400';
   };
 
   return (
