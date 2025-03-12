@@ -42,15 +42,17 @@ const MacroDetail = ({
         unit={macroLabels[selectedMacro].unit}
       />
 
-      {selectedMacro === 'calories' && (
+      {selectedMacro === 'calories' && nutritionData.calories.weekly && (
         <WeeklyCalorieChart data={nutritionData.calories.weekly} />
       )}
 
-      <MealDistribution 
-        meals={nutritionData[selectedMacro].meals} 
-        selectedMacro={selectedMacro}
-        unit={macroLabels[selectedMacro].unit}
-      />
+      {nutritionData[selectedMacro].meals && (
+        <MealDistribution 
+          meals={nutritionData[selectedMacro].meals} 
+          selectedMacro={selectedMacro}
+          unit={macroLabels[selectedMacro].unit}
+        />
+      )}
     </div>
   );
 };

@@ -26,24 +26,60 @@ export function useNutritionTracker() {
   const updateNutritionData = (calories: number, protein: number, fat: number, carbs: number, operation: 'add' | 'remove') => {
     const multiplier = operation === 'add' ? 1 : -1;
     
-    setNutritionData(prev => ({
-      calories: {
-        ...prev.calories,
-        current: prev.calories.current + (calories * multiplier)
-      },
-      protein: {
-        ...prev.protein,
-        current: prev.protein.current + (protein * multiplier)
-      },
-      fat: {
-        ...prev.fat,
-        current: prev.fat.current + (fat * multiplier)
-      },
-      carbs: {
-        ...prev.carbs,
-        current: prev.carbs.current + (carbs * multiplier)
-      }
-    }));
+    setNutritionData(prev => {
+      // Helper function to update meal distribution
+      const updateMealDistribution = (macroKey: string, value: number, mealName: string) => {
+        if (!prev[macroKey]?.meals) return prev[macroKey]?.meals || [];
+        
+        const existingMealIndex = prev[macroKey].meals.findIndex(m => m.name === mealName);
+        const mealsCopy = [...prev[macroKey].meals];
+        
+        if (existingMealIndex >= 0) {
+          const updatedValue = mealsCopy[existingMealIndex].value + (value * multiplier);
+          mealsCopy[existingMealIndex] = {
+            ...mealsCopy[existingMealIndex],
+            value: Math.max(0, updatedValue)
+          };
+        } else if (operation === 'add' && activeMeal) {
+          mealsCopy.push({
+            id: mealsCopy.length + 1,
+            name: mealName,
+            value: value
+          });
+        }
+        
+        return mealsCopy;
+      };
+      
+      // Get active meal name
+      const mealName = activeMeal ? 
+        (activeMeal === 'breakfast' ? 'Petit-déjeuner' : 
+         activeMeal === 'lunch' ? 'Déjeuner' : 'Dîner') : 
+        'Snack';
+      
+      return {
+        calories: {
+          ...prev.calories,
+          current: prev.calories.current + (calories * multiplier),
+          meals: updateMealDistribution('calories', calories, mealName)
+        },
+        protein: {
+          ...prev.protein,
+          current: prev.protein.current + (protein * multiplier),
+          meals: updateMealDistribution('protein', protein, mealName)
+        },
+        fat: {
+          ...prev.fat,
+          current: prev.fat.current + (fat * multiplier),
+          meals: updateMealDistribution('fat', fat, mealName)
+        },
+        carbs: {
+          ...prev.carbs,
+          current: prev.carbs.current + (carbs * multiplier),
+          meals: updateMealDistribution('carbs', carbs, mealName)
+        }
+      };
+    });
     
     setAvatarPulse(true);
     setTimeout(() => setAvatarPulse(false), 1500);

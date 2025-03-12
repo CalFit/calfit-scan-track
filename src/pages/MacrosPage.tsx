@@ -27,9 +27,21 @@ const MacrosPage = () => {
   };
 
   const getPercentage = (key: string) => {
-    return Math.min(Math.round((nutritionData[key as keyof typeof nutritionData].current / 
-                              nutritionData[key as keyof typeof nutritionData].target) * 100), 100);
+    const data = nutritionData[key as keyof typeof nutritionData];
+    if (!data) return 0;
+    return Math.min(Math.round((data.current / data.target) * 100), 100);
   };
+
+  // Making sure nutritionData has been loaded
+  if (!nutritionData) {
+    return (
+      <MainLayout>
+        <div className="flex justify-center items-center h-full">
+          <span>Chargement des données...</span>
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
