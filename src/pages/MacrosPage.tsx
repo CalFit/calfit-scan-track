@@ -3,11 +3,33 @@ import { useState } from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
 import MacroCard from '@/components/macros/MacroCard';
 import MacroDetail from '@/components/macros/MacroDetail';
-import { useMacroData } from '@/hooks/useMacroData';
+import { useNutritionTracker } from '@/hooks/useNutritionTracker';
+import { Calendar, Dumbbell, Nut, Wheat } from 'lucide-react';
 
 const MacrosPage = () => {
   const [selectedMacro, setSelectedMacro] = useState('calories');
-  const { nutritionData, macroColors, macroLabels, getPercentage } = useMacroData();
+  const { nutritionData } = useNutritionTracker();
+
+  // Macro colors consistent with the Index page
+  const macroColors = {
+    calories: 'bg-calfit-orange',
+    protein: 'bg-[#E74C3C]',
+    fat: 'bg-[#F1C40F]',
+    carbs: 'bg-[#3498DB]'
+  };
+
+  // Macro labels with consistent icons
+  const macroLabels = {
+    calories: { name: 'Calories', unit: 'kcal', icon: Calendar },
+    protein: { name: 'Protéines', unit: 'g', icon: Dumbbell },
+    fat: { name: 'Lipides', unit: 'g', icon: Nut },
+    carbs: { name: 'Glucides', unit: 'g', icon: Wheat }
+  };
+
+  const getPercentage = (key: string) => {
+    return Math.min(Math.round((nutritionData[key as keyof typeof nutritionData].current / 
+                              nutritionData[key as keyof typeof nutritionData].target) * 100), 100);
+  };
 
   return (
     <MainLayout>
@@ -29,10 +51,10 @@ const MacrosPage = () => {
                 key={key}
                 macroKey={key}
                 data={data}
-                label={macroLabels[key]}
+                label={macroLabels[key as keyof typeof macroLabels]}
                 isSelected={selectedMacro === key}
                 isOverTarget={isOverTarget}
-                color={macroColors[key]}
+                color={macroColors[key as keyof typeof macroColors]}
                 percentage={percentage}
                 onClick={() => setSelectedMacro(key)}
               />

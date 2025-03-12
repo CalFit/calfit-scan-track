@@ -32,12 +32,20 @@ const MacroCard = ({
 }: MacroCardProps) => {
   const IconComponent = label.icon;
   
+  // Get color based on macro type to match Index page
+  const getIconColor = () => {
+    if (macroKey === 'protein') return 'text-[#E74C3C]';
+    if (macroKey === 'carbs') return 'text-[#3498DB]';
+    if (macroKey === 'fat') return 'text-[#F1C40F]';
+    return 'text-calfit-orange';
+  };
+  
   return (
     <button
       onClick={onClick}
       className={cn(
         "calfit-card p-4 text-center transition-all hover:-md",
-        isSelected ? 'ring-2 ring-calfit-blue scale-105' : '',
+        isSelected ? 'ring-2 ring-[#3498DB] scale-105' : '',
         isOverTarget ? 'relative' : ''
       )}
     >
@@ -47,7 +55,7 @@ const MacroCard = ({
       <div className="flex items-center justify-center mb-2">
         <IconComponent className={cn(
           "w-5 h-5 mr-1.5",
-          `text-${color.replace('bg-', '')}`
+          getIconColor()
         )} />
         <div className="text-lg font-bold">
           {data.current}

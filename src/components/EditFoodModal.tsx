@@ -82,7 +82,7 @@ const EditFoodModal = ({ isOpen, onClose, onSave, food }: EditFoodModalProps) =>
               value={foodData.name}
               onChange={handleChange}
               className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 
-                       focus:outline-none focus:ring-2 focus:ring-calfit-blue dark:bg-gray-800"
+                       focus:outline-none focus:ring-2 focus:ring-[#3498DB] dark:bg-gray-800"
               required
             />
           </div>
@@ -99,7 +99,7 @@ const EditFoodModal = ({ isOpen, onClose, onSave, food }: EditFoodModalProps) =>
               onChange={handleChange}
               min="0"
               className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 
-                       focus:outline-none focus:ring-2 focus:ring-calfit-blue dark:bg-gray-800"
+                       focus:outline-none focus:ring-2 focus:ring-[#3498DB] dark:bg-gray-800"
             />
           </div>
           
@@ -116,7 +116,7 @@ const EditFoodModal = ({ isOpen, onClose, onSave, food }: EditFoodModalProps) =>
                 onChange={handleChange}
                 min="0"
                 className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 
-                         focus:outline-none focus:ring-2 focus:ring-calfit-blue dark:bg-gray-800"
+                         focus:outline-none focus:ring-2 focus:ring-[#3498DB] dark:bg-gray-800"
               />
             </div>
             
@@ -132,7 +132,7 @@ const EditFoodModal = ({ isOpen, onClose, onSave, food }: EditFoodModalProps) =>
                 onChange={handleChange}
                 min="0"
                 className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 
-                         focus:outline-none focus:ring-2 focus:ring-calfit-blue dark:bg-gray-800"
+                         focus:outline-none focus:ring-2 focus:ring-[#3498DB] dark:bg-gray-800"
               />
             </div>
             
@@ -148,7 +148,7 @@ const EditFoodModal = ({ isOpen, onClose, onSave, food }: EditFoodModalProps) =>
                 onChange={handleChange}
                 min="0"
                 className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 
-                         focus:outline-none focus:ring-2 focus:ring-calfit-blue dark:bg-gray-800"
+                         focus:outline-none focus:ring-2 focus:ring-[#3498DB] dark:bg-gray-800"
               />
             </div>
           </div>
@@ -163,7 +163,7 @@ const EditFoodModal = ({ isOpen, onClose, onSave, food }: EditFoodModalProps) =>
             </Button>
             <Button
               type="submit"
-              className="bg-calfit-blue hover:bg-calfit-blue/90"
+              className="bg-[#3498DB] hover:bg-[#3498DB]/90"
             >
               Enregistrer
             </Button>
