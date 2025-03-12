@@ -43,7 +43,7 @@ const Index = () => {
   return <MainLayout>
       <div className="space-y-6">
         <header className="text-center mb-2">
-          <h1 className="text-2xl md:text-3xl font-bold mb-1">Bonjour Alexandre</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-1">Alexandre</h1>
           <DateSelector date={selectedDate} onChange={handleDateChange} />
         </header>
 
