@@ -111,9 +111,9 @@ const AddFoodModal = ({ isOpen, onClose, onAddFood, mealType, recentFoods = [] }
 
         {mode === 'initial' && (
           <div className="calfit-card p-6 space-y-5 animate-scale-in dark:bg-gray-900/80 dark:border-gray-700/50">
-            <h2 className="text-xl font-semibold text-center text-white !important">
-              Ajouter un aliment à votre {getMealTitle()}
-            </h2>
+            <h2 className="text-xl font-semibold text-center" style={{ color: 'white !important' }}>
+  Ajouter un aliment à votre {getMealTitle()}
+</h2>
             
             {recentFoods.length > 0 && (
               <div className="mb-4">
