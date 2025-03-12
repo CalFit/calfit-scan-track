@@ -75,9 +75,9 @@ const SettingsPage = () => {
         </header>
 
         <div className="calfit-card">
-          <div className="bg-calfit-green/20 p-4 border-b border-gray-200 dark:border-gray-800">
+          <div className="bg-calfit-red/20 p-4 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center">
-              <Settings className="text-calfit-green w-5 h-5 mr-2" />
+              <Settings className="text-calfit-red w-5 h-5 mr-2" />
               <h3 className="text-lg font-semibold">Profil</h3>
             </div>
           </div>
@@ -105,7 +105,7 @@ const SettingsPage = () => {
                   checked={notifications}
                   onChange={() => setNotifications(!notifications)}
                 />
-                <div className="w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-calfit-green"></div>
+                <div className="w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-calfit-red"></div>
               </label>
             </div>
           </div>
