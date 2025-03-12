@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { Plus, ChevronDown, ChevronUp, X, Sun, Coffee, Utensils, Moon, MoreHorizontal } from 'lucide-react';
 import MacroProgressBar from '@/components/ui/MacroProgressBar';
@@ -218,8 +217,8 @@ const MealSection = ({
           e.stopPropagation();
           onAddFood();
         }} className="flex items-center gap-1.5 text-sm px-4 py-3 rounded-md bg-[#F39C12]/20 hover:bg-[#F39C12]/30 text-[#F39C12] dark:bg-gray-800 dark:hover:bg-gray-700 transition-all w-full justify-center hover:scale-105 duration-300 hover:-md btn-bounce">
-              <Plus size={16} className="animate-pulse-soft" />
-              Ajouter un aliment
+              <Plus size={16} className="animate-pulse-soft text-white" />
+              <span className="text-white">Ajouter un aliment</span>
             </button>
           </div>
         </div>}
