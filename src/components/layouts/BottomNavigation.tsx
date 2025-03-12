@@ -26,7 +26,7 @@ const BottomNavigation = ({ currentPath }: BottomNavigationProps) => {
               className={cn(
                 "flex flex-col items-center justify-center px-4 py-2 rounded-xl transition-all",
                 currentPath === item.path
-                  ? "text-calfit-green"
+                  ? "text-calfit-blue"
                   : "text-gray-500 hover:text-gray-800 dark:hover:text-gray-200"
               )}
             >

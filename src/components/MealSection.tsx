@@ -216,7 +216,7 @@ const MealSection = ({
             <button onClick={e => {
           e.stopPropagation();
           onAddFood();
-        }} className="flex items-center gap-1.5 text-sm px-4 py-3 rounded-md bg-[#F39C12]/20 hover:bg-[#F39C12]/30 text-[#F39C12] dark:bg-gray-800 dark:hover:bg-gray-700 transition-all w-full justify-center hover:scale-105 duration-300 hover:-md btn-bounce">
+        }} className="flex items-center gap-1.5 text-sm px-4 py-3 rounded-md bg-[#3498DB]/20 hover:bg-[#3498DB]/30 text-[#3498DB] dark:bg-gray-800 dark:hover:bg-gray-700 transition-all w-full justify-center hover:scale-105 duration-300 hover:-md btn-bounce">
               <Plus size={16} className="animate-pulse-soft text-white" />
               <span className="text-white">Ajouter un aliment</span>
             </button>

@@ -68,23 +68,23 @@ const SettingsPage = () => {
     <MainLayout>
       <div className="space-y-6">
         <header>
-          <h1 className="text-3xl font-bold mb-2">Réglages</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-bold mb-2 text-black">Réglages</h1>
+          <p className="text-black">
             Personnalisez votre expérience
           </p>
         </header>
 
         <div className="calfit-card">
-          <div className="bg-calfit-red/20 p-4 border-b border-gray-200 dark:border-gray-800">
+          <div className="bg-calfit-blue/20 p-4 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center">
-              <Settings className="text-calfit-red w-5 h-5 mr-2" />
-              <h3 className="text-lg font-semibold">Profil</h3>
+              <Settings className="text-calfit-blue w-5 h-5 mr-2" />
+              <h3 className="text-lg font-semibold text-black">Profil</h3>
             </div>
           </div>
           
           <div className="p-4 space-y-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-1">
+              <label htmlFor="name" className="block text-sm font-medium mb-1 text-black">
                 Nom
               </label>
               <input
@@ -97,7 +97,7 @@ const SettingsPage = () => {
             </div>
             
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Notifications</span>
+              <span className="text-sm font-medium text-black">Notifications</span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input 
                   type="checkbox" 
@@ -105,7 +105,7 @@ const SettingsPage = () => {
                   checked={notifications}
                   onChange={() => setNotifications(!notifications)}
                 />
-                <div className="w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-calfit-red"></div>
+                <div className="w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-calfit-blue"></div>
               </label>
             </div>
           </div>
@@ -113,12 +113,12 @@ const SettingsPage = () => {
 
         <div className="calfit-card">
           <div className="bg-calfit-blue/20 p-4 border-b border-gray-200 dark:border-gray-800">
-            <h3 className="text-lg font-semibold">Objectifs nutritionnels</h3>
+            <h3 className="text-lg font-semibold text-black">Objectifs nutritionnels</h3>
           </div>
           
           <div className="p-4 space-y-4">
             <div>
-              <label htmlFor="calories" className="block text-sm font-medium mb-1">
+              <label htmlFor="calories" className="block text-sm font-medium mb-1 text-black">
                 Calories (kcal)
               </label>
               <input
@@ -132,7 +132,7 @@ const SettingsPage = () => {
             </div>
             
             <div>
-              <label htmlFor="protein" className="block text-sm font-medium mb-1">
+              <label htmlFor="protein" className="block text-sm font-medium mb-1 text-black">
                 Protéines (g)
               </label>
               <input
@@ -146,7 +146,7 @@ const SettingsPage = () => {
             </div>
             
             <div>
-              <label htmlFor="fat" className="block text-sm font-medium mb-1">
+              <label htmlFor="fat" className="block text-sm font-medium mb-1 text-black">
                 Lipides (g)
               </label>
               <input
@@ -160,7 +160,7 @@ const SettingsPage = () => {
             </div>
             
             <div>
-              <label htmlFor="carbs" className="block text-sm font-medium mb-1">
+              <label htmlFor="carbs" className="block text-sm font-medium mb-1 text-black">
                 Glucides (g)
               </label>
               <input
@@ -177,7 +177,7 @@ const SettingsPage = () => {
         
         <div className="text-center mt-4">
           <button 
-            className={`calfit-button-primary ${!hasChanges() ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`calfit-button-secondary ${!hasChanges() ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={handleSaveChanges}
             disabled={!hasChanges()}
           >
