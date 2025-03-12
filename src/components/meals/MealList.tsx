@@ -88,8 +88,8 @@ const MealList = ({
           className="calfit-button-primary flex items-center justify-center gap-2 mx-auto bg-calfit-blue hover:bg-calfit-blue/90 text-white"
           onClick={() => onAddFoodClick('breakfast')}
         >
-          <Plus size={18} />
-          Ajouter un repas
+          <Plus size={18} className="text-white" />
+          <span className="text-white">Ajouter un aliment</span>
         </button>
       </div>
     </div>
