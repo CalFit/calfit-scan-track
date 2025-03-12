@@ -111,7 +111,7 @@ const AddFoodModal = ({ isOpen, onClose, onAddFood, mealType, recentFoods = [] }
 
         {mode === 'initial' && (
           <div className="calfit-card p-6 space-y-5 animate-scale-in dark:bg-gray-900/80 dark:border-gray-700/50">
-            <h2 className="text-xl font-semibold text-center text-white dark:text-white bg-black">
+            <h2 className="text-xl font-semibold text-center text-white dark:text-white bg-black !important">
   Ajouter un aliment à votre {getMealTitle()}
 </h2>
 
@@ -153,7 +153,7 @@ const AddFoodModal = ({ isOpen, onClose, onAddFood, mealType, recentFoods = [] }
                 className="calfit-card bg-calfit-light-green dark:bg-green-900/20 p-4 flex flex-col items-center space-y-3 hover:scale-105 transition-transform"
               >
                 <div className="p-3 bg-white dark:bg-gray-800 rounded-full">
-                  <ScanBarcode className="w-6 h-6 text-calfit-green" />
+                  <ScanBarcode className="w-6 h-6 text-calfit-blue" />
                 </div>
                 <span className="font-medium texte-white">Scanner un code</span>
               </button>
