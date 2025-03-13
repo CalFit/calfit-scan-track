@@ -78,7 +78,7 @@ const SettingsPage = () => {
           <div className="bg-calfit-blue/20 p-4 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center">
               <Settings className="text-calfit-blue w-5 h-5 mr-2" />
-              <h3 className="text-lg font-semibold text-black">Profil</h3>
+              <h3 className="text-lg font-semibold text-white">Profil</h3>
             </div>
           </div>
           
