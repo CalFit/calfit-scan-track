@@ -69,7 +69,7 @@ const SettingsPage = () => {
       <div className="space-y-6">
         <header>
           <h1 className="text-3xl font-bold mb-2 text-white">Réglages</h1>
-          <p className="text-black">
+          <p className="text-white">
             Personnalisez votre expérience
           </p>
         </header>
