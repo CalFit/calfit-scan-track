@@ -68,8 +68,8 @@ const SettingsPage = () => {
     <MainLayout>
       <div className="space-y-6">
         <header>
-          <h1 className="text-3xl font-bold mb-2 text-black">Réglages</h1>
-          <p className="text-black">
+          <h1 className="text-3xl font-bold mb-2 text-white">Réglages</h1>
+          <p className="text-white">
             Personnalisez votre expérience
           </p>
         </header>
@@ -78,13 +78,13 @@ const SettingsPage = () => {
           <div className="bg-calfit-blue/20 p-4 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center">
               <Settings className="text-calfit-blue w-5 h-5 mr-2" />
-              <h3 className="text-lg font-semibold text-black">Profil</h3>
+              <h3 className="text-lg font-semibold text-white">Profil</h3>
             </div>
           </div>
           
           <div className="p-4 space-y-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-1 text-black">
+              <label htmlFor="name" className="block text-sm font-medium mb-1 text-white">
                 Nom
               </label>
               <input
@@ -97,7 +97,7 @@ const SettingsPage = () => {
             </div>
             
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-black">Notifications</span>
+              <span className="text-sm font-medium text-white">Notifications</span>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input 
                   type="checkbox" 
@@ -113,12 +113,12 @@ const SettingsPage = () => {
 
         <div className="calfit-card">
           <div className="bg-calfit-blue/20 p-4 border-b border-gray-200 dark:border-gray-800">
-            <h3 className="text-lg font-semibold text-black">Objectifs nutritionnels</h3>
+            <h3 className="text-lg font-semibold text-white">Objectifs nutritionnels</h3>
           </div>
           
           <div className="p-4 space-y-4">
             <div>
-              <label htmlFor="calories" className="block text-sm font-medium mb-1 text-black">
+              <label htmlFor="calories" className="block text-sm font-medium mb-1 text-white">
                 Calories (kcal)
               </label>
               <input
@@ -132,7 +132,7 @@ const SettingsPage = () => {
             </div>
             
             <div>
-              <label htmlFor="protein" className="block text-sm font-medium mb-1 text-black">
+              <label htmlFor="protein" className="block text-sm font-medium mb-1 text-white">
                 Protéines (g)
               </label>
               <input
@@ -146,7 +146,7 @@ const SettingsPage = () => {
             </div>
             
             <div>
-              <label htmlFor="fat" className="block text-sm font-medium mb-1 text-black">
+              <label htmlFor="fat" className="block text-sm font-medium mb-1 text-white">
                 Lipides (g)
               </label>
               <input
@@ -160,7 +160,7 @@ const SettingsPage = () => {
             </div>
             
             <div>
-              <label htmlFor="carbs" className="block text-sm font-medium mb-1 text-black">
+              <label htmlFor="carbs" className="block text-sm font-medium mb-1 text-white">
                 Glucides (g)
               </label>
               <input
