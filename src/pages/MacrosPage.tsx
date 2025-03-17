@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
 import MacroCard from '@/components/macros/MacroCard';
@@ -12,7 +11,6 @@ const MacrosPage = () => {
   const { nutritionData } = useNutritionTracker();
   const { settings } = useUserSettings();
 
-  // Macro colors consistent with the Index page
   const macroColors = {
     calories: 'bg-calfit-orange',
     protein: 'bg-[#E74C3C]',
@@ -20,7 +18,6 @@ const MacrosPage = () => {
     carbs: 'bg-[#3498DB]'
   };
 
-  // Macro labels with consistent icons
   const macroLabels = {
     calories: { name: 'Calories', unit: 'kcal', icon: Calendar },
     protein: { name: 'Protéines', unit: 'g', icon: Dumbbell },
@@ -34,7 +31,6 @@ const MacrosPage = () => {
     return Math.min(Math.round((data.current / data.target) * 100), 100);
   };
 
-  // Making sure nutritionData has been loaded
   if (!nutritionData) {
     return (
       <MainLayout>
@@ -82,6 +78,18 @@ const MacrosPage = () => {
           macroColors={macroColors}
           macroLabels={macroLabels}
         />
+
+        {/* Ajout des boutons sous les macros */}
+        <div className="space-y-3 mt-4">
+          <button className="w-full flex items-center justify-between p-4 bg-blue-600 text-white rounded-lg shadow-lg">
+            <span>🔍 Chercher ou ajouter un aliment</span>
+          </button>
+          
+          <button className="w-full flex items-center justify-between p-4 bg-green-600 text-white rounded-lg shadow-lg">
+            <span>📋 Voir mes repas</span>
+          </button>
+        </div>
+
       </div>
     </MainLayout>
   );
