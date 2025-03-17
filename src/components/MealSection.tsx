@@ -2,6 +2,8 @@ import { useState, useRef } from 'react';
 import { Plus, ChevronDown, ChevronUp, X, Sun, Coffee, Utensils, Moon, MoreHorizontal } from 'lucide-react';
 import MacroProgressBar from '@/components/ui/MacroProgressBar';
 import { cn } from '@/lib/utils';
+import MealSearchBar from '@/components/meals/MealSearchBar';
+
 interface FoodItem {
   id: number;
   name: string;
@@ -11,11 +13,13 @@ interface FoodItem {
   carbs: number;
   isUnbalanced?: boolean;
 }
+
 interface DailyTarget {
   protein: number;
   fat: number;
   carbs: number;
 }
+
 interface MealSectionProps {
   title: string;
   items: FoodItem[];
@@ -23,7 +27,9 @@ interface MealSectionProps {
   onAddFood: () => void;
   onRemoveFood: (id: number) => void;
   onEditFood?: (food: FoodItem) => void;
+  onSearchFood?: (term: string) => void;
 }
+
 const foodIcons: Record<string, string> = {
   "yaourt grec": "🥄",
   "yaourt": "🥄",
@@ -51,6 +57,7 @@ const foodIcons: Record<string, string> = {
   "orange": "🍊",
   "fraise": "🍓"
 };
+
 const getFoodEmoji = (foodName: string): string => {
   const lowerName = foodName.toLowerCase();
   for (const [key, emoji] of Object.entries(foodIcons)) {
@@ -60,18 +67,22 @@ const getFoodEmoji = (foodName: string): string => {
   }
   return "🍽️";
 };
+
 const MealSection = ({
   title,
   items,
   dailyTarget,
   onAddFood,
   onRemoveFood,
-  onEditFood
+  onEditFood,
+  onSearchFood
 }: MealSectionProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [swipingItemId, setSwipingItemId] = useState<number | null>(null);
   const [showContextMenu, setShowContextMenu] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const touchStartXRef = useRef<number | null>(null);
+
   const mealTotals = items.reduce((acc, item) => {
     return {
       calories: acc.calories + item.calories,
@@ -85,9 +96,11 @@ const MealSection = ({
     fat: 0,
     carbs: 0
   });
+
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
+
   const getMealIcon = () => {
     const lowerTitle = title.toLowerCase();
     if (lowerTitle.includes('petit-déjeuner') || lowerTitle.includes('petit déjeuner')) {
@@ -99,10 +112,12 @@ const MealSection = ({
     }
     return <Utensils className="w-5 h-5 mr-2.5 text-gray-500" aria-label="Repas" />;
   };
+
   const handleTouchStart = (e: React.TouchEvent, id: number) => {
     touchStartXRef.current = e.touches[0].clientX;
     setSwipingItemId(id);
   };
+
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!touchStartXRef.current || swipingItemId === null) return;
     const touchCurrentX = e.touches[0].clientX;
@@ -112,6 +127,7 @@ const MealSection = ({
       element.style.transform = `translateX(${deltaX}px)`;
     }
   };
+
   const handleTouchEnd = (e: React.TouchEvent, id: number) => {
     if (!touchStartXRef.current || swipingItemId === null) return;
     const element = e.currentTarget as HTMLElement;
@@ -129,17 +145,41 @@ const MealSection = ({
     touchStartXRef.current = null;
     setSwipingItemId(null);
   };
+
   const isUnbalancedFood = (item: FoodItem): boolean => {
     return item.carbs > item.protein * 2 || item.isUnbalanced || false;
   };
-  
+
   const handleFoodClick = (food: FoodItem) => {
     if (onEditFood) {
       onEditFood(food);
     }
   };
-  
-  return <div className={cn("calfit-card overflow-hidden transition-all duration-300 border-l-4", title.toLowerCase().includes('petit-déjeuner') ? "border-l-orange-400" : title.toLowerCase().includes('déjeuner') ? "border-l-yellow-500" : "border-l-indigo-400")}>
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    if (onSearchFood) {
+      onSearchFood(term);
+    }
+  };
+
+  // Déterminer le mealType basé sur le titre
+  const getMealType = (): 'breakfast' | 'lunch' | 'dinner' => {
+    const lowerTitle = title.toLowerCase();
+    if (lowerTitle.includes('petit-déjeuner') || lowerTitle.includes('petit déjeuner')) {
+      return 'breakfast';
+    } else if (lowerTitle.includes('déjeuner')) {
+      return 'lunch';
+    } else {
+      return 'dinner';
+    }
+  };
+
+  return (
+    <div className={cn("calfit-card overflow-hidden transition-all duration-300 border-l-4", 
+      title.toLowerCase().includes('petit-déjeuner') ? "border-l-orange-400" : 
+      title.toLowerCase().includes('déjeuner') ? "border-l-yellow-500" : 
+      "border-l-indigo-400")}>
       <div className="flex items-center justify-between p-4 cursor-pointer" onClick={toggleExpand}>
         <div className="flex items-center">
           {getMealIcon()}
@@ -151,38 +191,85 @@ const MealSection = ({
           </div>
         </div>
         <div className="flex items-center">
-          <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-2 mr-1" onClick={e => {
-          e.stopPropagation();
-          setShowContextMenu(!showContextMenu);
-        }}>
-            
+          <button 
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-2 mr-1" 
+            onClick={e => {
+              e.stopPropagation();
+              setShowContextMenu(!showContextMenu);
+            }}
+          >
+            <MoreHorizontal size={20} />
           </button>
           <button className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors p-2">
             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
           </button>
         </div>
         
-        {showContextMenu && <div className="absolute right-12 mt-2 bg-white dark:bg-gray-800 rounded-md -lg py-1 z-10 border border-gray-200 dark:border-gray-700" onClick={e => e.stopPropagation()}>
-            <button className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setShowContextMenu(false)}>
+        {showContextMenu && (
+          <div 
+            className="absolute right-12 mt-2 bg-white dark:bg-gray-800 rounded-md -lg py-1 z-10 border border-gray-200 dark:border-gray-700" 
+            onClick={e => e.stopPropagation()}
+          >
+            <button 
+              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700" 
+              onClick={() => setShowContextMenu(false)}
+            >
               Renommer
             </button>
-            <button className="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setShowContextMenu(false)}>
+            <button 
+              className="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700" 
+              onClick={() => setShowContextMenu(false)}
+            >
               Supprimer
             </button>
-          </div>}
+          </div>
+        )}
       </div>
       
-      {isExpanded && <div className="p-4 pt-0 space-y-5 animate-fade-in">
+      {isExpanded && (
+        <div className="p-4 pt-0 space-y-5 animate-fade-in">
           <div className="grid grid-cols-3 gap-3 p-3.5 bg-muted/30 rounded-lg">
-            <MacroProgressBar label="Protéines" current={mealTotals.protein} target={dailyTarget.protein} color="bg-[#E74C3C]" compact />
+            <MacroProgressBar 
+              label="Protéines" 
+              current={mealTotals.protein} 
+              target={dailyTarget.protein} 
+              color="bg-[#E74C3C]" 
+              compact 
+            />
             
-            <MacroProgressBar label="Glucides" current={mealTotals.carbs} target={dailyTarget.carbs} color="bg-[#3498DB]" compact />
+            <MacroProgressBar 
+              label="Glucides" 
+              current={mealTotals.carbs} 
+              target={dailyTarget.carbs} 
+              color="bg-[#3498DB]" 
+              compact 
+            />
             
-            <MacroProgressBar label="Lipides" current={mealTotals.fat} target={dailyTarget.fat} color="bg-[#F1C40F]" compact />
+            <MacroProgressBar 
+              label="Lipides" 
+              current={mealTotals.fat} 
+              target={dailyTarget.fat} 
+              color="bg-[#F1C40F]" 
+              compact 
+            />
           </div>
+
+          {/* Ajout de la barre de recherche pour chaque section de repas */}
+          <MealSearchBar 
+            onSearch={handleSearch} 
+            onAddClick={onAddFood} 
+            mealType={getMealType()} 
+          />
           
           <div className="space-y-3.5">
-            {items.length > 0 ? items.map(item => <div key={item.id} className={`relative overflow-hidden transition-all duration-300 ${swipingItemId === item.id ? 'z-10' : ''}`} onTouchStart={e => handleTouchStart(e, item.id)} onTouchMove={handleTouchMove} onTouchEnd={e => handleTouchEnd(e, item.id)}>
+            {items.length > 0 ? items.map(item => (
+              <div 
+                key={item.id} 
+                className={`relative overflow-hidden transition-all duration-300 ${swipingItemId === item.id ? 'z-10' : ''}`} 
+                onTouchStart={e => handleTouchStart(e, item.id)} 
+                onTouchMove={handleTouchMove} 
+                onTouchEnd={e => handleTouchEnd(e, item.id)}
+              >
                 <div 
                   className={cn(
                     "flex justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300", 
@@ -205,23 +292,17 @@ const MealSection = ({
                     </div>
                   </div>
                 </div>
-                
-                
-              </div>) : <div className="text-center py-6 text-muted-foreground">
+              </div>
+            )) : (
+              <div className="text-center py-6 text-muted-foreground">
                 Aucun aliment ajouté
-              </div>}
+              </div>
+            )}
           </div>
-          
-          <div className="mt-3">
-            <button onClick={e => {
-          e.stopPropagation();
-          onAddFood();
-        }} className="flex items-center gap-1.5 text-sm px-4 py-3 rounded-md bg-[#3498DB]/20 hover:bg-[#3498DB]/30 text-[#3498DB] dark:bg-gray-800 dark:hover:bg-gray-700 transition-all w-full justify-center hover:scale-105 duration-300 hover:-md btn-bounce">
-              <Plus size={16} className="animate-pulse-soft text-white" />
-              <span className="text-white">Ajouter un aliment</span>
-            </button>
-          </div>
-        </div>}
-    </div>;
+        </div>
+      )}
+    </div>
+  );
 };
+
 export default MealSection;

@@ -1,45 +1,58 @@
 
-import { Link } from 'react-router-dom';
-import { ChartBar, User, Users, Settings, Search } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Home, BarChart2, Settings, Award, Utensils } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface BottomNavigationProps {
-  currentPath: string;
-}
-
-const BottomNavigation = ({ currentPath }: BottomNavigationProps) => {
+const BottomNavigation = () => {
+  const location = useLocation();
+  
   const navItems = [
-    { path: '/macros', label: 'Macros', icon: ChartBar },
-    { path: '/', label: 'Avatar', icon: User },
-    { path: '/food-search', label: 'Aliments', icon: Search },
-    { path: '/leaderboard', label: 'Amis', icon: Users },
-    { path: '/settings', label: 'Réglages', icon: Settings },
+    { 
+      name: 'Accueil', 
+      path: '/', 
+      icon: Home
+    },
+    { 
+      name: 'Repas', 
+      path: '/meals', 
+      icon: Utensils
+    },
+    { 
+      name: 'Macros', 
+      path: '/macros', 
+      icon: BarChart2
+    },
+    { 
+      name: 'Classement', 
+      path: '/leaderboard', 
+      icon: Award
+    },
+    { 
+      name: 'Réglages', 
+      path: '/settings', 
+      icon: Settings
+    }
   ];
 
   return (
-    <div className="fixed inset-x-0 bottom-0 w-full glass border-t border-border h-16 z-50">
-      <div className="container h-full max-w-md mx-auto px-4">
-        <nav className="flex items-center justify-between h-full">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                "flex flex-col items-center justify-center px-4 py-2 rounded-xl transition-all",
-                currentPath === item.path
-                  ? "text-calfit-blue"
-                  : "text-gray-500 hover:text-gray-800 dark:hover:text-gray-200"
-              )}
-            >
-              <item.icon className={cn(
-                "h-6 w-6 mb-1",
-                currentPath === item.path && "animate-pulse-soft"
-              )} />
-              <span className="text-xs font-medium">{item.label}</span>
-            </Link>
-          ))}
-        </nav>
-      </div>
+    <div className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background dark:border-gray-800">
+      <nav className="flex justify-between px-2">
+        {navItems.map(item => (
+          <Link 
+            key={item.path}
+            to={item.path}
+            className={cn(
+              "flex flex-1 flex-col items-center justify-center py-2 text-xs",
+              location.pathname === item.path 
+                ? "text-calfit-blue" 
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <item.icon className="mb-1 h-5 w-5" />
+            <span>{item.name}</span>
+          </Link>
+        ))}
+      </nav>
     </div>
   );
 };
