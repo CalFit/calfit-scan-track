@@ -5,10 +5,12 @@ import MacroCard from '@/components/macros/MacroCard';
 import MacroDetail from '@/components/macros/MacroDetail';
 import { useNutritionTracker } from '@/hooks/useNutritionTracker';
 import { Calendar, Dumbbell, Nut, Wheat } from 'lucide-react';
+import { useUserSettings } from '@/hooks/useUserSettings';
 
 const MacrosPage = () => {
   const [selectedMacro, setSelectedMacro] = useState('calories');
   const { nutritionData } = useNutritionTracker();
+  const { settings } = useUserSettings();
 
   // Macro colors consistent with the Index page
   const macroColors = {
@@ -47,7 +49,7 @@ const MacrosPage = () => {
     <MainLayout>
       <div className="space-y-6 pb-4">
         <header>
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">Macronutriments</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">{settings.name} - Macronutriments</h1>
           <p className="text-muted-foreground">
             Suivez votre consommation quotidienne
           </p>

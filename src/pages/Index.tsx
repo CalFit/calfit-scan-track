@@ -1,4 +1,5 @@
 
+import { useEffect } from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
 import AddFoodModal from '@/components/AddFoodModal';
 import EditFoodModal from '@/components/EditFoodModal';
@@ -7,8 +8,11 @@ import NutritionDashboard from '@/components/dashboard/NutritionDashboard';
 import MealList from '@/components/meals/MealList';
 import { useNutritionTracker } from '@/hooks/useNutritionTracker';
 import { useFoodActions } from '@/hooks/useFoodActions';
+import { useUserSettings } from '@/hooks/useUserSettings';
 
 const Index = () => {
+  const { settings } = useUserSettings();
+  
   const {
     nutritionData,
     meals,
@@ -40,10 +44,11 @@ const Index = () => {
     setActiveMeal
   });
 
-  return <MainLayout>
+  return (
+    <MainLayout>
       <div className="space-y-6">
         <header className="text-center mb-2">
-          <h1 className="text-2xl md:text-3xl font-bold mb-1">Alexandre</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-1">{settings.name}</h1>
           <DateSelector date={selectedDate} onChange={handleDateChange} />
         </header>
 
@@ -81,7 +86,8 @@ const Index = () => {
         onSave={(editedFood) => handleSaveEditedFood(editedFood, activeMeal, foodToEdit)} 
         food={foodToEdit} 
       />
-    </MainLayout>;
+    </MainLayout>
+  );
 };
 
 export default Index;

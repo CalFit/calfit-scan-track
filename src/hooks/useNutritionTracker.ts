@@ -1,18 +1,65 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { initialNutritionData, initialMeals } from '@/data/initialNutritionData';
 import { FoodItem } from '@/components/meals/MealList';
+import { useUserSettings } from '@/hooks/useUserSettings';
 
 type MealType = 'breakfast' | 'lunch' | 'dinner';
 
 export function useNutritionTracker() {
   const { toast } = useToast();
-  const [nutritionData, setNutritionData] = useState(initialNutritionData);
+  const { settings } = useUserSettings();
+  const [nutritionData, setNutritionData] = useState(() => {
+    // Initialiser les données de nutrition avec les objectifs des paramètres utilisateur
+    return {
+      ...initialNutritionData,
+      calories: {
+        ...initialNutritionData.calories,
+        target: settings.macroTargets.calories
+      },
+      protein: {
+        ...initialNutritionData.protein,
+        target: settings.macroTargets.protein
+      },
+      fat: {
+        ...initialNutritionData.fat,
+        target: settings.macroTargets.fat
+      },
+      carbs: {
+        ...initialNutritionData.carbs,
+        target: settings.macroTargets.carbs
+      }
+    };
+  });
+  
   const [meals, setMeals] = useState(initialMeals);
   const [activeMeal, setActiveMeal] = useState<MealType | null>(null);
   const [avatarPulse, setAvatarPulse] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  
+  // Mettre à jour les objectifs lorsque les paramètres utilisateur changent
+  useEffect(() => {
+    setNutritionData(prev => ({
+      ...prev,
+      calories: {
+        ...prev.calories,
+        target: settings.macroTargets.calories
+      },
+      protein: {
+        ...prev.protein,
+        target: settings.macroTargets.protein
+      },
+      fat: {
+        ...prev.fat,
+        target: settings.macroTargets.fat
+      },
+      carbs: {
+        ...prev.carbs,
+        target: settings.macroTargets.carbs
+      }
+    }));
+  }, [settings.macroTargets]);
   
   const isPerfectBalance = () => {
     const proteinPercentage = nutritionData.protein.current / nutritionData.protein.target;
