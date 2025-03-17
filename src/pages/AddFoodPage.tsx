@@ -20,7 +20,8 @@ const AddFoodPage = () => {
     barcode: '',
     serving_size: 100,
     serving_unit: 'g',
-    is_favorite: false
+    is_favorite: false,
+    image_url: null // Add the missing image_url property
   });
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -48,7 +49,7 @@ const AddFoodPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Créer l'objet d'aliment
+    // Créer l'objet d'aliment avec tous les champs requis
     const newFood = {
       ...foodData,
       user_id: null // Aliment accessible à tous (valeur par défaut)
