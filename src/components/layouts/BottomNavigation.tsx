@@ -1,6 +1,6 @@
 
 import { Link } from 'react-router-dom';
-import { ChartBar, User, Users, Settings } from 'lucide-react';
+import { ChartBar, User, Users, Settings, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface BottomNavigationProps {
@@ -11,6 +11,7 @@ const BottomNavigation = ({ currentPath }: BottomNavigationProps) => {
   const navItems = [
     { path: '/macros', label: 'Macros', icon: ChartBar },
     { path: '/', label: 'Avatar', icon: User },
+    { path: '/food-search', label: 'Aliments', icon: Search },
     { path: '/leaderboard', label: 'Amis', icon: Users },
     { path: '/settings', label: 'Réglages', icon: Settings },
   ];

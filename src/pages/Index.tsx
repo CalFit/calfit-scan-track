@@ -1,91 +1,31 @@
 
-import { useEffect } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import MainLayout from '@/components/layouts/MainLayout';
-import AddFoodModal from '@/components/AddFoodModal';
-import EditFoodModal from '@/components/EditFoodModal';
-import DateSelector from '@/components/DateSelector';
 import NutritionDashboard from '@/components/dashboard/NutritionDashboard';
-import MealList from '@/components/meals/MealList';
-import { useNutritionTracker } from '@/hooks/useNutritionTracker';
-import { useFoodActions } from '@/hooks/useFoodActions';
-import { useUserSettings } from '@/hooks/useUserSettings';
+import { Button } from '@/components/ui/button';
+import { Search } from 'lucide-react';
 
 const Index = () => {
-  const { settings } = useUserSettings();
-  
-  const {
-    nutritionData,
-    meals,
-    activeMeal,
-    avatarPulse,
-    selectedDate,
-    isPerfectBalance,
-    setActiveMeal,
-    updateNutritionData,
-    setMeals,
-    handleDateChange,
-    getRecentFoodsForMeal
-  } = useNutritionTracker();
-  
-  const {
-    showAddFood,
-    showEditFood,
-    foodToEdit,
-    setShowAddFood,
-    setShowEditFood,
-    handleAddFoodClick,
-    handleEditFood,
-    handleAddFood,
-    handleSaveEditedFood,
-    handleRemoveFood
-  } = useFoodActions({
-    updateNutritionData,
-    setMeals,
-    setActiveMeal
-  });
-
   return (
     <MainLayout>
       <div className="space-y-6">
-        <header className="text-center mb-2">
-          <h1 className="text-2xl md:text-3xl font-bold mb-1">{settings.name}</h1>
-          <DateSelector date={selectedDate} onChange={handleDateChange} />
-        </header>
-
-        <NutritionDashboard 
-          calories={nutritionData.calories} 
-          protein={nutritionData.protein} 
-          fat={nutritionData.fat} 
-          carbs={nutritionData.carbs} 
-          pulseAvatar={avatarPulse} 
-          isPerfectBalance={isPerfectBalance()} 
-        />
-
-        <MealList 
-          meals={meals} 
-          proteinTarget={nutritionData.protein.target} 
-          fatTarget={nutritionData.fat.target} 
-          carbsTarget={nutritionData.carbs.target} 
-          onAddFoodClick={handleAddFoodClick} 
-          onRemoveFood={handleRemoveFood}
-          onEditFood={handleEditFood}
-        />
+        <h1 className="text-3xl font-bold tracking-tight">Bonjour 👋</h1>
+        
+        <div className="bg-calfit-light-blue dark:bg-blue-900/20 rounded-lg p-4 flex items-center justify-between">
+          <div>
+            <h2 className="font-semibold">Chercher ou ajouter un aliment</h2>
+            <p className="text-sm text-muted-foreground">Suivez vos macros facilement</p>
+          </div>
+          <Link to="/food-search">
+            <Button size="icon" variant="default" className="bg-calfit-blue">
+              <Search className="h-5 w-5" />
+            </Button>
+          </Link>
+        </div>
+        
+        <NutritionDashboard />
       </div>
-
-      <AddFoodModal 
-        isOpen={showAddFood} 
-        onClose={() => setShowAddFood(false)} 
-        onAddFood={(food) => handleAddFood(food, activeMeal)} 
-        mealType={activeMeal || 'breakfast'} 
-        recentFoods={getRecentFoodsForMeal()}
-      />
-      
-      <EditFoodModal 
-        isOpen={showEditFood} 
-        onClose={() => setShowEditFood(false)} 
-        onSave={(editedFood) => handleSaveEditedFood(editedFood, activeMeal, foodToEdit)} 
-        food={foodToEdit} 
-      />
     </MainLayout>
   );
 };
