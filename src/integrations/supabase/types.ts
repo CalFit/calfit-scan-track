@@ -9,7 +9,142 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      "BDD ALIMENTS": {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
+      food_categories: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      foods: {
+        Row: {
+          barcode: string | null
+          calories: number
+          carbs: number
+          category_id: string | null
+          created_at: string
+          fat: number
+          id: string
+          image_url: string | null
+          is_favorite: boolean | null
+          name: string
+          protein: number
+          serving_size: number | null
+          serving_unit: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          barcode?: string | null
+          calories: number
+          carbs: number
+          category_id?: string | null
+          created_at?: string
+          fat: number
+          id?: string
+          image_url?: string | null
+          is_favorite?: boolean | null
+          name: string
+          protein: number
+          serving_size?: number | null
+          serving_unit?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          barcode?: string | null
+          calories?: number
+          carbs?: number
+          category_id?: string | null
+          created_at?: string
+          fat?: number
+          id?: string
+          image_url?: string | null
+          is_favorite?: boolean | null
+          name?: string
+          protein?: number
+          serving_size?: number | null
+          serving_unit?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foods_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "food_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meal_logs: {
+        Row: {
+          created_at: string
+          date: string
+          food_id: string
+          id: string
+          meal_type: string
+          quantity: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          food_id: string
+          id?: string
+          meal_type: string
+          quantity?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          food_id?: string
+          id?: string
+          meal_type?: string
+          quantity?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meal_logs_food_id_fkey"
+            columns: ["food_id"]
+            isOneToOne: false
+            referencedRelation: "foods"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
