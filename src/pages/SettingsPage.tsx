@@ -1,14 +1,16 @@
-
 import { useState, useEffect } from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
-import { Settings } from 'lucide-react';
+import { useTheme } from '@/providers/ThemeProvider';
+import { Settings, Sun, Moon } from 'lucide-react';
 import { useUserSettings, MacroTargets } from '@/hooks/useUserSettings';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 
 const SettingsPage = () => {
   const { settings, saveSettings, isLoading } = useUserSettings();
   const [localSettings, setLocalSettings] = useState(settings);
   const [hasChanges, setHasChanges] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   // Mettre à jour les valeurs locales lorsque les paramètres sont chargés
   useEffect(() => {
@@ -181,9 +183,30 @@ const SettingsPage = () => {
             </div>
           </div>
         </div>
+
+        <div className="calfit-card">
+          <div className="bg-calfit-blue/20 p-4 border-b border-gray-200 dark:border-gray-800">
+            <div className="flex items-center">
+              <Settings className="text-calfit-blue w-5 h-5 mr-2" />
+              <h3 className="text-lg font-semibold text-black">Apparence</h3>
+            </div>
+          </div>
+          <div className="p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-black">Thème sombre</span>
+              <Switch
+                id="theme"
+                checked={theme === "dark"}
+                onCheckedChange={(checked) => {
+                  setTheme(checked ? "dark" : "light");
+                }}
+              />
+            </div>
+          </div>
+        </div>
         
         <div className="text-center mt-4">
-          <Button 
+          <Button
             className={`${!hasChanges ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={handleSaveChanges}
             disabled={!hasChanges}
