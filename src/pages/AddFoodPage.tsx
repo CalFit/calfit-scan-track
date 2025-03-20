@@ -1,10 +1,17 @@
-
 import React, { useState } from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useFoodDatabase } from '@/hooks/useFoodDatabase';
 import { useNavigate } from 'react-router-dom';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 const AddFoodPage = () => {
   const navigate = useNavigate();
@@ -80,7 +87,7 @@ const AddFoodPage = () => {
             <label className="block text-sm font-medium mb-1" htmlFor="name">
               Nom de l'aliment
             </label>
-            <input
+            <Input
               type="text"
               id="name"
               name="name"
@@ -97,28 +104,25 @@ const AddFoodPage = () => {
             <label className="block text-sm font-medium mb-1" htmlFor="category_id">
               Catégorie
             </label>
-            <select
-              id="category_id"
-              name="category_id"
-              value={foodData.category_id}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 
-                         focus:outline-none focus:ring-2 focus:ring-[#3498DB] dark:bg-gray-800"
-            >
-              <option value="">Sélectionnez une catégorie</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.icon} {category.name}
-                </option>
-              ))}
-            </select>
+            <Select onValueChange={(value) => handleChange({ target: { name: 'category_id', value } } as any)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Sélectionnez une catégorie" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.icon} {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           
           <div>
             <label className="block text-sm font-medium mb-1" htmlFor="calories">
               Calories
             </label>
-            <input
+            <Input
               type="number"
               id="calories"
               name="calories"
@@ -137,7 +141,7 @@ const AddFoodPage = () => {
               <label className="block text-sm font-medium mb-1" htmlFor="protein">
                 Protéines (g)
               </label>
-              <input
+              <Input
                 type="number"
                 id="protein"
                 name="protein"
@@ -156,7 +160,7 @@ const AddFoodPage = () => {
               <label className="block text-sm font-medium mb-1" htmlFor="fat">
                 Lipides (g)
               </label>
-              <input
+              <Input
                 type="number"
                 id="fat"
                 name="fat"
@@ -175,7 +179,7 @@ const AddFoodPage = () => {
               <label className="block text-sm font-medium mb-1" htmlFor="carbs">
                 Glucides (g)
               </label>
-              <input
+              <Input
                 type="number"
                 id="carbs"
                 name="carbs"
@@ -196,7 +200,7 @@ const AddFoodPage = () => {
               <label className="block text-sm font-medium mb-1" htmlFor="serving_size">
                 Portion
               </label>
-              <input
+              <Input
                 type="number"
                 id="serving_size"
                 name="serving_size"
@@ -233,7 +237,7 @@ const AddFoodPage = () => {
             <label className="block text-sm font-medium mb-1" htmlFor="barcode">
               Code-barres (optionnel)
             </label>
-            <input
+            <Input
               type="text"
               id="barcode"
               name="barcode"

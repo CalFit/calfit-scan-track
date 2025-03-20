@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
 import ScannerPreview from '@/components/ScannerPreview';

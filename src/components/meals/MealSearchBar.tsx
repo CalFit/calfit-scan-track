@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, Plus, ScanBarcode, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';

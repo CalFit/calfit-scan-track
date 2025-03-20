@@ -1,4 +1,3 @@
-
 import React from 'react';
 import MacroProgressBar from '@/components/ui/MacroProgressBar';
 import WeeklyCalorieChart from './WeeklyCalorieChart';

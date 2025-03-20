@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { X, Search, ScanBarcode, Clock } from 'lucide-react';
 import ManualFoodEntry from '@/components/ManualFoodEntry';

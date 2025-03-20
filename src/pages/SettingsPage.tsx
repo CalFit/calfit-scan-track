@@ -2,9 +2,18 @@ import { useState, useEffect } from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
 import { useTheme } from '@/providers/ThemeProvider';
 import { Settings, Sun, Moon } from 'lucide-react';
-import { useUserSettings, MacroTargets } from '@/hooks/useUserSettings';
+import { useUserSettings } from '@/hooks/useUserSettings';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import NutritionalQuestionnaire from '@/components/NutritionalQuestionnaire';
 
 const SettingsPage = () => {
   const { settings, saveSettings, isLoading } = useUserSettings();
@@ -22,14 +31,14 @@ const SettingsPage = () => {
   // Vérifier s'il y a des modifications non enregistrées
   useEffect(() => {
     if (!isLoading) {
-      const isDifferent = 
-        localSettings.name !== settings.name ||
-        localSettings.notifications !== settings.notifications ||
-        localSettings.macroTargets.calories !== settings.macroTargets.calories ||
-        localSettings.macroTargets.protein !== settings.macroTargets.protein ||
-        localSettings.macroTargets.fat !== settings.macroTargets.fat ||
-        localSettings.macroTargets.carbs !== settings.macroTargets.carbs;
-      
+      const isDifferent =
+        localSettings?.name !== settings?.name ||
+        localSettings?.notifications !== settings?.notifications ||
+        localSettings?.macroTargets?.calories !== settings?.macroTargets?.calories ||
+        localSettings?.macroTargets?.protein !== settings?.macroTargets?.protein ||
+        localSettings?.macroTargets?.fat !== settings?.macroTargets?.fat ||
+        localSettings?.macroTargets?.carbs !== settings?.macroTargets?.carbs;
+
       setHasChanges(isDifferent);
     }
   }, [localSettings, settings, isLoading]);
@@ -78,7 +87,7 @@ const SettingsPage = () => {
       <div className="space-y-6">
         <header>
           <h1 className={`text-3xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Réglages</h1>
-          <p className={`${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+          <p className={`text-3xl font-bold mb-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
             Personnalisez votre expérience
           </p>
         </header>
@@ -90,7 +99,7 @@ const SettingsPage = () => {
               <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Profil</h3>
             </div>
           </div>
-          
+
           <div className="p-4 space-y-4">
             <div>
               <label htmlFor="name" className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
@@ -104,12 +113,12 @@ const SettingsPage = () => {
                 className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-800"
               />
             </div>
-            
+
             <div className="flex items-center justify-between">
               <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Notifications</span>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   className="sr-only peer"
                   checked={localSettings.notifications}
                   onChange={handleNotificationsChange}
@@ -124,7 +133,7 @@ const SettingsPage = () => {
           <div className="bg-calfit-blue/20 p-4 border-b border-gray-200 dark:border-gray-800">
             <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Objectifs nutritionnels</h3>
           </div>
-          
+
           <div className="p-4 space-y-4">
             <div>
               <label htmlFor="calories" className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
@@ -139,7 +148,7 @@ const SettingsPage = () => {
                 className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-800"
               />
             </div>
-            
+
             <div>
               <label htmlFor="protein" className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
                 Protéines (g)
@@ -153,7 +162,7 @@ const SettingsPage = () => {
                 className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-800"
               />
             </div>
-            
+
             <div>
               <label htmlFor="fat" className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
                 Lipides (g)
@@ -167,7 +176,7 @@ const SettingsPage = () => {
                 className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-800"
               />
             </div>
-            
+
             <div>
               <label htmlFor="carbs" className={`block text-sm font-medium mb-1 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
                 Glucides (g)
@@ -181,6 +190,32 @@ const SettingsPage = () => {
                 className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-800"
               />
             </div>
+          </div>
+        </div>
+
+        {/* Nutritional Personalization Section */}
+        <div className="calfit-card">
+          <div className="bg-calfit-blue/20 p-4 border-b border-gray-200 dark:border-gray-800">
+            <div className="flex items-center">
+              <Settings className="text-calfit-blue w-5 h-5 mr-2" />
+              <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Personnalisation Nutritionnelle</h3>
+            </div>
+          </div>
+          <div className="p-4">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline">Répondre au questionnaire</Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Questionnaire Nutritionnel</DialogTitle>
+                  <DialogDescription>
+                    Répondez aux questions pour personnaliser votre plan nutritionnel.
+                  </DialogDescription>
+                </DialogHeader>
+                <NutritionalQuestionnaire />
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 
@@ -204,7 +239,7 @@ const SettingsPage = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="text-center mt-4">
           <Button
             className={`${!hasChanges ? 'opacity-50 cursor-not-allowed' : ''}`}

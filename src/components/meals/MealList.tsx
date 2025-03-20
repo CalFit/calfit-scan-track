@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import MealSection from '@/components/MealSection';
 import { Plus } from 'lucide-react';

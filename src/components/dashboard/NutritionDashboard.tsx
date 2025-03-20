@@ -1,4 +1,3 @@
-
 import CalfitAvatar from '@/components/Avatar';
 import CircularMacroGauge from '@/components/ui/CircularMacroGauge';
 import { Badge } from '@/components/ui/badge';

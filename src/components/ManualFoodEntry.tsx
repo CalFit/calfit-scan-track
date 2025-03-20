@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Apple, ArrowLeft } from 'lucide-react';
 

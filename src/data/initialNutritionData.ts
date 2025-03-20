@@ -1,4 +1,3 @@
-
 export const initialNutritionData = {
   calories: { current: 0, target: 2570 },
   protein: { current: 0, target: 148 },

@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { ScanBarcode, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
