@@ -11,7 +11,7 @@ import AuthPage from './pages/AuthPage';
 import NotFound from './pages/NotFound';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { Toaster } from './components/ui/toaster';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider } from './contexts/auth';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { motion, AnimatePresence } from 'framer-motion';
 
