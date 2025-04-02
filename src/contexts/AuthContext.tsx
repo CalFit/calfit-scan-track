@@ -121,7 +121,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signUp = async (email: string, password: string, name: string) => {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
-      const { error } = await supabase.auth.signUp({
+      console.log("Starting signup process for:", email);
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -131,20 +132,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error during signup:', error);
+        throw error;
+      }
       
-      toast({
-        title: "Inscription réussie",
-        description: "Vérifiez votre email pour confirmer votre compte",
-      });
+      console.log("Signup response:", data);
+      
+      // Check if user was actually created
+      if (data && data.user) {
+        toast({
+          title: "Inscription réussie",
+          description: "Vérifiez votre email pour confirmer votre compte",
+        });
+      } else {
+        throw new Error("Aucune donnée utilisateur n'a été retournée après l'inscription");
+      }
       
     } catch (error: any) {
       console.error('Error signing up:', error);
       setState(prev => ({ 
         ...prev, 
-        error: error.message || "Erreur lors de l'inscription" 
+        error: translateAuthError(error.message) || "Erreur lors de l'inscription",
+        isLoading: false  // Important: Make sure to set isLoading to false on error
       }));
     } finally {
+      // Ensure isLoading is set to false regardless of outcome
       setState(prev => ({ ...prev, isLoading: false }));
     }
   };
@@ -163,9 +176,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('Error signing in:', error);
       setState(prev => ({ 
         ...prev, 
-        error: translateAuthError(error.message) || "Erreur lors de la connexion" 
+        error: translateAuthError(error.message) || "Erreur lors de la connexion",
+        isLoading: false // Important: Set isLoading to false here too
       }));
     } finally {
+      // Ensure isLoading is set to false regardless of outcome
       setState(prev => ({ ...prev, isLoading: false }));
     }
   };
@@ -186,9 +201,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('Error signing in with Google:', error);
       setState(prev => ({ 
         ...prev, 
-        error: error.message || "Erreur lors de la connexion avec Google" 
+        error: error.message || "Erreur lors de la connexion avec Google",
+        isLoading: false // Important: Set isLoading to false here too
       }));
     } finally {
+      // Ensure isLoading is set to false regardless of outcome
       setState(prev => ({ ...prev, isLoading: false }));
     }
   };
@@ -208,9 +225,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('Error signing out:', error);
       setState(prev => ({ 
         ...prev, 
-        error: error.message || "Erreur lors de la déconnexion" 
+        error: error.message || "Erreur lors de la déconnexion",
+        isLoading: false // Important: Set isLoading to false here too
       }));
     } finally {
+      // Ensure isLoading is set to false regardless of outcome
       setState(prev => ({ ...prev, isLoading: false }));
     }
   };
@@ -233,9 +252,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('Error resetting password:', error);
       setState(prev => ({ 
         ...prev, 
-        error: error.message || "Erreur lors de l'envoi de l'email de réinitialisation" 
+        error: error.message || "Erreur lors de l'envoi de l'email de réinitialisation",
+        isLoading: false // Important: Set isLoading to false here too
       }));
     } finally {
+      // Ensure isLoading is set to false regardless of outcome
       setState(prev => ({ ...prev, isLoading: false }));
     }
   };
