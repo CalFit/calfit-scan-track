@@ -122,6 +122,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
       console.log("Starting signup process for:", email);
+      
+      // Vérification des données d'entrée
+      if (!email || !password || !name) {
+        throw new Error("Tous les champs sont requis");
+      }
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -145,6 +151,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           title: "Inscription réussie",
           description: "Vérifiez votre email pour confirmer votre compte",
         });
+        
+        // Si l'inscription est réussie mais que l'utilisateur doit confirmer son email
+        if (data.user.identities && data.user.identities.length === 0) {
+          throw new Error("L'email est déjà utilisé");
+        }
       } else {
         throw new Error("Aucune donnée utilisateur n'a été retournée après l'inscription");
       }
@@ -154,10 +165,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setState(prev => ({ 
         ...prev, 
         error: translateAuthError(error.message) || "Erreur lors de l'inscription",
-        isLoading: false  // Important: Make sure to set isLoading to false on error
+        isLoading: false
       }));
     } finally {
-      // Ensure isLoading is set to false regardless of outcome
+      console.log("Signup process finished, setting isLoading to false");
       setState(prev => ({ ...prev, isLoading: false }));
     }
   };
@@ -166,6 +177,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
       console.log("Starting signin process for:", email);
+      
+      // Vérification des données d'entrée
+      if (!email || !password) {
+        throw new Error("Email et mot de passe requis");
+      }
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -191,7 +208,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading: false
       }));
     } finally {
-      // Ensure isLoading is set to false regardless of outcome
+      console.log("Signin process finished, setting isLoading to false");
       setState(prev => ({ ...prev, isLoading: false }));
     }
   };
@@ -199,6 +216,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signInWithGoogle = async () => {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
+      console.log("Starting Google signin process");
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -206,17 +224,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error during Google signin:', error);
+        throw error;
+      }
       
     } catch (error: any) {
       console.error('Error signing in with Google:', error);
       setState(prev => ({ 
         ...prev, 
         error: error.message || "Erreur lors de la connexion avec Google",
-        isLoading: false // Important: Set isLoading to false here too
+        isLoading: false
       }));
     } finally {
-      // Ensure isLoading is set to false regardless of outcome
+      console.log("Google signin process finished, setting isLoading to false");
       setState(prev => ({ ...prev, isLoading: false }));
     }
   };
@@ -283,6 +304,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       'Email not confirmed': 'Email non confirmé',
       'Password should be at least 6 characters': 'Le mot de passe doit contenir au moins 6 caractères',
       'User already registered': 'Utilisateur déjà inscrit',
+      'Email already registered': 'Email déjà utilisé',
     };
     
     return errorMap[errorMessage] || errorMessage;

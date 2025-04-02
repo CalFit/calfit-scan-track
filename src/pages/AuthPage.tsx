@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,6 +30,12 @@ const AuthPage = () => {
   const { signIn, signUp, signInWithGoogle, resetPassword, isLoading, error, clearErrors } = useAuth();
   const [activeTab, setActiveTab] = useState<string>('signin');
   const [showResetPassword, setShowResetPassword] = useState(false);
+  const [localLoading, setLocalLoading] = useState(false);
+  
+  // Synchroniser l'état de chargement local avec le contexte
+  useEffect(() => {
+    setLocalLoading(isLoading);
+  }, [isLoading]);
   
   const signInForm = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -57,18 +63,39 @@ const AuthPage = () => {
 
   const onSignInSubmit = async (values: z.infer<typeof signInSchema>) => {
     console.log("Sign in form submitted with values:", values);
-    await signIn(values.email, values.password);
+    setLocalLoading(true);
+    try {
+      await signIn(values.email, values.password);
+    } catch (error) {
+      console.error("Error in sign in submit handler:", error);
+    } finally {
+      setLocalLoading(false);
+    }
   };
 
   const onSignUpSubmit = async (values: z.infer<typeof signUpSchema>) => {
     console.log("Sign up form submitted with values:", values);
-    await signUp(values.email, values.password, values.name);
+    setLocalLoading(true);
+    try {
+      await signUp(values.email, values.password, values.name);
+    } catch (error) {
+      console.error("Error in sign up submit handler:", error);
+    } finally {
+      setLocalLoading(false);
+    }
   };
 
   const onResetPasswordSubmit = async (values: z.infer<typeof resetPasswordSchema>) => {
     console.log("Reset password form submitted with values:", values);
-    await resetPassword(values.email);
-    setShowResetPassword(false);
+    setLocalLoading(true);
+    try {
+      await resetPassword(values.email);
+      setShowResetPassword(false);
+    } catch (error) {
+      console.error("Error in reset password submit handler:", error);
+    } finally {
+      setLocalLoading(false);
+    }
   };
   
   const handleTabChange = (value: string) => {
@@ -154,12 +181,12 @@ const AuthPage = () => {
                     variant="outline"
                     className="w-1/2"
                     onClick={() => setShowResetPassword(false)}
-                    disabled={isLoading}
+                    disabled={localLoading}
                   >
                     Retour
                   </Button>
-                  <Button type="submit" className="w-1/2" disabled={isLoading}>
-                    {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-4 w-4" />}
+                  <Button type="submit" className="w-1/2" disabled={localLoading}>
+                    {localLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-4 w-4" />}
                     Envoyer
                   </Button>
                 </motion.div>
@@ -227,8 +254,13 @@ const AuthPage = () => {
 
                     <div className="space-y-2">
                       <motion.div variants={itemVariants}>
-                        <Button type="submit" className="w-full" disabled={isLoading}>
-                          {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                        <Button 
+                          type="submit" 
+                          className="w-full" 
+                          disabled={localLoading}
+                          onClick={signInForm.handleSubmit(onSignInSubmit)}
+                        >
+                          {localLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                           Se connecter
                         </Button>
                       </motion.div>
@@ -239,7 +271,7 @@ const AuthPage = () => {
                           variant="outline"
                           className="w-full"
                           onClick={() => signInWithGoogle()}
-                          disabled={isLoading}
+                          disabled={localLoading}
                         >
                           <Globe className="mr-2 h-4 w-4" />
                           Continuer avec Google
@@ -303,8 +335,12 @@ const AuthPage = () => {
 
                     <div className="space-y-2">
                       <motion.div variants={itemVariants}>
-                        <Button type="submit" className="w-full" disabled={isLoading}>
-                          {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                        <Button 
+                          type="submit" 
+                          className="w-full" 
+                          disabled={localLoading}
+                        >
+                          {localLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                           S'inscrire
                         </Button>
                       </motion.div>
@@ -315,7 +351,7 @@ const AuthPage = () => {
                           variant="outline"
                           className="w-full"
                           onClick={() => signInWithGoogle()}
-                          disabled={isLoading}
+                          disabled={localLoading}
                         >
                           <Globe className="mr-2 h-4 w-4" />
                           Continuer avec Google
