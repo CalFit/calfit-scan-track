@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -57,14 +56,17 @@ const AuthPage = () => {
   });
 
   const onSignInSubmit = async (values: z.infer<typeof signInSchema>) => {
+    console.log("Sign in form submitted with values:", values);
     await signIn(values.email, values.password);
   };
 
   const onSignUpSubmit = async (values: z.infer<typeof signUpSchema>) => {
+    console.log("Sign up form submitted with values:", values);
     await signUp(values.email, values.password, values.name);
   };
 
   const onResetPasswordSubmit = async (values: z.infer<typeof resetPasswordSchema>) => {
+    console.log("Reset password form submitted with values:", values);
     await resetPassword(values.email);
     setShowResetPassword(false);
   };

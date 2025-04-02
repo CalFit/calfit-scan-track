@@ -165,19 +165,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = async (email: string, password: string) => {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log("Starting signin process for:", email);
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error during signin:', error);
+        throw error;
+      }
+      
+      console.log("Signin response:", data);
+      
+      // Check if user was actually logged in
+      if (!data || !data.user) {
+        throw new Error("Aucune donnée utilisateur n'a été retournée après la connexion");
+      }
       
     } catch (error: any) {
       console.error('Error signing in:', error);
       setState(prev => ({ 
         ...prev, 
         error: translateAuthError(error.message) || "Erreur lors de la connexion",
-        isLoading: false // Important: Set isLoading to false here too
+        isLoading: false
       }));
     } finally {
       // Ensure isLoading is set to false regardless of outcome
