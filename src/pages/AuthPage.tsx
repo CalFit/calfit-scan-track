@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Mail, AlertCircle, Google } from 'lucide-react';
+import { Loader2, Mail, AlertCircle, Globe } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -239,7 +239,7 @@ const AuthPage = () => {
                           onClick={() => signInWithGoogle()}
                           disabled={isLoading}
                         >
-                          <Google className="mr-2 h-4 w-4" />
+                          <Globe className="mr-2 h-4 w-4" />
                           Continuer avec Google
                         </Button>
                       </motion.div>
@@ -315,7 +315,7 @@ const AuthPage = () => {
                           onClick={() => signInWithGoogle()}
                           disabled={isLoading}
                         >
-                          <Google className="mr-2 h-4 w-4" />
+                          <Globe className="mr-2 h-4 w-4" />
                           Continuer avec Google
                         </Button>
                       </motion.div>

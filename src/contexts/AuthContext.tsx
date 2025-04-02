@@ -31,14 +31,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session) {
-          const { data: profile } = await supabase
+          // Get user profile from profiles table
+          const { data, error } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', session.user.id)
             .single();
             
+          if (error) throw error;
+            
           setState({
-            user: profile as UserProfile,
+            user: data as UserProfile,
             isLoading: false,
             error: null,
           });
@@ -70,14 +73,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           // Using setTimeout to avoid Supabase deadlock issues
           setTimeout(async () => {
             try {
-              const { data: profile } = await supabase
+              // Get user profile from profiles table
+              const { data, error } = await supabase
                 .from('profiles')
                 .select('*')
                 .eq('id', session.user.id)
                 .single();
+              
+              if (error) throw error;
                 
               setState({
-                user: profile as UserProfile,
+                user: data as UserProfile,
                 isLoading: false,
                 error: null,
               });
@@ -85,7 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               navigate('/');
               toast({
                 title: "Connexion réussie",
-                description: `Bienvenue ${profile?.name || 'utilisateur'}!`,
+                description: `Bienvenue ${data?.name || 'utilisateur'}!`,
               });
             } catch (error) {
               console.error('Error fetching user profile:', error);
