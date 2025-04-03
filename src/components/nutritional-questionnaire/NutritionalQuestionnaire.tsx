@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { 
-  BasicInfoStep, 
+  PersonalInfoStep, 
   GoalsActivityStep, 
   DietPreferencesStep,
   AllergiesPreferencesStep 
@@ -29,11 +29,14 @@ const NutritionalQuestionnaire: React.FC = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   
-  const steps = ["Informations de base", "Activité & Objectifs", "Préférences alimentaires", "Allergies", "Résultats"];
+  const steps = ["Informations personnelles", "Objectifs & Activité", "Préférences alimentaires", "Allergies", "Résultats"];
   
   const form = useForm<QuestionnaireFormData>({
     resolver: zodResolver(nutritionalQuestionnaireSchema),
-    defaultValues: defaultQuestionnaireValues,
+    defaultValues: {
+      ...defaultQuestionnaireValues,
+      name: settings.name || defaultQuestionnaireValues.name
+    },
   });
   
   const watchedFormValues = form.watch();
@@ -47,7 +50,7 @@ const NutritionalQuestionnaire: React.FC = () => {
   const renderStepContent = () => {
     switch (step) {
       case 0:
-        return <BasicInfoStep form={form} />;
+        return <PersonalInfoStep form={form} />;
       case 1:
         return <GoalsActivityStep form={form} />;
       case 2:
@@ -93,6 +96,7 @@ const NutritionalQuestionnaire: React.FC = () => {
     if (calculatedMacros && calculatedMacros.calories > 0) {
       // Mise à jour des objectifs macros dans les paramètres utilisateur
       updateSettings({
+        name: watchedFormValues.name,
         macroTargets: {
           calories: calculatedMacros.calories,
           protein: calculatedMacros.protein,
@@ -221,7 +225,7 @@ const NutritionalQuestionnaire: React.FC = () => {
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirmer vos objectifs nutritionnels</DialogTitle>
+            <DialogTitle>Confirmer votre programme nutritionnel</DialogTitle>
             <DialogDescription>
               Êtes-vous sûr de vouloir mettre à jour vos objectifs nutritionnels avec les valeurs suivantes ?
             </DialogDescription>

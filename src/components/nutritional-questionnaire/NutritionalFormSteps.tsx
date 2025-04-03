@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { QuestionnaireFormData, Sex, Goal, ActivityLevel, Occupation, DietType } from './types';
+import { QuestionnaireFormData, Sex, Goal, ActivityLevel, Occupation, DietType, NutritionalGoal } from './types';
+import { nutritionalGoalLabels } from './utils';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -35,13 +36,22 @@ import { commonAllergies, commonFoodPreferences } from './utils';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
 
 interface BasicInfoStepProps {
   form: any;
 }
 
-// Étape 1: Infos de base (âge, sexe, taille, poids)
-export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ form }) => {
+// Étape 1: Informations personnelles
+export const PersonalInfoStep: React.FC<BasicInfoStepProps> = ({ form }) => {
   const isMobile = useIsMobile();
   
   return (
@@ -52,7 +62,26 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ form }) => {
       transition={{ duration: 0.3 }}
       className="space-y-4"
     >
-      <h2 className="text-xl font-semibold mb-4">Informations de base</h2>
+      <h2 className="text-xl font-semibold mb-4">Informations personnelles</h2>
+      
+      <FormField
+        control={form.control}
+        name="name"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Nom</FormLabel>
+            <FormControl>
+              <Input 
+                placeholder="Votre nom" 
+                {...field} 
+                className={cn(isMobile ? "text-base" : "text-sm")}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormField
           control={form.control}
@@ -153,23 +182,84 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ form }) => {
         />
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FormField
+          control={form.control}
+          name="targetWeight"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Poids cible (kg)</FormLabel>
+              <FormControl>
+                <Input 
+                  type="number" 
+                  {...field} 
+                  onChange={(e) => field.onChange(parseFloat(e.target.value))} 
+                  className={cn(isMobile ? "text-base" : "text-sm")}
+                />
+              </FormControl>
+              <FormDescription>
+                Votre poids idéal selon vos objectifs
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="bodyFatPercentage"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Pourcentage de graisse corporelle (%)</FormLabel>
+              <FormControl>
+                <Input 
+                  type="number" 
+                  {...field} 
+                  onChange={(e) => field.onChange(parseFloat(e.target.value))} 
+                  className={cn(isMobile ? "text-base" : "text-sm")}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+      
       <FormField
         control={form.control}
-        name="targetWeight"
+        name="startDate"
         render={({ field }) => (
-          <FormItem>
-            <FormLabel>Poids cible (kg)</FormLabel>
-            <FormControl>
-              <Input 
-                type="number" 
-                {...field} 
-                onChange={(e) => field.onChange(parseFloat(e.target.value))} 
-                className={cn(isMobile ? "text-base" : "text-sm")}
-              />
-            </FormControl>
-            <FormDescription>
-              Votre poids idéal selon vos objectifs
-            </FormDescription>
+          <FormItem className="flex flex-col">
+            <FormLabel>Date de début du programme</FormLabel>
+            <Popover>
+              <PopoverTrigger asChild>
+                <FormControl>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full pl-3 text-left font-normal",
+                      !field.value && "text-muted-foreground"
+                    )}
+                  >
+                    {field.value ? (
+                      format(field.value, "PPP", { locale: fr })
+                    ) : (
+                      <span>Choisir une date</span>
+                    )}
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                </FormControl>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={field.value}
+                  onSelect={field.onChange}
+                  initialFocus
+                  locale={fr}
+                />
+              </PopoverContent>
+            </Popover>
             <FormMessage />
           </FormItem>
         )}
@@ -189,6 +279,36 @@ export const GoalsActivityStep: React.FC<BasicInfoStepProps> = ({ form }) => {
       className="space-y-6"
     >
       <h2 className="text-xl font-semibold mb-4">Objectifs et niveau d'activité</h2>
+      
+      <FormField
+        control={form.control}
+        name="nutritionalGoal"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Programme nutritionnel</FormLabel>
+            <FormControl>
+              <Select
+                value={field.value}
+                onValueChange={field.onChange}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionnez votre programme" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="cleanBulk">{nutritionalGoalLabels.cleanBulk}</SelectItem>
+                  <SelectItem value="bodyRecomposition">{nutritionalGoalLabels.bodyRecomposition}</SelectItem>
+                  <SelectItem value="perfectDeficit">{nutritionalGoalLabels.perfectDeficit}</SelectItem>
+                  <SelectItem value="progressiveFatLoss">{nutritionalGoalLabels.progressiveFatLoss}</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormControl>
+            <FormDescription>
+              Ce programme déterminera votre plan nutritionnel complet
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
       
       <FormField
         control={form.control}
@@ -587,3 +707,6 @@ export const AllergiesPreferencesStep: React.FC<BasicInfoStepProps> = ({ form })
     </motion.div>
   );
 };
+
+// Importation de Button pour le DatePicker
+import { Button } from "@/components/ui/button";
