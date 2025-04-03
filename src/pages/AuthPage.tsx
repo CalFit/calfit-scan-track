@@ -26,6 +26,7 @@ const resetPasswordSchema = z.object({
   email: z.string().email('Email invalide'),
 });
 
+// Nous gardons le même contenu fonctionnel mais modifions les classes pour optimiser l'affichage mobile
 const AuthPage = () => {
   const { signIn, signUp, signInWithGoogle, resetPassword, isLoading, error, clearErrors } = useAuth();
   const [activeTab, setActiveTab] = useState<string>('signin');
@@ -125,23 +126,23 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background p-2 sm:p-4">
       <motion.div 
-        className="w-full max-w-md space-y-6"
+        className="w-full max-w-md space-y-4 sm:space-y-6"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
       >
-        <motion.div className="text-center space-y-2" variants={itemVariants}>
-          <h1 className="text-3xl font-bold">CalFit</h1>
-          <p className="text-muted-foreground">Connectez-vous pour suivre votre nutrition</p>
+        <motion.div className="text-center space-y-1 sm:space-y-2" variants={itemVariants}>
+          <h1 className="text-2xl sm:text-3xl font-bold">CalFit</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Connectez-vous pour suivre votre nutrition</p>
         </motion.div>
 
         {error && (
           <motion.div variants={itemVariants}>
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
+              <AlertDescription className="text-sm">{error}</AlertDescription>
             </Alert>
           </motion.div>
         )}
@@ -151,25 +152,25 @@ const AuthPage = () => {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="space-y-4"
+            className="space-y-3 sm:space-y-4"
           >
-            <motion.h2 className="text-xl font-semibold text-center" variants={itemVariants}>
+            <motion.h2 className="text-lg sm:text-xl font-semibold text-center" variants={itemVariants}>
               Réinitialiser votre mot de passe
             </motion.h2>
             
             <Form {...resetPasswordForm}>
-              <form onSubmit={resetPasswordForm.handleSubmit(onResetPasswordSubmit)} className="space-y-4">
+              <form onSubmit={resetPasswordForm.handleSubmit(onResetPasswordSubmit)} className="space-y-3 sm:space-y-4">
                 <motion.div variants={itemVariants}>
                   <FormField
                     control={resetPasswordForm.control}
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel className="text-sm">Email</FormLabel>
                         <FormControl>
                           <Input placeholder="votre@email.com" {...field} />
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
@@ -179,14 +180,14 @@ const AuthPage = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-1/2"
+                    className="w-1/2 text-xs sm:text-sm h-9"
                     onClick={() => setShowResetPassword(false)}
                     disabled={localLoading}
                   >
                     Retour
                   </Button>
-                  <Button type="submit" className="w-1/2" disabled={localLoading}>
-                    {localLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-4 w-4" />}
+                  <Button type="submit" className="w-1/2 text-xs sm:text-sm h-9" disabled={localLoading}>
+                    {localLoading ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Mail className="mr-1.5 h-3.5 w-3.5" />}
                     Envoyer
                   </Button>
                 </motion.div>
@@ -194,32 +195,32 @@ const AuthPage = () => {
             </Form>
           </motion.div>
         ) : (
-          <motion.div className="space-y-4" variants={itemVariants}>
+          <motion.div className="space-y-3 sm:space-y-4" variants={itemVariants}>
             <Tabs 
               defaultValue="signin" 
               value={activeTab}
               onValueChange={handleTabChange}
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="signin">Connexion</TabsTrigger>
-                <TabsTrigger value="signup">Inscription</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-4 sm:mb-6 h-9">
+                <TabsTrigger value="signin" className="text-xs sm:text-sm">Connexion</TabsTrigger>
+                <TabsTrigger value="signup" className="text-xs sm:text-sm">Inscription</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="signin" className="space-y-4">
+              <TabsContent value="signin" className="space-y-3 sm:space-y-4">
                 <Form {...signInForm}>
-                  <form onSubmit={signInForm.handleSubmit(onSignInSubmit)} className="space-y-4">
+                  <form onSubmit={signInForm.handleSubmit(onSignInSubmit)} className="space-y-3 sm:space-y-4">
                     <motion.div variants={itemVariants}>
                       <FormField
                         control={signInForm.control}
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel className="text-sm">Email</FormLabel>
                             <FormControl>
                               <Input placeholder="votre@email.com" {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-xs" />
                           </FormItem>
                         )}
                       />
@@ -231,11 +232,11 @@ const AuthPage = () => {
                         name="password"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Mot de passe</FormLabel>
+                            <FormLabel className="text-sm">Mot de passe</FormLabel>
                             <FormControl>
                               <Input type="password" placeholder="••••••" {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-xs" />
                           </FormItem>
                         )}
                       />
@@ -245,7 +246,7 @@ const AuthPage = () => {
                       <Button
                         type="button"
                         variant="link"
-                        className="px-0 font-normal text-sm"
+                        className="px-0 font-normal text-xs sm:text-sm h-auto"
                         onClick={() => setShowResetPassword(true)}
                       >
                         Mot de passe oublié ?
@@ -256,11 +257,11 @@ const AuthPage = () => {
                       <motion.div variants={itemVariants}>
                         <Button 
                           type="submit" 
-                          className="w-full" 
+                          className="w-full text-xs sm:text-sm h-9" 
                           disabled={localLoading}
                           onClick={signInForm.handleSubmit(onSignInSubmit)}
                         >
-                          {localLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                          {localLoading ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
                           Se connecter
                         </Button>
                       </motion.div>
@@ -269,11 +270,11 @@ const AuthPage = () => {
                         <Button
                           type="button"
                           variant="outline"
-                          className="w-full"
+                          className="w-full text-xs sm:text-sm h-9"
                           onClick={() => signInWithGoogle()}
                           disabled={localLoading}
                         >
-                          <Globe className="mr-2 h-4 w-4" />
+                          <Globe className="mr-1.5 h-3.5 w-3.5" />
                           Continuer avec Google
                         </Button>
                       </motion.div>
@@ -282,20 +283,20 @@ const AuthPage = () => {
                 </Form>
               </TabsContent>
 
-              <TabsContent value="signup" className="space-y-4">
+              <TabsContent value="signup" className="space-y-3 sm:space-y-4">
                 <Form {...signUpForm}>
-                  <form onSubmit={signUpForm.handleSubmit(onSignUpSubmit)} className="space-y-4">
+                  <form onSubmit={signUpForm.handleSubmit(onSignUpSubmit)} className="space-y-3 sm:space-y-4">
                     <motion.div variants={itemVariants}>
                       <FormField
                         control={signUpForm.control}
                         name="name"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Nom</FormLabel>
+                            <FormLabel className="text-sm">Nom</FormLabel>
                             <FormControl>
                               <Input placeholder="Votre nom" {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-xs" />
                           </FormItem>
                         )}
                       />
@@ -307,11 +308,11 @@ const AuthPage = () => {
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel className="text-sm">Email</FormLabel>
                             <FormControl>
                               <Input placeholder="votre@email.com" {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-xs" />
                           </FormItem>
                         )}
                       />
@@ -323,11 +324,11 @@ const AuthPage = () => {
                         name="password"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Mot de passe</FormLabel>
+                            <FormLabel className="text-sm">Mot de passe</FormLabel>
                             <FormControl>
                               <Input type="password" placeholder="••••••" {...field} />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-xs" />
                           </FormItem>
                         )}
                       />
@@ -337,10 +338,10 @@ const AuthPage = () => {
                       <motion.div variants={itemVariants}>
                         <Button 
                           type="submit" 
-                          className="w-full" 
+                          className="w-full text-xs sm:text-sm h-9" 
                           disabled={localLoading}
                         >
-                          {localLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                          {localLoading ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
                           S'inscrire
                         </Button>
                       </motion.div>
@@ -349,11 +350,11 @@ const AuthPage = () => {
                         <Button
                           type="button"
                           variant="outline"
-                          className="w-full"
+                          className="w-full text-xs sm:text-sm h-9"
                           onClick={() => signInWithGoogle()}
                           disabled={localLoading}
                         >
-                          <Globe className="mr-2 h-4 w-4" />
+                          <Globe className="mr-1.5 h-3.5 w-3.5" />
                           Continuer avec Google
                         </Button>
                       </motion.div>

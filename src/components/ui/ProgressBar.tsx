@@ -1,4 +1,6 @@
+
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ProgressBarProps {
   percentage: number;
@@ -13,10 +15,15 @@ const ProgressBar = ({
   percentage,
   label,
   color = 'bg-calfit-blue',
-  height = 'h-2.5',
+  height,
   animate = true,
   showDate = false
 }: ProgressBarProps) => {
+  const isMobile = useIsMobile();
+  
+  // Use smaller height on mobile
+  const progressHeight = height || (isMobile ? 'h-1.5' : 'h-2.5');
+  
   // Get current date in "Vendredi 7 mars 2025" format
   const getCurrentDate = () => {
     const date = new Date();
@@ -29,10 +36,10 @@ const ProgressBar = ({
   };
 
   return (
-    <div className="w-full space-y-1.5">
-      {label && <p className="text-sm font-medium">{label}</p>}
+    <div className="w-full space-y-1 sm:space-y-1.5">
+      {label && <p className="text-xs sm:text-sm font-medium">{label}</p>}
       
-      <div className={`w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden ${height}`}>
+      <div className={`w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden ${progressHeight}`}>
         <div 
           className={`${color} h-full rounded-full ${animate ? 'transition-all duration-500 ease-out' : ''}`} 
           style={{ 
@@ -42,7 +49,7 @@ const ProgressBar = ({
         />
       </div>
       
-      {showDate && <p className="text-xs text-gray-500 dark:text-gray-400 text-right">{getCurrentDate()}</p>}
+      {showDate && <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 text-right">{getCurrentDate()}</p>}
     </div>
   );
 };

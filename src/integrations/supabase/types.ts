@@ -9,138 +9,72 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      "BDD ALIMENTS": {
-        Row: {
-          created_at: string
-          id: number
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-        }
-        Update: {
-          created_at?: string
-          id?: number
-        }
-        Relationships: []
-      }
-      food_categories: {
-        Row: {
-          created_at: string
-          icon: string | null
-          id: string
-          name: string
-        }
-        Insert: {
-          created_at?: string
-          icon?: string | null
-          id?: string
-          name: string
-        }
-        Update: {
-          created_at?: string
-          icon?: string | null
-          id?: string
-          name?: string
-        }
-        Relationships: []
-      }
       foods: {
         Row: {
-          barcode: string | null
           calories: number
-          carbs: number
-          category_id: string | null
-          created_at: string
-          fat: number
+          carbs: number | null
+          created_at: string | null
+          fat: number | null
           id: string
-          image_url: string | null
-          is_favorite: boolean | null
+          meal_id: string | null
           name: string
-          protein: number
-          serving_size: number | null
-          serving_unit: string | null
-          updated_at: string
-          user_id: string | null
+          protein: number | null
         }
         Insert: {
-          barcode?: string | null
           calories: number
-          carbs: number
-          category_id?: string | null
-          created_at?: string
-          fat: number
+          carbs?: number | null
+          created_at?: string | null
+          fat?: number | null
           id?: string
-          image_url?: string | null
-          is_favorite?: boolean | null
+          meal_id?: string | null
           name: string
-          protein: number
-          serving_size?: number | null
-          serving_unit?: string | null
-          updated_at?: string
-          user_id?: string | null
+          protein?: number | null
         }
         Update: {
-          barcode?: string | null
           calories?: number
-          carbs?: number
-          category_id?: string | null
-          created_at?: string
-          fat?: number
+          carbs?: number | null
+          created_at?: string | null
+          fat?: number | null
           id?: string
-          image_url?: string | null
-          is_favorite?: boolean | null
+          meal_id?: string | null
           name?: string
-          protein?: number
-          serving_size?: number | null
-          serving_unit?: string | null
-          updated_at?: string
-          user_id?: string | null
+          protein?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: "foods_category_id_fkey"
-            columns: ["category_id"]
+            foreignKeyName: "foods_meal_id_fkey"
+            columns: ["meal_id"]
             isOneToOne: false
-            referencedRelation: "food_categories"
+            referencedRelation: "meals"
             referencedColumns: ["id"]
           },
         ]
       }
-      meal_logs: {
+      meals: {
         Row: {
-          created_at: string
-          date: string
-          food_id: string
           id: string
-          meal_type: string
-          quantity: number | null
-          user_id: string
+          meal_name: string
+          meal_time: string | null
+          user_id: string | null
         }
         Insert: {
-          created_at?: string
-          date?: string
-          food_id: string
           id?: string
-          meal_type: string
-          quantity?: number | null
-          user_id: string
+          meal_name: string
+          meal_time?: string | null
+          user_id?: string | null
         }
         Update: {
-          created_at?: string
-          date?: string
-          food_id?: string
           id?: string
-          meal_type?: string
-          quantity?: number | null
-          user_id?: string
+          meal_name?: string
+          meal_time?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "meal_logs_food_id_fkey"
-            columns: ["food_id"]
+            foreignKeyName: "meals_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "foods"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -187,9 +121,51 @@ export type Database = {
         }
         Relationships: []
       }
+      users: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          password_hash: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          password_hash: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          password_hash?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      meal_food_history: {
+        Row: {
+          calories: number | null
+          carbs: number | null
+          created_at: string | null
+          fat: number | null
+          food_name: string | null
+          meal_name: string | null
+          meal_time: string | null
+          protein: number | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never
