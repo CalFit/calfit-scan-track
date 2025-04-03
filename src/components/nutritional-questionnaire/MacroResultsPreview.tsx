@@ -27,24 +27,21 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
     // Ajouter un délai pour l'effet de chargement
     setLoading(true);
     
-    const timer = setTimeout(() => {
-      try {
-        const program = calculateNutritionalProgram(formData);
-        setNutritionalProgram(program);
-        
-        // Notifier le parent des nouvelles valeurs macro calculées
-        if (program && program.goal) {
-          onMacrosChange(program.goal);
-        }
-      } catch (error) {
-        console.error("Erreur lors du calcul des macros:", error);
-      } finally {
-        setLoading(false);
+    try {
+      const program = calculateNutritionalProgram(formData);
+      setNutritionalProgram(program);
+      
+      // Notifier le parent des nouvelles valeurs macro calculées
+      if (program && program.goal) {
+        onMacrosChange(program.goal);
       }
-    }, 500);
+    } catch (error) {
+      console.error("Erreur lors du calcul des macros:", error);
+    } finally {
+      setLoading(false);
+    }
     
-    return () => clearTimeout(timer);
-  }, [formData, onMacrosChange]);
+  }, [formData]);
   
   // Fonction pour formater les nombres avec des espaces pour les milliers
   const formatNumber = (num: number): string => {

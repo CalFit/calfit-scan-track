@@ -118,7 +118,8 @@ export const calculateNutritionalProgram = (data: QuestionnaireFormData): Nutrit
   
   // S'assurer que la somme est de 100%
   const total = macroDistribution.protein + macroDistribution.fat + macroDistribution.carbs;
-  if (total !== 100) {
+  const tolerance = 0.01; // Définir une tolérance pour les erreurs d'arrondi
+  if (Math.abs(total - 100) > tolerance) {
     // Ajuster les glucides pour que le total soit 100%
     macroDistribution.carbs += (100 - total);
   }

@@ -38,8 +38,11 @@ const NutritionalQuestionnaire: React.FC = () => {
       name: settings.name || defaultQuestionnaireValues.name
     },
   });
-  
-  const watchedFormValues = form.watch();
+  const formValues = form.getValues();
+  const watchedFormValues = {
+    ...formValues,
+    name: settings.name,
+  };
   
   // Lorsque les valeurs calculées changent
   const handleMacrosChange = (macros: CalculatedMacros) => {
