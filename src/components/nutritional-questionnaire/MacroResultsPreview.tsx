@@ -29,26 +29,46 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({
   const [proteinPercentage, setProteinPercentage] = useState(30);
   const [fatPercentage, setFatPercentage] = useState(30);
   const [carbsPercentage, setCarbsPercentage] = useState(40);
+  const [isCalculating, setIsCalculating] = useState(true);
   
   const isMobile = useIsMobile();
   
   // Calcul initial des macros basé sur les données du formulaire
   useEffect(() => {
-    const calculatedMacros = calculateMacros(formData);
-    setMacros(calculatedMacros);
+    setIsCalculating(true);
     
-    // Calculer les pourcentages initiaux
-    const totalCals = calculatedMacros.calories;
-    setProteinPercentage(Math.round((calculatedMacros.protein * 4 / totalCals) * 100));
-    setFatPercentage(Math.round((calculatedMacros.fat * 9 / totalCals) * 100));
-    setCarbsPercentage(Math.round((calculatedMacros.carbs * 4 / totalCals) * 100));
-  }, [formData]);
+    try {
+      const calculatedMacros = calculateMacros(formData);
+      
+      if (calculatedMacros && calculatedMacros.calories > 0) {
+        setMacros(calculatedMacros);
+        
+        // Calculer les pourcentages initiaux
+        const proteinCals = Math.round((calculatedMacros.protein * 4 / calculatedMacros.calories) * 100);
+        const fatCals = Math.round((calculatedMacros.fat * 9 / calculatedMacros.calories) * 100);
+        const carbsCals = 100 - proteinCals - fatCals;
+        
+        setProteinPercentage(proteinCals);
+        setFatPercentage(fatCals);
+        setCarbsPercentage(carbsCals);
+        
+        // Informer le parent des macros calculées
+        onMacrosChange(calculatedMacros);
+      }
+    } catch (error) {
+      console.error("Erreur lors du calcul des macros:", error);
+    } finally {
+      setIsCalculating(false);
+    }
+  }, [formData, onMacrosChange]);
   
   // Mettre à jour les macros lorsque les pourcentages changent
   useEffect(() => {
+    if (isCalculating || macros.calories <= 0) return;
+    
     // Assurons-nous que les pourcentages totalisent 100%
     const total = proteinPercentage + fatPercentage + carbsPercentage;
-    if (total !== 100) return;
+    if (Math.abs(total - 100) > 1) return; // Tolérance de 1% pour les erreurs d'arrondi
     
     // Calculer les macros en fonction des pourcentages
     const calories = macros.calories; // On garde les calories calculées
@@ -59,7 +79,7 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({
     const newMacros = { calories, protein, fat, carbs };
     setMacros(newMacros);
     onMacrosChange(newMacros);
-  }, [proteinPercentage, fatPercentage, carbsPercentage, macros.calories, onMacrosChange]);
+  }, [proteinPercentage, fatPercentage, carbsPercentage, macros.calories, onMacrosChange, isCalculating]);
 
   // Ajuster les pourcentages de manière à ce que leur somme soit toujours 100%
   const adjustPercentages = (type: 'protein' | 'fat' | 'carbs', value: number) => {
@@ -101,6 +121,16 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({
     setCarbsPercentage(newCarbs);
   };
 
+  if (isCalculating) {
+    return (
+      <div className="flex justify-center items-center h-40">
+        <div className="animate-pulse text-center">
+          <p>Calcul en cours...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -126,7 +156,7 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({
             "font-semibold",
             isMobile ? "text-2xl" : "text-3xl"
           )}>
-            {macros.calories} kcal
+            {macros.calories > 0 ? macros.calories : "-"} kcal
           </p>
           <p className="text-sm text-muted-foreground">par jour</p>
         </div>

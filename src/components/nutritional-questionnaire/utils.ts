@@ -12,6 +12,11 @@ import {
 export const calculateBMR = (data: QuestionnaireFormData): number => {
   const { sex, currentWeight, height, age } = data;
   
+  if (!age || !currentWeight || !height) {
+    console.error("Données manquantes pour le calcul BMR:", { age, currentWeight, height });
+    return 0;
+  }
+  
   if (sex === 'male') {
     return 10 * currentWeight + 6.25 * height - 5 * age + 5;
   } else {
@@ -22,9 +27,12 @@ export const calculateBMR = (data: QuestionnaireFormData): number => {
 // Calcul des besoins caloriques totaux
 export const calculateTDEE = (data: QuestionnaireFormData): number => {
   const bmr = calculateBMR(data);
-  const activityFactor = activityMultipliers[data.activityLevel];
-  const occupationFactor = occupationMultipliers[data.occupation];
-  const goalFactor = goalMultipliers[data.goal];
+  
+  if (bmr <= 0) return 0;
+  
+  const activityFactor = activityMultipliers[data.activityLevel] || 1.2;
+  const occupationFactor = occupationMultipliers[data.occupation] || 0;
+  const goalFactor = goalMultipliers[data.goal] || 1;
   
   // Calcul du TDEE de base
   let tdee = bmr * (activityFactor + occupationFactor);
@@ -38,13 +46,19 @@ export const calculateTDEE = (data: QuestionnaireFormData): number => {
 // Calcul de la répartition des macronutriments
 export const calculateMacros = (data: QuestionnaireFormData): CalculatedMacros => {
   const calories = calculateTDEE(data);
-  const { protein: proteinRatio, fat: fatRatio, carbs: carbsRatio } = 
-    macroDistributionByDiet[data.dietType];
+  
+  if (calories <= 0) {
+    console.error("Impossible de calculer les calories:", data);
+    return { calories: 0, protein: 0, fat: 0, carbs: 0 };
+  }
+  
+  const distribution = macroDistributionByDiet[data.dietType] || 
+    { protein: 0.3, fat: 0.3, carbs: 0.4 };
   
   // Calcul des grammes de protéines, lipides et glucides
-  const protein = Math.round((calories * proteinRatio) / 4); // 4 calories par gramme de protéines
-  const fat = Math.round((calories * fatRatio) / 9); // 9 calories par gramme de lipides
-  const carbs = Math.round((calories * carbsRatio) / 4); // 4 calories par gramme de glucides
+  const protein = Math.round((calories * distribution.protein) / 4); // 4 calories par gramme de protéines
+  const fat = Math.round((calories * distribution.fat) / 9); // 9 calories par gramme de lipides
+  const carbs = Math.round((calories * distribution.carbs) / 4); // 4 calories par gramme de glucides
   
   return { calories, protein, fat, carbs };
 };

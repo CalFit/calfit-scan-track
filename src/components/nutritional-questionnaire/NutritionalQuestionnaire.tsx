@@ -40,6 +40,7 @@ const NutritionalQuestionnaire: React.FC = () => {
   
   // Lorsque les valeurs calculées changent
   const handleMacrosChange = (macros: CalculatedMacros) => {
+    console.log("Nouveaux macros calculés:", macros);
     setCalculatedMacros(macros);
   };
 
@@ -70,8 +71,14 @@ const NutritionalQuestionnaire: React.FC = () => {
       }
     } else {
       // Nous sommes à la dernière étape, ouvrir la boîte de dialogue de confirmation
-      if (calculatedMacros) {
+      if (calculatedMacros && calculatedMacros.calories > 0) {
         setShowConfirmDialog(true);
+      } else {
+        toast({
+          title: "Erreur de calcul",
+          description: "Impossible de calculer vos besoins nutritionnels. Veuillez vérifier vos données.",
+          variant: "destructive",
+        });
       }
     }
   };
@@ -83,7 +90,7 @@ const NutritionalQuestionnaire: React.FC = () => {
   };
   
   const onSaveSettings = () => {
-    if (calculatedMacros) {
+    if (calculatedMacros && calculatedMacros.calories > 0) {
       // Mise à jour des objectifs macros dans les paramètres utilisateur
       updateSettings({
         macroTargets: {
@@ -100,6 +107,12 @@ const NutritionalQuestionnaire: React.FC = () => {
         title: "Programme nutritionnel mis à jour",
         description: "Vos objectifs nutritionnels ont été enregistrés avec succès.",
         duration: 3000,
+      });
+    } else {
+      toast({
+        title: "Erreur de sauvegarde",
+        description: "Impossible de sauvegarder les valeurs. Veuillez réessayer.",
+        variant: "destructive",
       });
     }
   };
@@ -155,9 +168,16 @@ const NutritionalQuestionnaire: React.FC = () => {
       <Form {...form}>
         <form className="space-y-6">
           <AnimatePresence mode="wait">
-            <div key={step} className="min-h-[300px]">
+            <motion.div 
+              key={step} 
+              className="min-h-[300px]"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+            >
               {renderStepContent()}
-            </div>
+            </motion.div>
           </AnimatePresence>
           
           {/* Boutons de navigation */}
