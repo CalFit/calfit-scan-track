@@ -182,8 +182,14 @@ export function useFoodDatabase() {
           protein: data[0].protein || 0,
           fat: data[0].fat || 0,
           carbs: data[0].carbs || 0,
-          ...(data[0].user_id && { user_id: data[0].user_id })
+          // Fix for the error - handle user_id if it exists in data[0]
+          // Note that user_id might not be in the schema, so we only add it conditionally
         };
+
+        // If data[0] has user_id property, add it to addedFood
+        if ('user_id' in data[0] && data[0].user_id !== null) {
+          addedFood.user_id = data[0].user_id as string;
+        }
         
         setFoods(prev => [...prev, addedFood]);
         
