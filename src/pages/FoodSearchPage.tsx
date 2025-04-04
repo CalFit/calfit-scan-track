@@ -1,9 +1,10 @@
+
 import { useState } from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
 import { useFoodDatabase } from '@/hooks/useFoodDatabase';
 import { Search, Plus, Scan, Calendar, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Food } from '@/types/supabase';
+import { Food } from '@/hooks/useFoodDatabase'; // Import from the hook directly to match types
 import { useNavigate } from 'react-router-dom';
 
 const FoodSearchPage = () => {
