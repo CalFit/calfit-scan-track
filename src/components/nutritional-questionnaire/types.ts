@@ -5,8 +5,8 @@ export type ActivityLevel = 'sedentary' | 'lightlyActive' | 'moderatelyActive' |
 export type Occupation = 'sedentaryJob' | 'moderateJob' | 'physicalJob';
 export type DietType = 'balanced' | 'highProtein' | 'keto' | 'vegetarian' | 'vegan' | 'mediterranean' | 'other';
 
-// Nouveaux types pour les objectifs nutritionnels spécifiques
-export type NutritionalGoal = 'cleanBulk' | 'bodyRecomposition' | 'perfectDeficit' | 'progressiveFatLoss';
+// Types d'objectifs nutritionnels spécifiques
+export type NutritionalGoal = 'cleanBulk' | 'bodyRecomposition' | 'perfectDeficit' | 'progressiveFatLoss' | 'maintenance';
 
 export interface MealPreferences {
   breakfast: boolean;
@@ -50,7 +50,35 @@ export interface CalculatedMacros {
   carbs: number;
 }
 
+export interface Measurements {
+  chest: number;
+  waist: number;
+  hips: number;
+  thighs: number;
+  arms: number;
+}
+
+export interface Performance {
+  benchPress: number;
+  squat: number;
+  deadlift: number;
+  // Des exercices supplémentaires peuvent être ajoutés ici
+}
+
+export interface WeeklyProgress {
+  week: number;
+  date: Date;
+  nextCheckDate: Date;
+  weight: number;
+  measurements: Measurements;
+  performance: Performance;
+  notes: string;
+  adjustedMacros: CalculatedMacros | null; // Macros ajustées si nécessaire
+}
+
 export interface NutritionalProgram {
+  lbm?: number; // Lean Body Mass (masse maigre)
+  bmr?: number; // Basal Metabolic Rate (métabolisme de base)
   maintenance: CalculatedMacros;
   goal: CalculatedMacros;
   macroDistribution: {
@@ -58,11 +86,12 @@ export interface NutritionalProgram {
     fat: number; // pourcentage
     carbs: number; // pourcentage
   };
+  weeklyProgress?: WeeklyProgress[]; // Suivi hebdomadaire facultatif
 }
 
 // Facteurs de multiplication pour le calcul du TDEE
 
-// Multiplicateurs de niveau d'activité (facteur BMR)
+// Multiplicateurs de niveau d'activité (facteur BMR) selon fichier CSV
 export const activityMultipliers = {
   sedentary: 1.2, // Peu ou pas d'exercice
   lightlyActive: 1.375, // Exercice léger 1-3 jours/semaine
@@ -92,7 +121,8 @@ export const nutritionalGoalMultipliers = {
   cleanBulk: 1.15, // Prise de muscle propre: 15% d'excédent calorique
   bodyRecomposition: 1.0, // Recomposition corporelle: maintien calorique avec ajustement des macros
   perfectDeficit: 0.8, // Création du déficit parfait: 20% de déficit calorique
-  progressiveFatLoss: 0.9 // Perte de gras progressive: 10% de déficit calorique
+  progressiveFatLoss: 0.9, // Perte de gras progressive: 10% de déficit calorique
+  maintenance: 1.0 // Maintien du poids sans changement
 };
 
 // Répartition des macros par type de régime
@@ -108,8 +138,9 @@ export const macroDistributionByDiet = {
 
 // Répartition des macros par objectif nutritionnel spécifique
 export const macroDistributionByNutritionalGoal = {
-  cleanBulk: { protein: 0.35, fat: 0.25, carbs: 0.4 },
-  bodyRecomposition: { protein: 0.4, fat: 0.3, carbs: 0.3 },
-  perfectDeficit: { protein: 0.45, fat: 0.25, carbs: 0.3 },
-  progressiveFatLoss: { protein: 0.4, fat: 0.3, carbs: 0.3 }
+  cleanBulk: { protein: 0.25, fat: 0.25, carbs: 0.5 },
+  bodyRecomposition: { protein: 0.35, fat: 0.25, carbs: 0.4 },
+  perfectDeficit: { protein: 0.4, fat: 0.3, carbs: 0.3 },
+  progressiveFatLoss: { protein: 0.35, fat: 0.35, carbs: 0.3 },
+  maintenance: { protein: 0.174, fat: 0.252, carbs: 0.575 } // Ratios du CSV
 };

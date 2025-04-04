@@ -11,25 +11,28 @@ import {
   AllergiesPreferencesStep 
 } from './NutritionalFormSteps';
 import { MacroResultsPreview } from './MacroResultsPreview';
-import { QuestionnaireFormData, CalculatedMacros } from './types';
+import { QuestionnaireFormData, CalculatedMacros, NutritionalProgram } from './types';
 import { nutritionalQuestionnaireSchema, defaultQuestionnaireValues } from './nutritionalQuestionnaireSchema';
+import { calculateNutritionalProgram } from './utils';
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import ProgressTracker from './ProgressTracker';
 
 const NutritionalQuestionnaire: React.FC = () => {
   const [step, setStep] = useState(0);
   const [calculatedMacros, setCalculatedMacros] = useState<CalculatedMacros | null>(null);
+  const [nutritionalProgram, setNutritionalProgram] = useState<NutritionalProgram | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { settings, updateSettings } = useUserSettings();
   const { toast } = useToast();
   const isMobile = useIsMobile();
   
-  const steps = ["Informations personnelles", "Objectifs & Activité", "Préférences alimentaires", "Allergies", "Résultats"];
+  const steps = ["Informations personnelles", "Objectifs & Activité", "Préférences alimentaires", "Allergies", "Résultats", "Suivi hebdomadaire"];
   
   const form = useForm<QuestionnaireFormData>({
     resolver: zodResolver(nutritionalQuestionnaireSchema),
@@ -39,15 +42,36 @@ const NutritionalQuestionnaire: React.FC = () => {
     },
   });
   const formValues = form.getValues();
-  const watchedFormValues = {
-    ...formValues,
-    name: settings.name,
-  };
+  const watchedFormValues = form.watch();
+  
+  // Calculer le programme nutritionnel chaque fois que les données du formulaire changent
+  useEffect(() => {
+    if (step === 4) { // Seulement à l'étape des résultats
+      try {
+        const program = calculateNutritionalProgram(watchedFormValues);
+        setNutritionalProgram(program);
+      } catch (error) {
+        console.error("Erreur lors du calcul du programme nutritionnel:", error);
+      }
+    }
+  }, [watchedFormValues, step]);
   
   // Lorsque les valeurs calculées changent
   const handleMacrosChange = (macros: CalculatedMacros) => {
-    console.log("Nouveaux macros calculés:", macros);
     setCalculatedMacros(macros);
+  };
+  
+  // Lorsque les macros sont ajustées dans le suivi hebdomadaire
+  const handleMacrosAdjustment = (macros: CalculatedMacros) => {
+    setCalculatedMacros(macros);
+    
+    // Mettre à jour également le programme nutritionnel
+    if (nutritionalProgram) {
+      setNutritionalProgram({
+        ...nutritionalProgram,
+        goal: macros
+      });
+    }
   };
 
   const renderStepContent = () => {
@@ -62,6 +86,18 @@ const NutritionalQuestionnaire: React.FC = () => {
         return <AllergiesPreferencesStep form={form} />;
       case 4:
         return <MacroResultsPreview formData={watchedFormValues} onMacrosChange={handleMacrosChange} />;
+      case 5:
+        return nutritionalProgram ? (
+          <ProgressTracker 
+            formData={watchedFormValues} 
+            nutritionalProgram={nutritionalProgram} 
+            onMacrosAdjustment={handleMacrosAdjustment} 
+          />
+        ) : (
+          <div className="text-center p-8">
+            <p className="text-red-500">Impossible de charger le suivi. Veuillez revenir à l'étape précédente et réessayer.</p>
+          </div>
+        );
       default:
         return null;
     }
@@ -202,24 +238,38 @@ const NutritionalQuestionnaire: React.FC = () => {
               <ChevronLeft className="mr-1 h-4 w-4" /> Précédent
             </Button>
             
-            <Button
-              type="button"
-              onClick={onNextStep}
-              className={cn(
-                "flex items-center",
-                isMobile ? "text-sm px-3 py-1.5" : ""
-              )}
-            >
-              {step < steps.length - 1 ? (
-                <>
-                  Suivant <ChevronRight className="ml-1 h-4 w-4" />
-                </>
-              ) : (
-                <>
-                  Enregistrer <Check className="ml-1 h-4 w-4" />
-                </>
-              )}
-            </Button>
+            {/* Afficher le bouton Enregistrer tout si nous sommes à l'étape du suivi, sinon bouton Suivant ou Enregistrer */}
+            {step === 5 ? (
+              <Button
+                type="button"
+                onClick={onSaveSettings}
+                className={cn(
+                  "flex items-center",
+                  isMobile ? "text-sm px-3 py-1.5" : ""
+                )}
+              >
+                <Save className="mr-1 h-4 w-4" /> Enregistrer tout
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                onClick={onNextStep}
+                className={cn(
+                  "flex items-center",
+                  isMobile ? "text-sm px-3 py-1.5" : ""
+                )}
+              >
+                {step < steps.length - 1 ? (
+                  <>
+                    Suivant <ChevronRight className="ml-1 h-4 w-4" />
+                  </>
+                ) : (
+                  <>
+                    Enregistrer <Check className="ml-1 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            )}
           </div>
         </form>
       </Form>

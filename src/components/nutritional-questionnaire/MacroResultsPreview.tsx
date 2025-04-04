@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QuestionnaireFormData, CalculatedMacros, NutritionalProgram } from './types';
-import { calculateNutritionalProgram, getNutritionalGoalLabel } from './utils';
+import { calculateNutritionalProgram, getNutritionalGoalLabel, generateInitialWeeklyProgress } from './utils';
 import MacroProgressBar from '@/components/ui/MacroProgressBar';
 import { Progress } from "@/components/ui/progress";
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
@@ -41,7 +41,7 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
       setLoading(false);
     }
     
-  }, [formData]);
+  }, [formData, onMacrosChange]);
   
   // Fonction pour formater les nombres avec des espaces pour les milliers
   const formatNumber = (num: number): string => {
@@ -69,7 +69,8 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
     );
   }
   
-  const { maintenance, goal, macroDistribution } = nutritionalProgram;
+  const { maintenance, goal, macroDistribution, lbm, bmr } = nutritionalProgram;
+  const initialProgress = generateInitialWeeklyProgress(formData);
   
   return (
     <motion.div
@@ -115,16 +116,44 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
               <p className="font-semibold">{formData.targetWeight} kg</p>
             </div>
             
-            {formData.bodyFatPercentage && (
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">% Graisse</p>
-                <p className="font-semibold">{formData.bodyFatPercentage}%</p>
-              </div>
-            )}
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-muted-foreground">% Graisse</p>
+              <p className="font-semibold">{formData.bodyFatPercentage}%</p>
+            </div>
+            
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-muted-foreground">Masse maigre estimée</p>
+              <p className="font-semibold">{lbm ? lbm.toFixed(1) : 'N/A'} kg</p>
+            </div>
             
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">Date de début</p>
               <p className="font-semibold">{format(formData.startDate, 'dd/MM/yyyy', { locale: fr })}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Section des calculs métaboliques */}
+      <Card className="bg-card border-0 shadow-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-semibold text-calfit-blue">
+            Calculs métaboliques
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Métabolisme de base (BMR)</p>
+                <p className="font-semibold">{bmr ? formatNumber(bmr) : 'N/A'} kcal</p>
+                <p className="text-xs text-muted-foreground">Formule Harris-Benedict</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Maintenance (MMR)</p>
+                <p className="font-semibold">{formatNumber(maintenance.calories)} kcal</p>
+                <p className="text-xs text-muted-foreground">Niveau d'activité: {activityLevelToFrench(formData.activityLevel)}</p>
+              </div>
             </div>
           </div>
         </CardContent>
@@ -172,7 +201,8 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
                   <tr className="bg-calfit-blue/10">
                     <th className="border p-2 text-left">Macronutriments</th>
                     <th className="border p-2 text-right">Pourcentage</th>
-                    <th className="border p-2 text-right">Grammes</th>
+                    <th className="border p-2 text-right">Maintenance (g)</th>
+                    <th className="border p-2 text-right">Objectif (g)</th>
                     <th className="border p-2 text-right">Calories</th>
                   </tr>
                 </thead>
@@ -180,18 +210,21 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
                   <tr>
                     <td className="border p-2 font-medium text-[#E74C3C]">Protéines</td>
                     <td className="border p-2 text-right">{macroDistribution.protein}%</td>
+                    <td className="border p-2 text-right">{maintenance.protein} g</td>
                     <td className="border p-2 text-right font-semibold">{goal.protein} g</td>
                     <td className="border p-2 text-right">{goal.protein * 4} kcal</td>
                   </tr>
                   <tr>
                     <td className="border p-2 font-medium text-[#F1C40F]">Lipides</td>
                     <td className="border p-2 text-right">{macroDistribution.fat}%</td>
+                    <td className="border p-2 text-right">{maintenance.fat} g</td>
                     <td className="border p-2 text-right font-semibold">{goal.fat} g</td>
                     <td className="border p-2 text-right">{goal.fat * 9} kcal</td>
                   </tr>
                   <tr>
                     <td className="border p-2 font-medium text-[#3498DB]">Glucides</td>
                     <td className="border p-2 text-right">{macroDistribution.carbs}%</td>
+                    <td className="border p-2 text-right">{maintenance.carbs} g</td>
                     <td className="border p-2 text-right font-semibold">{goal.carbs} g</td>
                     <td className="border p-2 text-right">{goal.carbs * 4} kcal</td>
                   </tr>
@@ -306,6 +339,28 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
         </CardContent>
       </Card>
       
+      {/* Section de suivi initial */}
+      <Card className="bg-card border-0 shadow-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg font-semibold text-calfit-blue">
+            Date de prochaine vérification
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center space-y-2">
+            <p className="text-sm">
+              Pour suivre vos progrès, nous vous recommandons de vérifier votre poids et vos mesures dans:
+            </p>
+            <p className="text-xl font-bold">
+              7 jours ({format(initialProgress.nextCheckDate, 'dd/MM/yyyy', { locale: fr })})
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Nous pourrons alors ajuster votre plan nutritionnel en fonction de vos résultats.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+      
       {/* Section de résumé */}
       <div className="bg-calfit-blue/10 p-4 rounded-lg">
         <p className="text-sm text-center">
@@ -316,3 +371,16 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
     </motion.div>
   );
 };
+
+// Fonction utilitaire pour traduire les niveaux d'activité
+function activityLevelToFrench(level: string): string {
+  const translations: Record<string, string> = {
+    'sedentary': 'Sédentaire (×1.2)',
+    'lightlyActive': 'Légèrement actif (×1.375)',
+    'moderatelyActive': 'Modérément actif (×1.55)',
+    'veryActive': 'Très actif (×1.725)',
+    'superActive': 'Extrêmement actif (×1.9)'
+  };
+  
+  return translations[level] || level;
+}

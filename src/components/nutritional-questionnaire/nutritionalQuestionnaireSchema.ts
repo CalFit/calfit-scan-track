@@ -20,7 +20,7 @@ export const nutritionalQuestionnaireSchema = z.object({
 
   // Objectifs et activité
   goal: z.enum(["weightLoss", "maintenance", "weightGain", "performance", "generalHealth"]),
-  nutritionalGoal: z.enum(["cleanBulk", "bodyRecomposition", "perfectDeficit", "progressiveFatLoss"]),
+  nutritionalGoal: z.enum(["cleanBulk", "bodyRecomposition", "perfectDeficit", "progressiveFatLoss", "maintenance"]),
   activityLevel: z.enum(["sedentary", "lightlyActive", "moderatelyActive", "veryActive", "superActive"]),
   occupation: z.enum(["sedentaryJob", "moderateJob", "physicalJob"]),
   
