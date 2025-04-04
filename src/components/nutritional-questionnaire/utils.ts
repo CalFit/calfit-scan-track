@@ -1,3 +1,4 @@
+
 import { 
   QuestionnaireFormData, 
   CalculatedMacros, 
@@ -53,16 +54,17 @@ export const calculateMaintenanceTDEE = (data: QuestionnaireFormData): number =>
   
   if (bmr <= 0) return 0;
   
-  // Utilisation exacte des facteurs d'activité du CSV
+  // Utilisation exacte des facteurs d'activité du CSV avec une valeur modérée par défaut (1.5)
   const activityFactors = {
     sedentary: 1.2,    // Peu ou pas d'exercice
     lightlyActive: 1.375, // Exercice léger 1-3 jours/semaine
-    moderatelyActive: 1.5, // Correction à 1.5 comme dans le CSV
+    moderatelyActive: 1.5, // Modéré (1.5) comme dans le CSV - valeur par défaut
     veryActive: 1.725, // Exercice intense 6-7 jours/semaine
     superActive: 1.9   // Exercice très intense
   };
   
-  const activityFactor = activityFactors[data.activityLevel] || 1.5; // Par défaut, on utilise modéré (1.5)
+  // Utiliser le facteur d'activité modéré (1.5) par défaut si non spécifié
+  const activityFactor = activityFactors[data.activityLevel] || 1.5;
   
   // Calcul du MMR (Maintenance Metabolic Rate)
   let mmr = bmr * activityFactor;
