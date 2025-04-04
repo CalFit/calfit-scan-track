@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QuestionnaireFormData, CalculatedMacros, NutritionalProgram } from './types';
@@ -147,13 +146,16 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Métabolisme de base (BMR)</p>
                 <p className="font-semibold">{bmr ? formatNumber(bmr) : 'N/A'} kcal</p>
-                <p className="text-xs text-muted-foreground">Formule Harris-Benedict</p>
+                <p className="text-xs text-muted-foreground">Formule Harris-Benedict révisée</p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Maintenance (MMR)</p>
                 <p className="font-semibold">{formatNumber(maintenance.calories)} kcal</p>
-                <p className="text-xs text-muted-foreground">Niveau d'activité: {activityLevelToFrench(formData.activityLevel)}</p>
+                <p className="text-xs text-muted-foreground">Niveau d'activité: Modéré (×1.5)</p>
               </div>
+            </div>
+            <div className="mt-2 text-sm bg-calfit-blue/10 p-2 rounded">
+              <p>Votre MMR est calculé avec un niveau d'activité 'Modéré (1.5)', correspondant à une activité physique normale.</p>
             </div>
           </div>
         </CardContent>

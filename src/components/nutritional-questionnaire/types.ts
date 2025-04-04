@@ -1,7 +1,7 @@
-
 export type Sex = 'male' | 'female';
 export type Goal = 'weightLoss' | 'maintenance' | 'weightGain' | 'performance' | 'generalHealth';
-export type ActivityLevel = 'sedentary' | 'lightlyActive' | 'moderatelyActive' | 'veryActive' | 'superActive';
+// Modification de ActivityLevel pour n'autoriser que l'option moderatelyActive
+export type ActivityLevel = 'moderatelyActive';
 export type Occupation = 'sedentaryJob' | 'moderateJob' | 'physicalJob';
 export type DietType = 'balanced' | 'highProtein' | 'keto' | 'vegetarian' | 'vegan' | 'mediterranean' | 'other';
 
@@ -91,11 +91,11 @@ export interface NutritionalProgram {
 
 // Facteurs de multiplication pour le calcul du TDEE
 
-// Multiplicateurs de niveau d'activité (facteur BMR) selon fichier CSV
+// Multiplicateurs de niveau d'activité (facteur BMR) - conservé mais désormais nous n'utilisons que 1.5
 export const activityMultipliers = {
   sedentary: 1.2, // Peu ou pas d'exercice
   lightlyActive: 1.375, // Exercice léger 1-3 jours/semaine
-  moderatelyActive: 1.5, // Corrigé à 1.5 comme dans le CSV
+  moderatelyActive: 1.5, // Valeur fixe utilisée pour tous les calculs
   veryActive: 1.725, // Exercice intense 6-7 jours/semaine
   superActive: 1.9 // Exercice très intense ou entraînement deux fois par jour
 };

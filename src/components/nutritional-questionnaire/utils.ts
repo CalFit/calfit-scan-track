@@ -21,12 +21,12 @@ export const calculateLBM = (data: QuestionnaireFormData): number => {
     return 0;
   }
   
-  // Formule exacte comme dans le CSV
+  // Formule exacte pour le calcul de la masse maigre
   const lbm = currentWeight * (1 - bodyFatPercentage / 100);
   return parseFloat(lbm.toFixed(2)); // Arrondi à 2 décimales comme dans le CSV
 };
 
-// Calcul du métabolisme de base selon la formule de Harris-Benedict
+// Calcul du métabolisme de base selon la formule de Harris-Benedict RÉVISÉE
 export const calculateBMR = (data: QuestionnaireFormData): number => {
   const { sex, currentWeight, height, age } = data;
   
@@ -37,39 +37,33 @@ export const calculateBMR = (data: QuestionnaireFormData): number => {
   
   let bmr: number;
   
-  // Formule Harris-Benedict exacte comme dans le CSV
+  // Application de la formule Harris-Benedict révisée:
+  // BMR = (10 × Poids(kg)) + (6.25 × Taille(cm)) − (5 × Âge(ans)) + 5 (pour hommes)
+  // ou BMR = (10 × Poids(kg)) + (6.25 × Taille(cm)) − (5 × Âge(ans)) - 161 (pour femmes)
   if (sex === 'male') {
     bmr = 10 * currentWeight + 6.25 * height - 5 * age + 5;
   } else {
     bmr = 10 * currentWeight + 6.25 * height - 5 * age - 161;
   }
   
-  // Retourne la valeur avec 2 décimales comme dans le CSV
+  // Retourne la valeur avec 2 décimales pour précision
   return parseFloat(bmr.toFixed(2));
 };
 
-// Calcul des besoins caloriques pour le maintien (MMR)
+// Calcul des besoins caloriques pour le maintien (MMR) avec un facteur d'activité FIXE à 1.5
 export const calculateMaintenanceTDEE = (data: QuestionnaireFormData): number => {
   const bmr = calculateBMR(data);
   
   if (bmr <= 0) return 0;
   
-  // Utilisation exacte des facteurs d'activité du CSV avec une valeur modérée par défaut (1.5)
-  const activityFactors = {
-    sedentary: 1.2,    // Peu ou pas d'exercice
-    lightlyActive: 1.375, // Exercice léger 1-3 jours/semaine
-    moderatelyActive: 1.5, // Modéré (1.5) comme dans le CSV - valeur par défaut
-    veryActive: 1.725, // Exercice intense 6-7 jours/semaine
-    superActive: 1.9   // Exercice très intense
-  };
-  
-  // Utiliser le facteur d'activité modéré (1.5) par défaut si non spécifié
-  const activityFactor = activityFactors[data.activityLevel] || 1.5;
+  // Application du facteur d'activité FIXE modéré (1.5)
+  // Le facteur d'activité est désormais toujours 1.5, quel que soit le choix de l'utilisateur
+  const activityFactor = 1.5; // Facteur d'activité fixe à "modéré"
   
   // Calcul du MMR (Maintenance Metabolic Rate)
   let mmr = bmr * activityFactor;
   
-  // Retourne la valeur avec 2 décimales comme dans le CSV
+  // Retourne la valeur avec 2 décimales pour précision
   return parseFloat(mmr.toFixed(2));
 };
 
@@ -368,4 +362,31 @@ export const generateProgressivePlan = (
   }
   
   return weeklyPlans;
+};
+
+// Liste des allergènes communs pour les options de sélection
+export const commonAllergies = [
+  "Lactose", "Gluten", "Arachides", "Fruits à coque", 
+  "Œufs", "Poisson", "Crustacés", "Soja", "Sésame"
+];
+
+// Liste des préférences alimentaires pour les options de sélection
+export const commonFoodPreferences = [
+  "Viande rouge", "Volaille", "Poisson", "Fruits de mer", 
+  "Produits laitiers", "Légumes", "Fruits", "Céréales complètes", 
+  "Légumineuses", "Noix et graines"
+];
+
+// Traduction des objectifs nutritionnels pour l'affichage
+export const nutritionalGoalLabels = {
+  cleanBulk: "Prise de muscle propre",
+  bodyRecomposition: "Recomposition corporelle",
+  perfectDeficit: "Création du déficit parfait",
+  progressiveFatLoss: "Perte de gras progressive",
+  maintenance: "Maintien du poids"
+};
+
+// Obtenir le nom affiché pour un objectif nutritionnel
+export const getNutritionalGoalLabel = (goal: string): string => {
+  return nutritionalGoalLabels[goal as keyof typeof nutritionalGoalLabels] || goal;
 };

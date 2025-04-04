@@ -17,7 +17,8 @@ export const nutritionalQuestionnaireSchema = z.object({
   // Objectifs et activité
   goal: z.enum(["weightLoss", "maintenance", "weightGain", "performance", "generalHealth"]),
   nutritionalGoal: z.enum(["cleanBulk", "bodyRecomposition", "perfectDeficit", "progressiveFatLoss", "maintenance"]),
-  activityLevel: z.enum(["sedentary", "lightlyActive", "moderatelyActive", "veryActive", "superActive"]),
+  // Retrait des options d'activité en conservant uniquement la valeur fixe "moderatelyActive"
+  activityLevel: z.literal("moderatelyActive"),
   occupation: z.enum(["sedentaryJob", "moderateJob", "physicalJob"]),
   
   // Préférences alimentaires
@@ -50,10 +51,10 @@ export const defaultQuestionnaireValues: QuestionnaireFormData = {
   bodyFatPercentage: 20,
   startDate: new Date(),
   
-  // Objectifs et activité - Changer la valeur par défaut à moderatelyActive (1.5)
+  // Objectifs et activité - Niveau d'activité fixé à modéré (1.5)
   goal: "weightLoss",
   nutritionalGoal: "progressiveFatLoss",
-  activityLevel: "moderatelyActive", // Valeur par défaut: modéré (1.5) au lieu de veryActive (1.725)
+  activityLevel: "moderatelyActive", // Valeur fixe: modérément actif (facteur 1.5)
   occupation: "sedentaryJob",
   
   // Préférences alimentaires
