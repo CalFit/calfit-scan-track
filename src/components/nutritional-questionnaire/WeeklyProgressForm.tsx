@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Card, 
@@ -32,16 +33,16 @@ import { useToast } from '@/hooks/use-toast';
 const progressFormSchema = z.object({
   weight: z.number().min(30, "Poids minimum 30kg").max(250, "Poids maximum 250kg"),
   measurements: z.object({
-    chest: z.number().min(0).optional(),
-    waist: z.number().min(0).optional(),
-    hips: z.number().min(0).optional(),
-    thighs: z.number().min(0).optional(),
-    arms: z.number().min(0).optional(),
+    chest: z.number().min(0),
+    waist: z.number().min(0),
+    hips: z.number().min(0),
+    thighs: z.number().min(0),
+    arms: z.number().min(0),
   }),
   performance: z.object({
-    benchPress: z.number().min(0).optional(),
-    squat: z.number().min(0).optional(),
-    deadlift: z.number().min(0).optional(),
+    benchPress: z.number().min(0),
+    squat: z.number().min(0),
+    deadlift: z.number().min(0),
   }),
   notes: z.string().optional()
 });
@@ -68,7 +69,7 @@ const WeeklyProgressForm: React.FC<WeeklyProgressFormProps> = ({
   
   // Utiliser les valeurs précédentes si disponibles, sinon utiliser des valeurs par défaut
   const defaultValues: ProgressFormValues = {
-    weight: lastProgress?.weight || currentProgram.maintenance.weight || 0,
+    weight: lastProgress?.weight || (currentProgram?.maintenance ? currentProgram?.maintenance?.calories / 15 : 70),
     measurements: {
       chest: lastProgress?.measurements.chest || 0,
       waist: lastProgress?.measurements.waist || 0,
@@ -114,8 +115,18 @@ const WeeklyProgressForm: React.FC<WeeklyProgressFormProps> = ({
       date: today,
       nextCheckDate,
       weight: data.weight,
-      measurements: data.measurements,
-      performance: data.performance,
+      measurements: {
+        chest: data.measurements.chest,
+        waist: data.measurements.waist,
+        hips: data.measurements.hips,
+        thighs: data.measurements.thighs,
+        arms: data.measurements.arms
+      },
+      performance: {
+        benchPress: data.performance.benchPress,
+        squat: data.performance.squat,
+        deadlift: data.performance.deadlift
+      },
       notes: data.notes || '',
       adjustedMacros // Peut être null si aucun ajustement n'a été calculé
     };

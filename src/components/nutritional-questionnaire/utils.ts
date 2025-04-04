@@ -1,4 +1,3 @@
-
 import { 
   QuestionnaireFormData, 
   CalculatedMacros, 
@@ -21,7 +20,9 @@ export const calculateLBM = (data: QuestionnaireFormData): number => {
     return 0;
   }
   
-  return currentWeight * (1 - bodyFatPercentage / 100);
+  // Formule exacte comme dans le CSV
+  const lbm = currentWeight * (1 - bodyFatPercentage / 100);
+  return parseFloat(lbm.toFixed(2)); // Arrondi à 2 décimales comme dans le CSV
 };
 
 // Calcul du métabolisme de base selon la formule de Harris-Benedict
@@ -33,11 +34,17 @@ export const calculateBMR = (data: QuestionnaireFormData): number => {
     return 0;
   }
   
+  let bmr: number;
+  
+  // Formule Harris-Benedict exacte comme dans le CSV
   if (sex === 'male') {
-    return 10 * currentWeight + 6.25 * height - 5 * age + 5;
+    bmr = 10 * currentWeight + 6.25 * height - 5 * age + 5;
   } else {
-    return 10 * currentWeight + 6.25 * height - 5 * age - 161;
+    bmr = 10 * currentWeight + 6.25 * height - 5 * age - 161;
   }
+  
+  // Retourne la valeur avec 2 décimales comme dans le CSV
+  return parseFloat(bmr.toFixed(2));
 };
 
 // Calcul des besoins caloriques pour le maintien (MMR)
@@ -46,13 +53,22 @@ export const calculateMaintenanceTDEE = (data: QuestionnaireFormData): number =>
   
   if (bmr <= 0) return 0;
   
-  // Utilisation du facteur d'activité direct plutôt que la combinaison d'activité et occupation
-  const activityFactor = activityMultipliers[data.activityLevel] || 1.2;
+  // Utilisation exacte des facteurs d'activité du CSV
+  const activityFactors = {
+    sedentary: 1.2,    // Peu ou pas d'exercice
+    lightlyActive: 1.375, // Exercice léger 1-3 jours/semaine
+    moderatelyActive: 1.5, // Correction à 1.5 comme dans le CSV
+    veryActive: 1.725, // Exercice intense 6-7 jours/semaine
+    superActive: 1.9   // Exercice très intense
+  };
+  
+  const activityFactor = activityFactors[data.activityLevel] || 1.5; // Par défaut, on utilise modéré (1.5)
   
   // Calcul du MMR (Maintenance Metabolic Rate)
   let mmr = bmr * activityFactor;
   
-  return Math.round(mmr);
+  // Retourne la valeur avec 2 décimales comme dans le CSV
+  return parseFloat(mmr.toFixed(2));
 };
 
 // Calcul des besoins caloriques pour l'objectif spécifique
@@ -70,25 +86,26 @@ export const calculateGoalTDEE = (data: QuestionnaireFormData): number => {
       goalTDEE = maintenanceTDEE;
       break;
     case 'bodyRecomposition':
-      // Recomposition = -300 kcal
+      // Recomposition corporelle: -300 kcal exactement comme dans le CSV
       goalTDEE = maintenanceTDEE - 300;
       break;
     case 'cleanBulk':
-      // Prise de masse = +300 kcal
+      // Prise de masse: +300 kcal exactement comme dans le CSV
       goalTDEE = maintenanceTDEE + 300;
       break;
     case 'perfectDeficit':
     case 'progressiveFatLoss':
-      // Perte de poids = -500 kcal
+      // Perte de poids: -500 kcal exactement comme dans le CSV
       goalTDEE = maintenanceTDEE - 500;
       break;
     default:
-      // Utiliser le multiplicateur si aucune des options spécifiques n'est sélectionnée
-      const nutritionalGoalFactor = nutritionalGoalMultipliers[data.nutritionalGoal] || 1;
-      goalTDEE = Math.round(maintenanceTDEE * nutritionalGoalFactor);
+      // Pour tout autre cas, utiliser le multiplicateur ou 1.0 par défaut
+      const nutritionalGoalFactor = nutritionalGoalMultipliers[data.nutritionalGoal] || 1.0;
+      goalTDEE = maintenanceTDEE * nutritionalGoalFactor;
   }
   
-  return Math.round(goalTDEE);
+  // Retourne la valeur avec 2 décimales comme dans le CSV
+  return parseFloat(goalTDEE.toFixed(2));
 };
 
 // Calcul des macronutriments pour le maintien selon la répartition CSV
@@ -100,7 +117,7 @@ export const calculateMaintenanceMacros = (data: QuestionnaireFormData): Calcula
     return { calories: 0, protein: 0, fat: 0, carbs: 0 };
   }
   
-  // Utilisation des ratios du fichier CSV pour la maintenance:
+  // Utilisation des ratios exacts du fichier CSV pour la maintenance:
   // Glucides = 57.5%, Protéines = 17.4%, Lipides = 25.2%
   const csvDistribution = {
     carbs: 0.575,
@@ -113,12 +130,17 @@ export const calculateMaintenanceMacros = (data: QuestionnaireFormData): Calcula
     macroDistributionByDiet[data.dietType] || csvDistribution : 
     csvDistribution;
   
-  // Calcul des grammes de protéines, lipides et glucides
-  const protein = Math.round((calories * distribution.protein) / 4); // 4 calories par gramme de protéines
-  const fat = Math.round((calories * distribution.fat) / 9);         // 9 calories par gramme de lipides
-  const carbs = Math.round((calories * distribution.carbs) / 4);     // 4 calories par gramme de glucides
+  // Calcul des grammes de protéines, lipides et glucides avec 2 décimales
+  const protein = parseFloat((calories * distribution.protein / 4).toFixed(1)); // 4 calories par gramme de protéines
+  const fat = parseFloat((calories * distribution.fat / 9).toFixed(1));         // 9 calories par gramme de lipides
+  const carbs = parseFloat((calories * distribution.carbs / 4).toFixed(1));     // 4 calories par gramme de glucides
   
-  return { calories, protein, fat, carbs };
+  return { 
+    calories: parseFloat(calories.toFixed(2)), 
+    protein, 
+    fat, 
+    carbs 
+  };
 };
 
 // Calcul des macronutriments pour l'objectif spécifique
@@ -130,7 +152,7 @@ export const calculateGoalMacros = (data: QuestionnaireFormData): CalculatedMacr
     return { calories: 0, protein: 0, fat: 0, carbs: 0 };
   }
   
-  // Utilisation des ratios du fichier CSV pour la maintenance comme base
+  // Utilisation des ratios exacts du fichier CSV pour la maintenance comme base
   const csvDistribution = {
     carbs: 0.575,
     protein: 0.174,
@@ -146,12 +168,17 @@ export const calculateGoalMacros = (data: QuestionnaireFormData): CalculatedMacr
     distribution = macroDistributionByDiet[data.dietType];
   }
   
-  // Calcul des grammes de protéines, lipides et glucides
-  const protein = Math.round((calories * distribution.protein) / 4); // 4 calories par gramme de protéines
-  const fat = Math.round((calories * distribution.fat) / 9);         // 9 calories par gramme de lipides
-  const carbs = Math.round((calories * distribution.carbs) / 4);     // 4 calories par gramme de glucides
+  // Calcul des grammes de protéines, lipides et glucides avec 2 décimales
+  const protein = parseFloat((calories * distribution.protein / 4).toFixed(1)); // 4 calories par gramme de protéines
+  const fat = parseFloat((calories * distribution.fat / 9).toFixed(1));         // 9 calories par gramme de lipides
+  const carbs = parseFloat((calories * distribution.carbs / 4).toFixed(1));     // 4 calories par gramme de glucides
   
-  return { calories, protein, fat, carbs };
+  return { 
+    calories: parseFloat(calories.toFixed(2)), 
+    protein, 
+    fat, 
+    carbs 
+  };
 };
 
 // Calcul du programme nutritionnel complet

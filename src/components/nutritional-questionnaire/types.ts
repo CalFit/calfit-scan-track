@@ -95,9 +95,9 @@ export interface NutritionalProgram {
 export const activityMultipliers = {
   sedentary: 1.2, // Peu ou pas d'exercice
   lightlyActive: 1.375, // Exercice léger 1-3 jours/semaine
-  moderatelyActive: 1.55, // Exercice modéré 3-5 jours/semaine
+  moderatelyActive: 1.5, // Corrigé à 1.5 comme dans le CSV
   veryActive: 1.725, // Exercice intense 6-7 jours/semaine
-  superActive: 1.9 // Exercice très intense, travail physique ou entraînement deux fois par jour
+  superActive: 1.9 // Exercice très intense ou entraînement deux fois par jour
 };
 
 // Multiplicateurs de niveau d'occupation (facteur supplémentaire)
@@ -142,5 +142,5 @@ export const macroDistributionByNutritionalGoal = {
   bodyRecomposition: { protein: 0.35, fat: 0.25, carbs: 0.4 },
   perfectDeficit: { protein: 0.4, fat: 0.3, carbs: 0.3 },
   progressiveFatLoss: { protein: 0.35, fat: 0.35, carbs: 0.3 },
-  maintenance: { protein: 0.174, fat: 0.252, carbs: 0.575 } // Ratios du CSV
+  maintenance: { protein: 0.174, fat: 0.252, carbs: 0.575 } // Ratios exacts du CSV
 };
