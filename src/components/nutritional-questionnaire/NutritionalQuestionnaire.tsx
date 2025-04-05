@@ -22,6 +22,7 @@ const NutritionalQuestionnaire: React.FC = () => {
   const [calculatedMacros, setCalculatedMacros] = useState<CalculatedMacros | null>(null);
   const [nutritionalProgram, setNutritionalProgram] = useState<NutritionalProgram | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [resultsCalculated, setResultsCalculated] = useState(false);
   
   // Hooks
   const { settings, updateSettings } = useUserSettings();
@@ -56,6 +57,7 @@ const NutritionalQuestionnaire: React.FC = () => {
   // Lorsque les valeurs calculées changent
   const handleMacrosChange = (macros: CalculatedMacros) => {
     setCalculatedMacros(macros);
+    setResultsCalculated(true);
   };
   
   // Lorsque les macros sont ajustées dans le suivi hebdomadaire
@@ -69,6 +71,21 @@ const NutritionalQuestionnaire: React.FC = () => {
         goal: macros
       });
     }
+  };
+  
+  // Fonction pour refaire le questionnaire
+  const handleRestartQuestionnaire = () => {
+    form.reset(defaultQuestionnaireValues);
+    setStep(0);
+    setResultsCalculated(false);
+    setCalculatedMacros(null);
+    setNutritionalProgram(null);
+    
+    toast({
+      title: "Questionnaire réinitialisé",
+      description: "Toutes les données ont été réinitialisées.",
+      duration: 3000,
+    });
   };
   
   // Fonction pour passer à l'étape suivante
@@ -134,11 +151,13 @@ const NutritionalQuestionnaire: React.FC = () => {
   return (
     <div className="pb-4">
       {/* En-tête avec indicateur de progression */}
-      <QuestionnaireHeader 
-        currentStep={step} 
-        totalSteps={steps.length} 
-        stepNames={steps} 
-      />
+      {!resultsCalculated && (
+        <QuestionnaireHeader 
+          currentStep={step} 
+          totalSteps={steps.length} 
+          stepNames={steps} 
+        />
+      )}
       
       {/* Contenu du formulaire */}
       <Form {...form}>
@@ -159,18 +178,34 @@ const NutritionalQuestionnaire: React.FC = () => {
                 nutritionalProgram={nutritionalProgram}
                 onMacrosChange={handleMacrosChange}
                 onMacrosAdjustment={handleMacrosAdjustment}
+                resultsCalculated={resultsCalculated}
               />
             </motion.div>
           </AnimatePresence>
           
           {/* Boutons de navigation */}
-          <QuestionnaireNavigation
-            currentStep={step}
-            totalSteps={steps.length}
-            onPrevStep={onPrevStep}
-            onNextStep={onNextStep}
-            isLastStep={step === steps.length - 1}
-          />
+          {!resultsCalculated && (
+            <QuestionnaireNavigation
+              currentStep={step}
+              totalSteps={steps.length}
+              onPrevStep={onPrevStep}
+              onNextStep={onNextStep}
+              isLastStep={step === steps.length - 1}
+            />
+          )}
+          
+          {/* Bouton pour refaire le questionnaire (visible seulement après calcul) */}
+          {resultsCalculated && (
+            <div className="flex justify-center pt-4">
+              <button
+                type="button"
+                onClick={handleRestartQuestionnaire}
+                className="px-6 py-2 bg-calfit-blue text-white rounded-md hover:bg-calfit-blue/80 transition-colors"
+              >
+                Refaire le questionnaire
+              </button>
+            </div>
+          )}
         </form>
       </Form>
       

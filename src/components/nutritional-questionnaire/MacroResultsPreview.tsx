@@ -12,16 +12,27 @@ import { motion } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface MacroResultsPreviewProps {
   formData: QuestionnaireFormData;
   onMacrosChange: (macros: CalculatedMacros) => void;
+  customizable?: boolean;
 }
 
-export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formData, onMacrosChange }) => {
+export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ 
+  formData, 
+  onMacrosChange,
+  customizable = false 
+}) => {
   const [nutritionalProgram, setNutritionalProgram] = useState<NutritionalProgram | null>(null);
   const [loading, setLoading] = useState(true);
+  const [customMacros, setCustomMacros] = useState<CalculatedMacros | null>(null);
+  const [editMode, setEditMode] = useState(false);
   const isMobile = useIsMobile();
+  const { toast } = useToast();
   
   // Calculer les macros chaque fois que les données du formulaire changent
   useEffect(() => {
@@ -31,6 +42,11 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
     try {
       const program = calculateNutritionalProgram(formData);
       setNutritionalProgram(program);
+      
+      // Initialiser les macros personnalisées avec les valeurs calculées
+      if (!customMacros) {
+        setCustomMacros(program.goal);
+      }
       
       // Notifier le parent des nouvelles valeurs macro calculées
       if (program && program.goal) {
@@ -47,6 +63,79 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
   // Fonction pour formater les nombres avec des espaces pour les milliers
   const formatNumber = (num: number): string => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  };
+  
+  // Fonction pour mettre à jour les macros personnalisées
+  const handleMacroChange = (type: 'calories' | 'protein' | 'fat' | 'carbs', value: number) => {
+    if (!customMacros) return;
+    
+    // Créer une copie des macros actuelles
+    const newMacros = { ...customMacros };
+    
+    // Mettre à jour la valeur spécifique
+    newMacros[type] = value;
+    
+    // Si les calories sont modifiées, ajuster la répartition des macronutriments proportionnellement
+    if (type === 'calories') {
+      const ratio = value / customMacros.calories;
+      newMacros.protein = Math.round(customMacros.protein * ratio);
+      newMacros.fat = Math.round(customMacros.fat * ratio);
+      newMacros.carbs = Math.round(customMacros.carbs * ratio);
+    } 
+    // Si un macronutriment est modifié, ajuster les autres proportionnellement
+    else {
+      // Calculer les calories des macros
+      const proteinCalories = newMacros.protein * 4;
+      const fatCalories = newMacros.fat * 9;
+      const carbsCalories = newMacros.carbs * 4;
+      
+      // Mettre à jour les calories totales
+      newMacros.calories = proteinCalories + fatCalories + carbsCalories;
+    }
+    
+    setCustomMacros(newMacros);
+  };
+  
+  // Fonction pour calculer la répartition des macros en pourcentage
+  const calculateMacroDistribution = (macros: CalculatedMacros) => {
+    const totalCalories = macros.calories > 0 ? macros.calories : 1; // Éviter division par zéro
+    const proteinCalories = macros.protein * 4;
+    const fatCalories = macros.fat * 9;
+    const carbsCalories = macros.carbs * 4;
+    
+    return {
+      protein: Math.round((proteinCalories / totalCalories) * 100),
+      fat: Math.round((fatCalories / totalCalories) * 100),
+      carbs: Math.round((carbsCalories / totalCalories) * 100)
+    };
+  };
+  
+  // Fonction pour appliquer les modifications personnalisées
+  const applyCustomMacros = () => {
+    if (customMacros) {
+      onMacrosChange(customMacros);
+      
+      setEditMode(false);
+      
+      toast({
+        title: "Modifications appliquées",
+        description: "Vos objectifs nutritionnels personnalisés ont été appliqués.",
+        duration: 3000,
+      });
+    }
+  };
+  
+  // Fonction pour réinitialiser les macros personnalisés
+  const resetCustomMacros = () => {
+    if (nutritionalProgram) {
+      setCustomMacros(nutritionalProgram.goal);
+      
+      toast({
+        title: "Macros réinitialisées",
+        description: "Les valeurs ont été réinitialisées aux calculs originaux.",
+        duration: 3000,
+      });
+    }
   };
   
   if (loading) {
@@ -73,6 +162,10 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
   const { maintenance, goal, macroDistribution, lbm, bmr } = nutritionalProgram;
   const initialProgress = generateInitialWeeklyProgress(formData);
   
+  // Utiliser les macros personnalisées si disponibles, sinon utiliser celles calculées
+  const displayMacros = customMacros || goal;
+  const displayDistribution = calculateMacroDistribution(displayMacros);
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -81,7 +174,11 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
       transition={{ duration: 0.3 }}
       className="space-y-6"
     >
-      <h2 className="text-xl font-semibold">Aperçu de votre programme nutritionnel</h2>
+      <h2 className="text-xl font-semibold">
+        {customizable 
+          ? "Votre programme nutritionnel personnalisé" 
+          : "Aperçu de votre programme nutritionnel"}
+      </h2>
       
       {/* Section des informations personnelles */}
       <Card className="bg-card border-0 shadow-sm">
@@ -165,10 +262,43 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
       
       {/* Section du programme nutritionnel */}
       <Card className="bg-card border-0 shadow-sm">
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-2 flex flex-row justify-between items-center">
           <CardTitle className="text-lg font-semibold text-calfit-blue">
             Programme : {getNutritionalGoalLabel(formData.nutritionalGoal)}
           </CardTitle>
+          {customizable && (
+            <div>
+              {!editMode ? (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setEditMode(true)}
+                  className="text-calfit-blue border-calfit-blue hover:bg-calfit-blue hover:text-white"
+                >
+                  Personnaliser
+                </Button>
+              ) : (
+                <div className="flex space-x-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={resetCustomMacros}
+                    className="text-gray-500 border-gray-300"
+                  >
+                    Réinitialiser
+                  </Button>
+                  <Button 
+                    variant="default" 
+                    size="sm"
+                    onClick={applyCustomMacros}
+                    className="bg-calfit-blue hover:bg-calfit-blue/80"
+                  >
+                    Appliquer
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -187,16 +317,92 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
                   <tr>
                     <td className="border p-2 font-medium">Calories journalières</td>
                     <td className="border p-2 text-right">{formatNumber(maintenance.calories)} kcal</td>
-                    <td className="border p-2 text-right font-semibold">{formatNumber(goal.calories)} kcal</td>
+                    <td className="border p-2 text-right font-semibold">{formatNumber(displayMacros.calories)} kcal</td>
                     <td className="border p-2 text-right">
-                      <span className={goal.calories >= maintenance.calories ? "text-green-500" : "text-red-500"}>
-                        {goal.calories >= maintenance.calories ? '+' : ''}{formatNumber(goal.calories - maintenance.calories)} kcal
+                      <span className={displayMacros.calories >= maintenance.calories ? "text-green-500" : "text-red-500"}>
+                        {displayMacros.calories >= maintenance.calories ? '+' : ''}{formatNumber(displayMacros.calories - maintenance.calories)} kcal
                       </span>
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
+            
+            {/* Section d'édition personnalisée - uniquement visible en mode édition */}
+            {editMode && customizable && customMacros && (
+              <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-md space-y-6 my-4">
+                <h3 className="text-md font-semibold mb-4">Personnalisation des objectifs</h3>
+                
+                <div className="space-y-6">
+                  {/* Calories */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <label className="text-sm font-medium">Calories: {customMacros.calories} kcal</label>
+                      <span className="text-xs text-calfit-blue">
+                        Différence: {customMacros.calories - maintenance.calories > 0 ? '+' : ''}
+                        {customMacros.calories - maintenance.calories} kcal
+                      </span>
+                    </div>
+                    <Slider
+                      value={[customMacros.calories]}
+                      min={Math.max(1000, Math.round(maintenance.calories * 0.65))}
+                      max={Math.round(maintenance.calories * 1.35)}
+                      step={10}
+                      onValueChange={(values) => handleMacroChange('calories', values[0])}
+                      className="my-4"
+                    />
+                  </div>
+                  
+                  {/* Protéines */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <label className="text-sm font-medium text-[#E74C3C]">Protéines: {customMacros.protein} g</label>
+                      <span className="text-xs">{Math.round((customMacros.protein * 4 / customMacros.calories) * 100)}% des calories</span>
+                    </div>
+                    <Slider
+                      value={[customMacros.protein]}
+                      min={Math.max(40, Math.round(customMacros.protein * 0.7))}
+                      max={Math.round(customMacros.protein * 1.3)}
+                      step={1}
+                      onValueChange={(values) => handleMacroChange('protein', values[0])}
+                      className="my-4"
+                    />
+                  </div>
+                  
+                  {/* Lipides */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <label className="text-sm font-medium text-[#F1C40F]">Lipides: {customMacros.fat} g</label>
+                      <span className="text-xs">{Math.round((customMacros.fat * 9 / customMacros.calories) * 100)}% des calories</span>
+                    </div>
+                    <Slider
+                      value={[customMacros.fat]}
+                      min={Math.max(20, Math.round(customMacros.fat * 0.7))}
+                      max={Math.round(customMacros.fat * 1.3)}
+                      step={1}
+                      onValueChange={(values) => handleMacroChange('fat', values[0])}
+                      className="my-4"
+                    />
+                  </div>
+                  
+                  {/* Glucides */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <label className="text-sm font-medium text-[#3498DB]">Glucides: {customMacros.carbs} g</label>
+                      <span className="text-xs">{Math.round((customMacros.carbs * 4 / customMacros.calories) * 100)}% des calories</span>
+                    </div>
+                    <Slider
+                      value={[customMacros.carbs]}
+                      min={Math.max(50, Math.round(customMacros.carbs * 0.7))}
+                      max={Math.round(customMacros.carbs * 1.3)}
+                      step={1}
+                      onValueChange={(values) => handleMacroChange('carbs', values[0])}
+                      className="my-4"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
             
             {/* Tableau des macronutriments */}
             <div className="overflow-x-auto">
@@ -213,24 +419,24 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
                 <tbody>
                   <tr>
                     <td className="border p-2 font-medium text-[#E74C3C]">Protéines</td>
-                    <td className="border p-2 text-right">{macroDistribution.protein}%</td>
+                    <td className="border p-2 text-right">{displayDistribution.protein}%</td>
                     <td className="border p-2 text-right">{maintenance.protein} g</td>
-                    <td className="border p-2 text-right font-semibold">{goal.protein} g</td>
-                    <td className="border p-2 text-right">{goal.protein * 4} kcal</td>
+                    <td className="border p-2 text-right font-semibold">{displayMacros.protein} g</td>
+                    <td className="border p-2 text-right">{displayMacros.protein * 4} kcal</td>
                   </tr>
                   <tr>
                     <td className="border p-2 font-medium text-[#F1C40F]">Lipides</td>
-                    <td className="border p-2 text-right">{macroDistribution.fat}%</td>
+                    <td className="border p-2 text-right">{displayDistribution.fat}%</td>
                     <td className="border p-2 text-right">{maintenance.fat} g</td>
-                    <td className="border p-2 text-right font-semibold">{goal.fat} g</td>
-                    <td className="border p-2 text-right">{goal.fat * 9} kcal</td>
+                    <td className="border p-2 text-right font-semibold">{displayMacros.fat} g</td>
+                    <td className="border p-2 text-right">{displayMacros.fat * 9} kcal</td>
                   </tr>
                   <tr>
                     <td className="border p-2 font-medium text-[#3498DB]">Glucides</td>
-                    <td className="border p-2 text-right">{macroDistribution.carbs}%</td>
+                    <td className="border p-2 text-right">{displayDistribution.carbs}%</td>
                     <td className="border p-2 text-right">{maintenance.carbs} g</td>
-                    <td className="border p-2 text-right font-semibold">{goal.carbs} g</td>
-                    <td className="border p-2 text-right">{goal.carbs * 4} kcal</td>
+                    <td className="border p-2 text-right font-semibold">{displayMacros.carbs} g</td>
+                    <td className="border p-2 text-right">{displayMacros.carbs * 4} kcal</td>
                   </tr>
                 </tbody>
               </table>
@@ -253,22 +459,22 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
               <h3 className="text-sm font-semibold mb-2">Répartition en grammes</h3>
               <MacroProgressBar 
                 label="Protéines" 
-                current={goal.protein} 
-                target={goal.protein} 
+                current={displayMacros.protein} 
+                target={displayMacros.protein} 
                 color="bg-[#E74C3C]" 
                 unit="g" 
               />
               <MacroProgressBar 
                 label="Lipides" 
-                current={goal.fat} 
-                target={goal.fat} 
+                current={displayMacros.fat} 
+                target={displayMacros.fat} 
                 color="bg-[#F1C40F]" 
                 unit="g" 
               />
               <MacroProgressBar 
                 label="Glucides" 
-                current={goal.carbs} 
-                target={goal.carbs} 
+                current={displayMacros.carbs} 
+                target={displayMacros.carbs} 
                 color="bg-[#3498DB]" 
                 unit="g" 
               />
@@ -281,8 +487,8 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
                 <div className="relative">
                   <div className="w-full h-full">
                     <CircularProgressbar
-                      value={macroDistribution.protein}
-                      text={`${macroDistribution.protein}%`}
+                      value={displayDistribution.protein}
+                      text={`${displayDistribution.protein}%`}
                       styles={buildStyles({
                         rotation: 0,
                         strokeLinecap: 'butt',
@@ -296,10 +502,10 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
                   </div>
                   <div className="absolute top-0 left-0 w-full h-full">
                     <CircularProgressbar
-                      value={macroDistribution.fat}
+                      value={displayDistribution.fat}
                       text=""
                       styles={buildStyles({
-                        rotation: macroDistribution.protein * 3.6,
+                        rotation: displayDistribution.protein * 3.6,
                         strokeLinecap: 'butt',
                         pathTransitionDuration: 0.5,
                         pathColor: '#F1C40F',
@@ -309,10 +515,10 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
                   </div>
                   <div className="absolute top-0 left-0 w-full h-full">
                     <CircularProgressbar
-                      value={macroDistribution.carbs}
+                      value={displayDistribution.carbs}
                       text=""
                       styles={buildStyles({
-                        rotation: (macroDistribution.protein + macroDistribution.fat) * 3.6,
+                        rotation: (displayDistribution.protein + displayDistribution.fat) * 3.6,
                         strokeLinecap: 'butt',
                         pathTransitionDuration: 0.5,
                         pathColor: '#3498DB',
@@ -329,15 +535,15 @@ export const MacroResultsPreview: React.FC<MacroResultsPreviewProps> = ({ formDa
           <div className="flex flex-wrap justify-center gap-4 mt-4">
             <div className="flex items-center">
               <div className="w-4 h-4 bg-[#E74C3C] rounded-full mr-2"></div>
-              <span className="text-sm">Protéines: {macroDistribution.protein}%</span>
+              <span className="text-sm">Protéines: {displayDistribution.protein}%</span>
             </div>
             <div className="flex items-center">
               <div className="w-4 h-4 bg-[#F1C40F] rounded-full mr-2"></div>
-              <span className="text-sm">Lipides: {macroDistribution.fat}%</span>
+              <span className="text-sm">Lipides: {displayDistribution.fat}%</span>
             </div>
             <div className="flex items-center">
               <div className="w-4 h-4 bg-[#3498DB] rounded-full mr-2"></div>
-              <span className="text-sm">Glucides: {macroDistribution.carbs}%</span>
+              <span className="text-sm">Glucides: {displayDistribution.carbs}%</span>
             </div>
           </div>
         </CardContent>

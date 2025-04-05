@@ -13,6 +13,7 @@ interface StepRendererProps {
   nutritionalProgram: NutritionalProgram | null;
   onMacrosChange: (macros: CalculatedMacros) => void;
   onMacrosAdjustment: (macros: CalculatedMacros) => void;
+  resultsCalculated?: boolean;
 }
 
 const StepRenderer: React.FC<StepRendererProps> = ({
@@ -21,8 +22,19 @@ const StepRenderer: React.FC<StepRendererProps> = ({
   formValues,
   nutritionalProgram,
   onMacrosChange,
-  onMacrosAdjustment
+  onMacrosAdjustment,
+  resultsCalculated = false
 }) => {
+  // Si les résultats ont été calculés, afficher directement la page de résultats
+  if (resultsCalculated) {
+    return <MacroResultsPreview 
+             formData={formValues} 
+             onMacrosChange={onMacrosChange} 
+             customizable={true} 
+           />;
+  }
+
+  // Sinon, afficher l'étape correspondant au step actuel
   switch (step) {
     case 0:
       return <PersonalInfoStep form={form} />;
@@ -33,7 +45,11 @@ const StepRenderer: React.FC<StepRendererProps> = ({
     case 3:
       return <AllergiesPreferencesStep form={form} />;
     case 4:
-      return <MacroResultsPreview formData={formValues} onMacrosChange={onMacrosChange} />;
+      return <MacroResultsPreview 
+               formData={formValues} 
+               onMacrosChange={onMacrosChange} 
+               customizable={false}
+             />;
     case 5:
       return nutritionalProgram ? (
         <ProgressTracker 

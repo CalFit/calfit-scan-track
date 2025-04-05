@@ -38,6 +38,7 @@ export function useFoodForm(initialBarcode: string | null) {
   return {
     foodData,
     handleChange,
-    validateForm
+    validateForm,
+    setFoodData
   };
 }
