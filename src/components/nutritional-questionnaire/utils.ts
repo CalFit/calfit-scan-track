@@ -1,4 +1,3 @@
-
 import { 
   QuestionnaireFormData, 
   CalculatedMacros, 
@@ -278,90 +277,6 @@ export const calculateMacroAdjustments = (
   
   // Sinon, tout va bien, on garde les mêmes macros
   return currentProgram.goal;
-};
-
-// Liste des allergènes communs pour les options de sélection
-export const commonAllergies = [
-  "Lactose", "Gluten", "Arachides", "Fruits à coque", 
-  "Œufs", "Poisson", "Crustacés", "Soja", "Sésame"
-];
-
-// Liste des préférences alimentaires pour les options de sélection
-export const commonFoodPreferences = [
-  "Viande rouge", "Volaille", "Poisson", "Fruits de mer", 
-  "Produits laitiers", "Légumes", "Fruits", "Céréales complètes", 
-  "Légumineuses", "Noix et graines"
-];
-
-// Traduction des objectifs nutritionnels pour l'affichage
-export const nutritionalGoalLabels = {
-  cleanBulk: "Prise de muscle propre",
-  bodyRecomposition: "Recomposition corporelle",
-  perfectDeficit: "Création du déficit parfait",
-  progressiveFatLoss: "Perte de gras progressive",
-  maintenance: "Maintien du poids"
-};
-
-// Obtenir le nom affiché pour un objectif nutritionnel
-export const getNutritionalGoalLabel = (goal: string): string => {
-  return nutritionalGoalLabels[goal as keyof typeof nutritionalGoalLabels] || goal;
-};
-
-// Calculer les calories nécessaires pour gagner ou perdre 1kg de poids
-export const calculateCaloriesForWeightChange = (
-  direction: 'gain' | 'loss', 
-  durationWeeks: number = 4
-): number => {
-  // 1kg de graisse = environ 7700 calories
-  const caloriesPerKg = 7700;
-  const daysInPeriod = durationWeeks * 7;
-  
-  // Calcul des calories supplémentaires par jour pour atteindre 1kg dans la durée spécifiée
-  const caloriesPerDay = caloriesPerKg / daysInPeriod;
-  
-  return direction === 'gain' ? caloriesPerDay : -caloriesPerDay;
-};
-
-// Générer un plan nutritionnel progressif sur plusieurs semaines
-export const generateProgressivePlan = (
-  initialProgram: NutritionalProgram, 
-  durationWeeks: number = 12,
-  targetWeightChange: number = 0 // en kg, positif pour gain, négatif pour perte
-): NutritionalProgram[] => {
-  const weeklyPlans: NutritionalProgram[] = [initialProgram];
-  
-  if (targetWeightChange === 0 || durationWeeks <= 1) {
-    return weeklyPlans;
-  }
-  
-  // Calculer l'ajustement calorique hebdomadaire nécessaire
-  const direction = targetWeightChange > 0 ? 'gain' : 'loss';
-  const absoluteTargetChange = Math.abs(targetWeightChange);
-  const weeklyCalorieAdjustment = calculateCaloriesForWeightChange(direction, durationWeeks);
-  
-  // Générer le plan pour chaque semaine
-  for (let week = 1; week < durationWeeks; week++) {
-    const previousPlan = weeklyPlans[week - 1];
-    const newCalories = Math.round(previousPlan.goal.calories + weeklyCalorieAdjustment);
-    
-    // Calculer les nouvelles macros basées sur la même distribution
-    const newMacros: CalculatedMacros = {
-      calories: newCalories,
-      protein: Math.round((newCalories * previousPlan.macroDistribution.protein / 100) / 4),
-      fat: Math.round((newCalories * previousPlan.macroDistribution.fat / 100) / 9),
-      carbs: Math.round((newCalories * previousPlan.macroDistribution.carbs / 100) / 4),
-    };
-    
-    // Créer le nouveau programme pour cette semaine
-    const newProgram: NutritionalProgram = {
-      ...previousPlan,
-      goal: newMacros
-    };
-    
-    weeklyPlans.push(newProgram);
-  }
-  
-  return weeklyPlans;
 };
 
 // Liste des allergènes communs pour les options de sélection
