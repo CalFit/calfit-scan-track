@@ -1,4 +1,6 @@
+
 import * as z from "zod";
+import { QuestionnaireFormData } from './types';
 
 // Define the schema for the questionnaire form
 export const nutritionalQuestionnaireSchema = z.object({
