@@ -1,7 +1,9 @@
+
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QuestionnaireFormData, CalculatedMacros, NutritionalProgram } from './types';
 import { calculateNutritionalProgram, getNutritionalGoalLabel, generateInitialWeeklyProgress } from './utils';
+import CalorieCalculationPreview from './CalorieCalculationPreview';
 import MacroProgressBar from '@/components/ui/MacroProgressBar';
 import { Progress } from "@/components/ui/progress";
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';

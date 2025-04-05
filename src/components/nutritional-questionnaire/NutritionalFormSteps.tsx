@@ -1,353 +1,58 @@
+// Importe uniquement ce qui est nécessaire pour éviter l'erreur de date-picker
+import React, { useEffect, useState } from 'react';
+import { 
+  FormField, FormItem, FormLabel, FormControl, 
+  FormMessage, FormDescription
+} from '@/components/ui/form';
+import { 
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button'; // Ajout de l'import manquant
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Separator } from '@/components/ui/separator';
+import { 
+  commonAllergies, commonFoodPreferences, 
+  nutritionalGoalLabels
+} from './utils';
+import { 
+  Sex, Goal, ActivityLevel, Occupation, 
+  DietType, NutritionalGoal 
+} from './types';
+import CleanBulkOptions from './CleanBulkOptions';
 
-import React from 'react';
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "lucide-react";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { fr } from 'date-fns/locale';
-import { DatePicker } from "@/components/ui/date-picker";
-import { QuestionnaireFormData } from './types';
-import { UseFormReturn } from 'react-hook-form';
+// Import DatePicker from correct location
+import { DatePicker } from '@/components/ui/date-picker';
 
-// Composant pour l'étape des informations personnelles
-export const PersonalInfoStep = ({ form }: { form: UseFormReturn<QuestionnaireFormData> }) => {
+export const PersonalInfoStep: React.FC<{ form: any }> = ({ form }) => {
   return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Informations personnelles</h2>
-        
+    <div className="space-y-4">
+      <h2 className="text-lg font-semibold mb-2">Informations Personnelles</h2>
+      
+      <FormField
+        control={form.control}
+        name="name"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Nom</FormLabel>
+            <FormControl>
+              <Input placeholder="Votre nom" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormField
           control={form.control}
-          name="name"
+          name="age"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nom complet</FormLabel>
+              <FormLabel>Âge</FormLabel>
               <FormControl>
-                <Input placeholder="Votre nom" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="age"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Âge</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number" 
-                    placeholder="Votre âge" 
-                    {...field}
-                    onChange={(e) => field.onChange(Number(e.target.value) || 0)}
-                    value={field.value || ''}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="sex"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Sexe</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionnez votre sexe" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="male">Homme</SelectItem>
-                    <SelectItem value="female">Femme</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="height"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Taille (cm)</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number" 
-                    placeholder="Votre taille en cm" 
-                    {...field}
-                    onChange={(e) => field.onChange(Number(e.target.value) || 0)}
-                    value={field.value || ''}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="currentWeight"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Poids actuel (kg)</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number"
-                    placeholder="Votre poids actuel en kg" 
-                    {...field}
-                    onChange={(e) => field.onChange(Number(e.target.value) || 0)}
-                    value={field.value || ''}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="targetWeight"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Poids cible (kg)</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number"
-                    placeholder="Votre poids cible en kg" 
-                    {...field}
-                    onChange={(e) => field.onChange(Number(e.target.value) || 0)}
-                    value={field.value || ''}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="bodyFatPercentage"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Pourcentage de graisse corporelle (%)</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number"
-                    placeholder="Votre % de graisse corporelle"
-                    {...field}
-                    onChange={(e) => field.onChange(Number(e.target.value) || 0)}
-                    value={field.value || ''}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        
-        <FormField
-          control={form.control}
-          name="startDate"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Date de début</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP", { locale: fr })
-                      ) : (
-                        <span>Choisir une date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <DatePicker
-                    mode="single"
-                    locale={fr}
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={false}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-    </div>
-  );
-};
-
-// Composant pour l'étape des objectifs et activité
-export const GoalsActivityStep = ({ form }: { form: UseFormReturn<QuestionnaireFormData> }) => {
-  return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Objectifs et niveau d'activité</h2>
-        
-        <FormField
-          control={form.control}
-          name="goal"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Objectif principal</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionnez votre objectif" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="weightLoss">Perte de poids</SelectItem>
-                  <SelectItem value="maintenance">Maintien du poids</SelectItem>
-                  <SelectItem value="weightGain">Prise de poids</SelectItem>
-                  <SelectItem value="performance">Performance sportive</SelectItem>
-                  <SelectItem value="generalHealth">Santé générale</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="nutritionalGoal"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Objectif nutritionnel spécifique</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionnez votre objectif nutritionnel" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="cleanBulk">Prise de muscle propre</SelectItem>
-                  <SelectItem value="bodyRecomposition">Recomposition corporelle</SelectItem>
-                  <SelectItem value="perfectDeficit">Création du déficit parfait</SelectItem>
-                  <SelectItem value="progressiveFatLoss">Perte de gras progressive</SelectItem>
-                  <SelectItem value="maintenance">Maintien du poids</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        {/* Information sur le niveau d'activité fixe */}
-        <div className="p-4 bg-calfit-blue/10 rounded-md">
-          <h3 className="font-medium mb-2">Niveau d'activité</h3>
-          <p>Pour des calculs précis, nous utilisons un niveau d'activité standard 'Modéré (×1.5)' correspondant à une activité physique normale.</p>
-        </div>
-        
-        <FormField
-          control={form.control}
-          name="occupation"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Type d'occupation</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionnez votre type d'occupation" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="sedentaryJob">Travail sédentaire (bureau)</SelectItem>
-                  <SelectItem value="moderateJob">Travail modéré (mobilité)</SelectItem>
-                  <SelectItem value="physicalJob">Travail physique</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-    </div>
-  );
-};
-
-// Composant pour l'étape des préférences alimentaires
-export const DietPreferencesStep = ({ form }: { form: UseFormReturn<QuestionnaireFormData> }) => {
-  return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Préférences alimentaires</h2>
-        
-        <FormField
-          control={form.control}
-          name="dietType"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Type de régime</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionnez votre type de régime" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="balanced">Équilibré</SelectItem>
-                  <SelectItem value="highProtein">Riche en protéines</SelectItem>
-                  <SelectItem value="keto">Kéto</SelectItem>
-                  <SelectItem value="vegetarian">Végétarien</SelectItem>
-                  <SelectItem value="vegan">Végan</SelectItem>
-                  <SelectItem value="mediterranean">Méditerranéen</SelectItem>
-                  <SelectItem value="other">Autre</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="mealsPerDay"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nombre de repas par jour</FormLabel>
-              <FormControl>
-                <Input 
-                  type="number"
-                  placeholder="Nombre de repas"
-                  {...field}
-                  onChange={(e) => field.onChange(Number(e.target.value) || 0)}
-                  value={field.value || ''}
-                />
+                <Input type="number" placeholder="Votre âge" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -356,187 +61,373 @@ export const DietPreferencesStep = ({ form }: { form: UseFormReturn<Questionnair
         
         <FormField
           control={form.control}
-          name="mealPreferences"
+          name="sex"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Préférences de repas</FormLabel>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                <div>
-                  <FormField
-                    control={form.control}
-                    name="mealPreferences.breakfast"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm font-normal">
-                          Petit-déjeuner
-                        </FormLabel>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div>
-                  <FormField
-                    control={form.control}
-                    name="mealPreferences.morningSnack"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm font-normal">
-                          Collation du matin
-                        </FormLabel>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div>
-                  <FormField
-                    control={form.control}
-                    name="mealPreferences.lunch"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm font-normal">
-                          Déjeuner
-                        </FormLabel>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div>
-                  <FormField
-                    control={form.control}
-                    name="mealPreferences.afternoonSnack"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm font-normal">
-                          Collation de l'après-midi
-                        </FormLabel>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div>
-                  <FormField
-                    control={form.control}
-                    name="mealPreferences.dinner"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm font-normal">
-                          Dîner
-                        </FormLabel>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div>
-                  <FormField
-                    control={form.control}
-                    name="mealPreferences.eveningSnack"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm font-normal">
-                          Collation du soir
-                        </FormLabel>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
+              <FormLabel>Sexe</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionnez votre sexe" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="male">Homme</SelectItem>
+                  <SelectItem value="female">Femme</SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
         />
       </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FormField
+          control={form.control}
+          name="height"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Taille (cm)</FormLabel>
+              <FormControl>
+                <Input type="number" placeholder="Votre taille en cm" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="currentWeight"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Poids actuel (kg)</FormLabel>
+              <FormControl>
+                <Input type="number" placeholder="Votre poids actuel en kg" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FormField
+          control={form.control}
+          name="targetWeight"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Poids cible (kg)</FormLabel>
+              <FormControl>
+                <Input type="number" placeholder="Votre poids cible en kg" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="bodyFatPercentage"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Pourcentage de graisse corporelle (%)</FormLabel>
+              <FormControl>
+                <Input type="number" placeholder="Votre % de graisse corporelle" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+      
+      <FormField
+        control={form.control}
+        name="startDate"
+        render={({ field }) => (
+          <FormItem className="flex flex-col space-y-1.5">
+            <FormLabel>Date de début</FormLabel>
+            <FormControl>
+              <DatePicker
+                onSelect={field.onChange}
+                defaultMonth={field.value}
+                mode="single"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </div>
   );
 };
 
-// Composant pour l'étape des allergies et préférences
-export const AllergiesPreferencesStep = ({ form }: { form: UseFormReturn<QuestionnaireFormData> }) => {
+export const GoalsActivityStep: React.FC<{ form: any }> = ({ form }) => {
+  const [showCleanBulkOptions, setShowCleanBulkOptions] = useState(false);
+  const nutritionalGoal = form.watch('nutritionalGoal');
+  
+  useEffect(() => {
+    setShowCleanBulkOptions(nutritionalGoal === 'cleanBulk');
+  }, [nutritionalGoal]);
+
   return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Allergies et préférences</h2>
-        
-        <FormField
-          control={form.control}
-          name="allergies"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Allergies</FormLabel>
-              <Textarea
-                placeholder="Entrez vos allergies, séparées par des virgules"
-                {...field}
-              />
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="foodPreferences"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Préférences alimentaires</FormLabel>
-              <Textarea
-                placeholder="Entrez vos préférences alimentaires, séparées par des virgules"
-                {...field}
-              />
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <FormField
-          control={form.control}
-          name="dietaryHabits"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Habitudes alimentaires</FormLabel>
+    <div className="space-y-4">
+      <h2 className="text-lg font-semibold mb-2">Objectifs et Activité Physique</h2>
+      
+      <FormField
+        control={form.control}
+        name="goal"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Objectif principal</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionnez un objectif" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="weightLoss">Perte de poids</SelectItem>
+                <SelectItem value="maintenance">Maintien du poids</SelectItem>
+                <SelectItem value="weightGain">Gain de poids/muscle</SelectItem>
+                <SelectItem value="performance">Performance sportive</SelectItem>
+                <SelectItem value="generalHealth">Santé générale</SelectItem>
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      
+      <FormField
+        control={form.control}
+        name="nutritionalGoal"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Objectif nutritionnel spécifique</FormLabel>
+            <Select onValueChange={(value) => {
+              field.onChange(value);
+              setShowCleanBulkOptions(value === 'cleanBulk');
+            }} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionnez un programme" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {Object.entries(nutritionalGoalLabels).map(([key, label]) => (
+                  <SelectItem key={key} value={key}>{label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      
+      {/* Clean Bulk Options (new component) */}
+      <CleanBulkOptions form={form} visible={showCleanBulkOptions} />
+      
+      <FormField
+        control={form.control}
+        name="activityLevel"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Niveau d'activité physique</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionnez votre niveau d'activité" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="moderatelyActive">Modérément actif</SelectItem>
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      
+      <FormField
+        control={form.control}
+        name="occupation"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Type d'occupation</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionnez votre type d'occupation" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="sedentaryJob">Travail sédentaire</SelectItem>
+                <SelectItem value="moderateJob">Travail modéré</SelectItem>
+                <SelectItem value="physicalJob">Travail physique</SelectItem>
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      
+      <div className="text-sm text-muted-foreground italic my-2">
+        <p>L'activité sera fixée à modérée pour ce calcul nutritionnel.</p>
+      </div>
+    </div>
+  );
+};
+
+export const DietPreferencesStep: React.FC<{ form: any }> = ({ form }) => {
+  return (
+    <div className="space-y-4">
+      <h2 className="text-lg font-semibold mb-2">Préférences Alimentaires</h2>
+      
+      <FormField
+        control={form.control}
+        name="dietType"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Type de régime alimentaire</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionnez un régime" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="balanced">Équilibré</SelectItem>
+                <SelectItem value="highProtein">Riche en protéines</SelectItem>
+                <SelectItem value="keto">Cétogène</SelectItem>
+                <SelectItem value="vegetarian">Végétarien</SelectItem>
+                <SelectItem value="vegan">Végan</SelectItem>
+                <SelectItem value="mediterranean">Méditerranéen</SelectItem>
+                <SelectItem value="other">Autre</SelectItem>
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      
+      <FormField
+        control={form.control}
+        name="mealsPerDay"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Nombre de repas par jour</FormLabel>
+            <FormControl>
+              <Input type="number" placeholder="Nombre de repas" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      
+      <FormField
+        control={form.control}
+        name="dietaryHabits"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Habitudes alimentaires</FormLabel>
+            <FormControl>
               <Textarea
                 placeholder="Décrivez vos habitudes alimentaires"
+                className="resize-none"
                 {...field}
               />
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
+            </FormControl>
+            <FormDescription>
+              Décrivez vos habitudes alimentaires typiques.
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
+  );
+};
+
+export const AllergiesPreferencesStep: React.FC<{ form: any }> = ({ form }) => {
+  return (
+    <div className="space-y-4">
+      <h2 className="text-lg font-semibold mb-2">Allergies et Préférences</h2>
+      
+      <FormField
+        control={form.control}
+        name="allergies"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Allergies</FormLabel>
+            <div className="flex flex-wrap gap-2">
+              {commonAllergies.map((allergy) => (
+                <div key={allergy} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={allergy}
+                    checked={field.value?.includes(allergy)}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        field.onChange([...(field.value || []), allergy]);
+                      } else {
+                        field.onChange(field.value?.filter((v: string) => v !== allergy));
+                      }
+                    }}
+                  />
+                  <label
+                    htmlFor={allergy}
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {allergy}
+                  </label>
+                </div>
+              ))}
+            </div>
+            <FormDescription>
+              Sélectionnez les allergies auxquelles vous êtes sensible.
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      
+      <FormField
+        control={form.control}
+        name="foodPreferences"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Préférences alimentaires</FormLabel>
+            <div className="flex flex-wrap gap-2">
+              {commonFoodPreferences.map((preference) => (
+                <div key={preference} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={preference}
+                    checked={field.value?.includes(preference)}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        field.onChange([...(field.value || []), preference]);
+                      } else {
+                        field.onChange(field.value?.filter((v: string) => v !== preference));
+                      }
+                    }}
+                  />
+                  <label
+                    htmlFor={preference}
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {preference}
+                  </label>
+                </div>
+              ))}
+            </div>
+            <FormDescription>
+              Sélectionnez vos préférences alimentaires.
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </div>
   );
 };

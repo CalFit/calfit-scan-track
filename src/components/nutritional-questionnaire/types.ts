@@ -1,3 +1,4 @@
+
 export type Sex = 'male' | 'female';
 export type Goal = 'weightLoss' | 'maintenance' | 'weightGain' | 'performance' | 'generalHealth';
 // Modification de ActivityLevel pour n'autoriser que l'option moderatelyActive
@@ -41,6 +42,9 @@ export interface QuestionnaireFormData {
   allergies: string[];
   foodPreferences: string[];
   dietaryHabits: string;
+  
+  // Options avancées
+  highCalorieBulk?: boolean; // Option pour +400 kcal au lieu de +200 kcal pour prise de muscle
 }
 
 export interface CalculatedMacros {
@@ -118,10 +122,10 @@ export const goalMultipliers = {
 
 // Multiplicateurs d'objectif nutritionnel spécifique (facteur d'ajustement)
 export const nutritionalGoalMultipliers = {
-  cleanBulk: 1.15, // Prise de muscle propre: 15% d'excédent calorique
+  cleanBulk: 1.15, // Prise de muscle propre: 15% d'excédent calorique (peut être ajusté dynamiquement)
   bodyRecomposition: 1.0, // Recomposition corporelle: maintien calorique avec ajustement des macros
   perfectDeficit: 0.8, // Création du déficit parfait: 20% de déficit calorique
-  progressiveFatLoss: 0.9, // Perte de gras progressive: 10% de déficit calorique
+  progressiveFatLoss: 0.9, // Perte de gras progressive: légèrement révisé (maintenant -10% au lieu de -20%)
   maintenance: 1.0 // Maintien du poids sans changement
 };
 

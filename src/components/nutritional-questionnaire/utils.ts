@@ -81,17 +81,22 @@ export const calculateGoalTDEE = (data: QuestionnaireFormData): number => {
       goalTDEE = maintenanceTDEE;
       break;
     case 'bodyRecomposition':
-      // Recomposition corporelle: -300 kcal exactement comme dans le CSV
+      // Recomposition corporelle: -300 kcal exactement
       goalTDEE = maintenanceTDEE - 300;
       break;
     case 'cleanBulk':
-      // Prise de masse: +300 kcal exactement comme dans le CSV
-      goalTDEE = maintenanceTDEE + 300;
+      // Prise de masse: +200 kcal par défaut, optionnellement +400 kcal
+      goalTDEE = data.highCalorieBulk === true ? 
+        maintenanceTDEE + 400 : // Option haute calories
+        maintenanceTDEE + 200;  // Option standard
       break;
     case 'perfectDeficit':
-    case 'progressiveFatLoss':
-      // Perte de poids: -500 kcal exactement comme dans le CSV
+      // Déficit parfait: -500 kcal
       goalTDEE = maintenanceTDEE - 500;
+      break;
+    case 'progressiveFatLoss':
+      // Perte de poids progressive: -300 kcal (mise à jour de -500 à -300)
+      goalTDEE = maintenanceTDEE - 300;
       break;
     default:
       // Pour tout autre cas, utiliser le multiplicateur ou 1.0 par défaut

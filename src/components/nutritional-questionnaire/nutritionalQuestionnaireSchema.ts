@@ -1,63 +1,63 @@
+import * as z from "zod";
 
-import { z } from 'zod';
-import { QuestionnaireFormData, MealPreferences } from './types';
-
-// Définition du schéma de validation pour le questionnaire
+// Define the schema for the questionnaire form
 export const nutritionalQuestionnaireSchema = z.object({
-  // Informations personnelles
-  name: z.string().min(1, "Le nom est requis"),
-  age: z.number().min(18, "L'âge doit être d'au moins 18 ans").max(100, "L'âge doit être inférieur à 100 ans"),
+  name: z.string().min(2, {
+    message: "Le nom doit comporter au moins 2 caractères.",
+  }),
+  age: z.number().min(18, {
+    message: "Vous devez avoir au moins 18 ans.",
+  }),
   sex: z.enum(["male", "female"]),
-  height: z.number().min(140, "La taille doit être d'au moins 140 cm").max(220, "La taille doit être inférieure à 220 cm"),
-  currentWeight: z.number().min(40, "Le poids doit être d'au moins 40 kg").max(200, "Le poids doit être inférieur à 200 kg"),
-  targetWeight: z.number().min(40, "Le poids cible doit être d'au moins 40 kg").max(200, "Le poids cible doit être inférieur à 200 kg"),
-  bodyFatPercentage: z.number().min(3, "Le pourcentage de graisse corporelle doit être d'au moins 3%").max(70, "Le pourcentage de graisse corporelle doit être inférieur à 70%"),
+  height: z.number().min(100, {
+    message: "La taille doit être d'au moins 100 cm.",
+  }),
+  currentWeight: z.number().min(30, {
+    message: "Le poids doit être d'au moins 30 kg.",
+  }),
+  targetWeight: z.number().min(30, {
+    message: "Le poids cible doit être d'au moins 30 kg.",
+  }),
+  bodyFatPercentage: z.number().min(5, {
+    message: "Le pourcentage de graisse corporelle doit être d'au moins 5%.",
+  }),
   startDate: z.date(),
-  
-  // Objectifs et activité
   goal: z.enum(["weightLoss", "maintenance", "weightGain", "performance", "generalHealth"]),
   nutritionalGoal: z.enum(["cleanBulk", "bodyRecomposition", "perfectDeficit", "progressiveFatLoss", "maintenance"]),
-  // Retrait des options d'activité en conservant uniquement la valeur fixe "moderatelyActive"
-  activityLevel: z.literal("moderatelyActive"),
+  activityLevel: z.enum(["moderatelyActive"]),
   occupation: z.enum(["sedentaryJob", "moderateJob", "physicalJob"]),
-  
-  // Préférences alimentaires
   dietType: z.enum(["balanced", "highProtein", "keto", "vegetarian", "vegan", "mediterranean", "other"]),
-  mealsPerDay: z.number().min(2).max(6),
+  mealsPerDay: z.number().min(1, {
+    message: "Vous devez manger au moins un repas par jour.",
+  }),
   mealPreferences: z.object({
     breakfast: z.boolean(),
     morningSnack: z.boolean(),
     lunch: z.boolean(),
     afternoonSnack: z.boolean(),
     dinner: z.boolean(),
-    eveningSnack: z.boolean(),
+    eveningSnack: z.boolean()
   }),
-  
-  // Allergies et préférences
-  allergies: z.array(z.string()),
-  foodPreferences: z.array(z.string()),
+  allergies: z.string().array(),
+  foodPreferences: z.string().array(),
   dietaryHabits: z.string(),
+  highCalorieBulk: z.boolean().optional(),
 });
 
-// Valeurs par défaut pour le formulaire
-export const defaultQuestionnaireValues: QuestionnaireFormData = {
-  // Informations personnelles
+// Default values for the form
+export const defaultQuestionnaireValues: Partial<QuestionnaireFormData> = {
   name: "",
   age: 30,
   sex: "male",
   height: 175,
-  currentWeight: 80,
-  targetWeight: 75,
+  currentWeight: 75,
+  targetWeight: 70,
   bodyFatPercentage: 20,
   startDate: new Date(),
-  
-  // Objectifs et activité - Niveau d'activité fixé à modéré (1.5)
   goal: "weightLoss",
   nutritionalGoal: "progressiveFatLoss",
-  activityLevel: "moderatelyActive", // Valeur fixe: modérément actif (facteur 1.5)
+  activityLevel: "moderatelyActive",
   occupation: "sedentaryJob",
-  
-  // Préférences alimentaires
   dietType: "balanced",
   mealsPerDay: 3,
   mealPreferences: {
@@ -66,11 +66,10 @@ export const defaultQuestionnaireValues: QuestionnaireFormData = {
     lunch: true,
     afternoonSnack: false,
     dinner: true,
-    eveningSnack: false,
+    eveningSnack: false
   },
-  
-  // Allergies et préférences
   allergies: [],
   foodPreferences: [],
   dietaryHabits: "",
+  highCalorieBulk: false
 };
