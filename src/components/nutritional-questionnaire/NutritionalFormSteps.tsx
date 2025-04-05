@@ -45,7 +45,13 @@ export const PersonalInfoStep = ({ form }: { form: UseFormReturn<QuestionnaireFo
               <FormItem>
                 <FormLabel>Âge</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder="Votre âge" {...field} />
+                  <Input 
+                    type="number" 
+                    placeholder="Votre âge" 
+                    {...field}
+                    onChange={(e) => field.onChange(Number(e.target.value) || 0)}
+                    value={field.value || ''}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -83,7 +89,13 @@ export const PersonalInfoStep = ({ form }: { form: UseFormReturn<QuestionnaireFo
               <FormItem>
                 <FormLabel>Taille (cm)</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder="Votre taille en cm" {...field} />
+                  <Input 
+                    type="number" 
+                    placeholder="Votre taille en cm" 
+                    {...field}
+                    onChange={(e) => field.onChange(Number(e.target.value) || 0)}
+                    value={field.value || ''}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -97,7 +109,13 @@ export const PersonalInfoStep = ({ form }: { form: UseFormReturn<QuestionnaireFo
               <FormItem>
                 <FormLabel>Poids actuel (kg)</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder="Votre poids actuel en kg" {...field} />
+                  <Input 
+                    type="number"
+                    placeholder="Votre poids actuel en kg" 
+                    {...field}
+                    onChange={(e) => field.onChange(Number(e.target.value) || 0)}
+                    value={field.value || ''}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -113,7 +131,13 @@ export const PersonalInfoStep = ({ form }: { form: UseFormReturn<QuestionnaireFo
               <FormItem>
                 <FormLabel>Poids cible (kg)</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder="Votre poids cible en kg" {...field} />
+                  <Input 
+                    type="number"
+                    placeholder="Votre poids cible en kg" 
+                    {...field}
+                    onChange={(e) => field.onChange(Number(e.target.value) || 0)}
+                    value={field.value || ''}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -127,7 +151,13 @@ export const PersonalInfoStep = ({ form }: { form: UseFormReturn<QuestionnaireFo
               <FormItem>
                 <FormLabel>Pourcentage de graisse corporelle (%)</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder="Votre % de graisse corporelle" {...field} />
+                  <Input 
+                    type="number"
+                    placeholder="Votre % de graisse corporelle"
+                    {...field}
+                    onChange={(e) => field.onChange(Number(e.target.value) || 0)}
+                    value={field.value || ''}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -311,7 +341,13 @@ export const DietPreferencesStep = ({ form }: { form: UseFormReturn<Questionnair
             <FormItem>
               <FormLabel>Nombre de repas par jour</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="Nombre de repas" {...field} />
+                <Input 
+                  type="number"
+                  placeholder="Nombre de repas"
+                  {...field}
+                  onChange={(e) => field.onChange(Number(e.target.value) || 0)}
+                  value={field.value || ''}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Apple, ArrowLeft } from 'lucide-react';
 
@@ -32,7 +33,7 @@ const ManualFoodEntry = ({ initialBarcode, onSubmit, onCancel }: ManualFoodEntry
     // Convert to number for numeric fields
     const numericFields = ['calories', 'protein', 'fat', 'carbs'];
     const processedValue = numericFields.includes(name) 
-      ? parseFloat(value) || 0 
+      ? Number(value) || 0 
       : value;
     
     setFoodData(prev => ({
