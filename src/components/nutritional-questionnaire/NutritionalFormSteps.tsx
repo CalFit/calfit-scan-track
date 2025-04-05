@@ -1,3 +1,4 @@
+
 // Importe uniquement ce qui est nécessaire pour éviter l'erreur de date-picker
 import React, { useEffect, useState } from 'react';
 import { 
@@ -52,7 +53,17 @@ export const PersonalInfoStep: React.FC<{ form: any }> = ({ form }) => {
             <FormItem>
               <FormLabel>Âge</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="Votre âge" {...field} />
+                <Input 
+                  type="number" 
+                  placeholder="Votre âge" 
+                  {...field} 
+                  onChange={(e) => {
+                    // Conversion explicite en nombre
+                    const value = parseFloat(e.target.value) || 0;
+                    field.onChange(value);
+                  }}
+                  value={field.value || ''}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -90,7 +101,17 @@ export const PersonalInfoStep: React.FC<{ form: any }> = ({ form }) => {
             <FormItem>
               <FormLabel>Taille (cm)</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="Votre taille en cm" {...field} />
+                <Input 
+                  type="number" 
+                  placeholder="Votre taille en cm" 
+                  {...field} 
+                  onChange={(e) => {
+                    // Conversion explicite en nombre
+                    const value = parseFloat(e.target.value) || 0;
+                    field.onChange(value);
+                  }}
+                  value={field.value || ''}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -104,7 +125,17 @@ export const PersonalInfoStep: React.FC<{ form: any }> = ({ form }) => {
             <FormItem>
               <FormLabel>Poids actuel (kg)</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="Votre poids actuel en kg" {...field} />
+                <Input 
+                  type="number" 
+                  placeholder="Votre poids actuel en kg" 
+                  {...field}
+                  onChange={(e) => {
+                    // Conversion explicite en nombre
+                    const value = parseFloat(e.target.value) || 0;
+                    field.onChange(value);
+                  }}
+                  value={field.value || ''}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -120,7 +151,17 @@ export const PersonalInfoStep: React.FC<{ form: any }> = ({ form }) => {
             <FormItem>
               <FormLabel>Poids cible (kg)</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="Votre poids cible en kg" {...field} />
+                <Input 
+                  type="number" 
+                  placeholder="Votre poids cible en kg" 
+                  {...field}
+                  onChange={(e) => {
+                    // Conversion explicite en nombre
+                    const value = parseFloat(e.target.value) || 0;
+                    field.onChange(value);
+                  }}
+                  value={field.value || ''}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -134,7 +175,17 @@ export const PersonalInfoStep: React.FC<{ form: any }> = ({ form }) => {
             <FormItem>
               <FormLabel>Pourcentage de graisse corporelle (%)</FormLabel>
               <FormControl>
-                <Input type="number" placeholder="Votre % de graisse corporelle" {...field} />
+                <Input 
+                  type="number" 
+                  placeholder="Votre % de graisse corporelle" 
+                  {...field}
+                  onChange={(e) => {
+                    // Conversion explicite en nombre
+                    const value = parseFloat(e.target.value) || 0;
+                    field.onChange(value);
+                  }}
+                  value={field.value || ''}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -319,7 +370,17 @@ export const DietPreferencesStep: React.FC<{ form: any }> = ({ form }) => {
           <FormItem>
             <FormLabel>Nombre de repas par jour</FormLabel>
             <FormControl>
-              <Input type="number" placeholder="Nombre de repas" {...field} />
+              <Input 
+                type="number" 
+                placeholder="Nombre de repas" 
+                {...field}
+                onChange={(e) => {
+                  // Conversion explicite en nombre
+                  const value = parseInt(e.target.value) || 0;
+                  field.onChange(value);
+                }}
+                value={field.value || ''}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

@@ -18,7 +18,7 @@ export function useFoodForm(initialBarcode: string | null) {
     // Convert to number for numeric fields
     const numericFields = ['calories', 'protein', 'fat', 'carbs'];
     const processedValue = numericFields.includes(name) 
-      ? Number(value) || 0 
+      ? parseFloat(value) || 0 
       : value;
     
     setFoodData(prev => ({

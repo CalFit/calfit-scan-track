@@ -171,7 +171,6 @@ const WeeklyProgressForm: React.FC<WeeklyProgressFormProps> = ({
                         <FormControl>
                           <Input
                             type="number"
-                            {...field}
                             onChange={e => field.onChange(Number(e.target.value) || 0)}
                             value={field.value || ''}
                           />
@@ -213,7 +212,6 @@ const WeeklyProgressForm: React.FC<WeeklyProgressFormProps> = ({
                         <FormControl>
                           <Input 
                             type="number" 
-                            {...field}
                             onChange={e => field.onChange(Number(e.target.value) || 0)}
                             value={field.value || ''}
                           />
@@ -232,7 +230,6 @@ const WeeklyProgressForm: React.FC<WeeklyProgressFormProps> = ({
                         <FormControl>
                           <Input 
                             type="number" 
-                            {...field}
                             onChange={e => field.onChange(Number(e.target.value) || 0)}
                             value={field.value || ''}
                           />
@@ -251,7 +248,6 @@ const WeeklyProgressForm: React.FC<WeeklyProgressFormProps> = ({
                         <FormControl>
                           <Input 
                             type="number" 
-                            {...field}
                             onChange={e => field.onChange(Number(e.target.value) || 0)}
                             value={field.value || ''}
                           />
@@ -270,7 +266,6 @@ const WeeklyProgressForm: React.FC<WeeklyProgressFormProps> = ({
                         <FormControl>
                           <Input 
                             type="number" 
-                            {...field}
                             onChange={e => field.onChange(Number(e.target.value) || 0)}
                             value={field.value || ''}
                           />
@@ -289,7 +284,6 @@ const WeeklyProgressForm: React.FC<WeeklyProgressFormProps> = ({
                         <FormControl>
                           <Input 
                             type="number" 
-                            {...field}
                             onChange={e => field.onChange(Number(e.target.value) || 0)}
                             value={field.value || ''}
                           />
@@ -317,7 +311,6 @@ const WeeklyProgressForm: React.FC<WeeklyProgressFormProps> = ({
                         <FormControl>
                           <Input 
                             type="number" 
-                            {...field}
                             onChange={e => field.onChange(Number(e.target.value) || 0)}
                             value={field.value || ''}
                           />
@@ -336,7 +329,6 @@ const WeeklyProgressForm: React.FC<WeeklyProgressFormProps> = ({
                         <FormControl>
                           <Input 
                             type="number" 
-                            {...field}
                             onChange={e => field.onChange(Number(e.target.value) || 0)}
                             value={field.value || ''}
                           />
@@ -355,7 +347,6 @@ const WeeklyProgressForm: React.FC<WeeklyProgressFormProps> = ({
                         <FormControl>
                           <Input 
                             type="number" 
-                            {...field}
                             onChange={e => field.onChange(Number(e.target.value) || 0)}
                             value={field.value || ''}
                           />

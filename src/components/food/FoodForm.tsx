@@ -8,6 +8,23 @@ interface FoodFormProps {
 }
 
 const FoodForm: React.FC<FoodFormProps> = ({ foodData, onChange }) => {
+  // Fonction d'aide pour gérer la conversion de valeurs numériques
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>, originalOnChange: (e: React.ChangeEvent<HTMLInputElement>) => void) => {
+    const { name, value } = e.target;
+    
+    // Créer un nouvel événement avec la même structure mais avec une valeur convertie
+    const newEvent = {
+      ...e,
+      target: {
+        ...e.target,
+        value: value // La valeur originale reste une chaîne
+      }
+    };
+    
+    // Appeler le gestionnaire original
+    originalOnChange(newEvent);
+  };
+
   return (
     <div className="space-y-4">
       <div>
@@ -36,7 +53,7 @@ const FoodForm: React.FC<FoodFormProps> = ({ foodData, onChange }) => {
           id="calories"
           name="calories"
           value={foodData.calories || ''}
-          onChange={onChange}
+          onChange={(e) => handleNumberChange(e, onChange)}
           min="0"
           placeholder="0"
           className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 
@@ -54,7 +71,7 @@ const FoodForm: React.FC<FoodFormProps> = ({ foodData, onChange }) => {
             id="protein"
             name="protein"
             value={foodData.protein || ''}
-            onChange={onChange}
+            onChange={(e) => handleNumberChange(e, onChange)}
             min="0"
             placeholder="0"
             className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 
@@ -71,7 +88,7 @@ const FoodForm: React.FC<FoodFormProps> = ({ foodData, onChange }) => {
             id="fat"
             name="fat"
             value={foodData.fat || ''}
-            onChange={onChange}
+            onChange={(e) => handleNumberChange(e, onChange)}
             min="0"
             placeholder="0"
             className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 
@@ -88,7 +105,7 @@ const FoodForm: React.FC<FoodFormProps> = ({ foodData, onChange }) => {
             id="carbs"
             name="carbs"
             value={foodData.carbs || ''}
-            onChange={onChange}
+            onChange={(e) => handleNumberChange(e, onChange)}
             min="0"
             placeholder="0"
             className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 
