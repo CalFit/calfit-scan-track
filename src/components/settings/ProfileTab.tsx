@@ -8,10 +8,12 @@ import { useUserSettings } from '@/hooks/useUserSettings';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { useAuth } from '@/contexts/auth';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from "@/hooks/use-toast";
 
 const ProfileTab = () => {
   const { theme } = useTheme();
   const { user } = useAuth();
+  const { toast } = useToast(); // Properly initialize the toast function
   const { settings, saveSettings, isLoading: isLoadingSettings } = useUserSettings();
   const { profile, updateProfile, isLoading: isLoadingProfile, loadUserProfile } = useUserProfile();
   
@@ -259,3 +261,4 @@ const ProfileTab = () => {
 };
 
 export default ProfileTab;
+
