@@ -1,3 +1,4 @@
+
 import { Calendar, Dumbbell, Nut, Wheat } from 'lucide-react';
 import { useNutritionTracker } from './useNutritionTracker';
 

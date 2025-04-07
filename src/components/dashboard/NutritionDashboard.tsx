@@ -1,6 +1,6 @@
+
 import CalfitAvatar from '@/components/Avatar';
 import CircularMacroGauge from '@/components/ui/CircularMacroGauge';
-import { Badge } from '@/components/ui/badge';
 import { CaloriesCard } from '@/components/dashboard/CaloriesCard';
 import { useNutritionTracker } from '@/hooks/useNutritionTracker';
 
