@@ -125,14 +125,39 @@ export function useUserProfile() {
     }
   };
 
-  // Charger le profil au montage du composant si l'utilisateur est connecté
+  // Configuration de la subscription en temps réel
   useEffect(() => {
-    if (user) {
-      loadUserProfile();
-    } else {
+    if (!user) {
       setProfile(null);
       setIsLoading(false);
+      return;
     }
+    
+    // Charger le profil initial
+    loadUserProfile();
+    
+    // Créer une souscription aux mises à jour du profil
+    const channel = supabase
+      .channel('user_profile_changes')
+      .on('postgres_changes', 
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'user_profiles',
+          filter: `id=eq.${user.id}`
+        }, 
+        (payload) => {
+          console.log('Changement détecté dans user_profiles:', payload);
+          // Recharger le profil
+          loadUserProfile();
+        }
+      )
+      .subscribe();
+    
+    // Nettoyer la souscription
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user]);
 
   return {

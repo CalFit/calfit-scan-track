@@ -1,16 +1,17 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { initialNutritionData, initialMeals } from '@/data/initialNutritionData';
 import { FoodItem } from '@/components/meals/MealList';
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { MacroTargets } from './useUserSettings';
+import { useUserGoals } from '@/hooks/useUserGoals';
 
 type MealType = 'breakfast' | 'lunch' | 'dinner';
 
 export function useNutritionTracker() {
   const { toast } = useToast();
   const { settings } = useUserSettings();
+  const { goals } = useUserGoals();
   const [nutritionData, setNutritionData] = useState(() => {
     // Initialiser les données de nutrition avec les objectifs des paramètres utilisateur
     return {
@@ -39,28 +40,39 @@ export function useNutritionTracker() {
   const [avatarPulse, setAvatarPulse] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   
-  // Mettre à jour les objectifs lorsque les paramètres utilisateur changent
+  // Mettre à jour les objectifs lorsque les paramètres utilisateur ou les objectifs Supabase changent
   useEffect(() => {
-    setNutritionData(prev => ({
-      ...prev,
-      calories: {
-        ...prev.calories,
-        target: settings.macroTargets.calories
-      },
-      protein: {
-        ...prev.protein,
-        target: settings.macroTargets.protein
-      },
-      fat: {
-        ...prev.fat,
-        target: settings.macroTargets.fat
-      },
-      carbs: {
-        ...prev.carbs,
-        target: settings.macroTargets.carbs
+    // Priorité aux objectifs Supabase si disponibles
+    const targetData = goals || settings.macroTargets;
+    
+    if (targetData) {
+      setNutritionData(prev => ({
+        ...prev,
+        calories: {
+          ...prev.calories,
+          target: targetData.calories
+        },
+        protein: {
+          ...prev.protein,
+          target: targetData.protein
+        },
+        fat: {
+          ...prev.fat,
+          target: targetData.fat
+        },
+        carbs: {
+          ...prev.carbs,
+          target: targetData.carbs
+        }
+      }));
+      
+      // Animation de pulsation pour indiquer la mise à jour
+      if (goals) {
+        setAvatarPulse(true);
+        setTimeout(() => setAvatarPulse(false), 1500);
       }
-    }));
-  }, [settings.macroTargets]);
+    }
+  }, [settings.macroTargets, goals]);
   
   // Fonction pour mettre à jour les objectifs de manière explicite
   const updateTargets = (targets: MacroTargets) => {
@@ -83,6 +95,10 @@ export function useNutritionTracker() {
         target: targets.carbs
       }
     }));
+    
+    // Animation de pulsation pour indiquer la mise à jour
+    setAvatarPulse(true);
+    setTimeout(() => setAvatarPulse(false), 1500);
   };
   
   const isPerfectBalance = () => {
@@ -181,6 +197,9 @@ export function useNutritionTracker() {
     updateTargets,
     setMeals,
     handleDateChange,
-    getRecentFoodsForMeal
+    getRecentFoodsForMeal: () => {
+      if (!activeMeal) return [];
+      return meals[activeMeal]?.items || [];
+    }
   };
 }

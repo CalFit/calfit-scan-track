@@ -110,11 +110,6 @@ export function useUserGoals() {
       // Mettre à jour l'état local
       setGoals(newGoals);
 
-      toast({
-        title: "Objectifs sauvegardés",
-        description: "Vos objectifs nutritionnels ont été enregistrés avec succès",
-      });
-
       return true;
     } catch (err: any) {
       console.error("Erreur lors de la sauvegarde des objectifs:", err);
@@ -132,14 +127,43 @@ export function useUserGoals() {
     }
   };
 
-  // Charger les objectifs au montage du composant si l'utilisateur est connecté
+  // Configuration de la subscription en temps réel
   useEffect(() => {
-    if (user) {
-      loadUserGoals();
-    } else {
-      setGoals(null);
-      setIsLoading(false);
-    }
+    if (!user) return;
+    
+    // Charger les objectifs initiaux
+    loadUserGoals();
+    
+    // Créer une souscription aux mises à jour de objectifs
+    const channel = supabase
+      .channel('user_goals_changes')
+      .on('postgres_changes', 
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'user_goals',
+          filter: `id=eq.${user.id}`
+        }, 
+        (payload) => {
+          console.log('Changement détecté dans user_goals:', payload);
+          // Recharger les objectifs
+          loadUserGoals();
+          
+          // Notification de mise à jour (uniquement pour les mises à jour, pas pour la première charge)
+          if (payload.eventType === 'UPDATE') {
+            toast({
+              title: "Objectifs mis à jour",
+              description: "Vos objectifs nutritionnels ont été synchronisés.",
+            });
+          }
+        }
+      )
+      .subscribe();
+    
+    // Nettoyer la souscription
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user]);
 
   return {

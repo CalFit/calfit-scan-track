@@ -13,7 +13,7 @@ const ProfileTab = () => {
   const { theme } = useTheme();
   const { user } = useAuth();
   const { settings, saveSettings, isLoading: isLoadingSettings } = useUserSettings();
-  const { profile, updateProfile, isLoading: isLoadingProfile } = useUserProfile();
+  const { profile, updateProfile, isLoading: isLoadingProfile, loadUserProfile } = useUserProfile();
   
   const [localSettings, setLocalSettings] = useState(settings);
   const [localProfile, setLocalProfile] = useState({
@@ -41,6 +41,13 @@ const ProfileTab = () => {
       });
     }
   }, [settings, profile, isLoadingSettings, isLoadingProfile]);
+
+  // Recharger les données du profil lorsque l'utilisateur change
+  useEffect(() => {
+    if (user) {
+      loadUserProfile();
+    }
+  }, [user]);
 
   // Vérifier s'il y a des modifications non enregistrées
   useEffect(() => {
@@ -99,6 +106,12 @@ const ProfileTab = () => {
     
     if (settingsSaved && profileSaved) {
       setHasChanges(false);
+      
+      // Notification de succès
+      toast({
+        title: "Modifications enregistrées",
+        description: "Vos informations de profil ont été mises à jour et synchronisées.",
+      });
     }
   };
 

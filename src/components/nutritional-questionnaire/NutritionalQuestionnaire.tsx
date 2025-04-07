@@ -30,8 +30,8 @@ const NutritionalQuestionnaire: React.FC = () => {
   // Hooks
   const { settings, updateSettings } = useUserSettings();
   const { user } = useAuth();
-  const { profile } = useUserProfile();
-  const { saveUserGoals } = useUserGoals();
+  const { profile, loadUserProfile } = useUserProfile();
+  const { saveUserGoals, goals, loadUserGoals } = useUserGoals();
   const { toast } = useToast();
   
   // Définition des étapes
@@ -119,16 +119,25 @@ const NutritionalQuestionnaire: React.FC = () => {
   };
   
   // Fonction pour refaire le questionnaire
-  const handleRestartQuestionnaire = () => {
+  const handleRestartQuestionnaire = async () => {
+    // Réinitialiser le formulaire aux valeurs par défaut
     form.reset(getDefaultValues());
+    
+    // Réinitialiser les états locaux
     setStep(0);
     setResultsCalculated(false);
     setCalculatedMacros(null);
     setNutritionalProgram(null);
     
+    // Force le rechargement des données depuis Supabase
+    if (user) {
+      await loadUserProfile();
+      await loadUserGoals();
+    }
+    
     toast({
       title: "Questionnaire réinitialisé",
-      description: "Toutes les données ont été réinitialisées.",
+      description: "Vous pouvez maintenant recommencer le questionnaire.",
       duration: 3000,
     });
   };
@@ -180,21 +189,29 @@ const NutritionalQuestionnaire: React.FC = () => {
       // Si l'utilisateur est connecté, sauvegarder également dans Supabase
       if (user) {
         // Sauvegarder les objectifs nutritionnels
-        await saveUserGoals({
+        const success = await saveUserGoals({
           calories: calculatedMacros.calories,
           protein: calculatedMacros.protein,
           fat: calculatedMacros.fat,
           carbs: calculatedMacros.carbs,
         });
+        
+        if (success) {
+          toast({
+            title: "Programme nutritionnel mis à jour",
+            description: "Vos objectifs nutritionnels ont été enregistrés avec succès.",
+            duration: 3000,
+          });
+        }
+      } else {
+        toast({
+          title: "Programme nutritionnel mis à jour",
+          description: "Vos objectifs nutritionnels ont été enregistrés localement.",
+          duration: 3000,
+        });
       }
       
       setShowConfirmDialog(false);
-      
-      toast({
-        title: "Programme nutritionnel mis à jour",
-        description: "Vos objectifs nutritionnels ont été enregistrés avec succès.",
-        duration: 3000,
-      });
     } else {
       toast({
         title: "Erreur de sauvegarde",
@@ -207,7 +224,7 @@ const NutritionalQuestionnaire: React.FC = () => {
   return (
     <div className="pb-4">
       {/* En-tête avec indicateur de progression */}
-      {!resultsCalculated && (
+      {step < steps.length && !resultsCalculated && (
         <QuestionnaireHeader 
           currentStep={step} 
           totalSteps={steps.length} 
@@ -240,7 +257,7 @@ const NutritionalQuestionnaire: React.FC = () => {
           </AnimatePresence>
           
           {/* Boutons de navigation */}
-          {!resultsCalculated && (
+          {step < steps.length && !resultsCalculated && (
             <QuestionnaireNavigation
               currentStep={step}
               totalSteps={steps.length}
