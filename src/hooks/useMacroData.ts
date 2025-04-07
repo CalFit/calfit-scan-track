@@ -1,6 +1,9 @@
 
 import { Calendar, Dumbbell, Nut, Wheat } from 'lucide-react';
 import { useNutritionTracker } from './useNutritionTracker';
+import { useUserGoals } from './useUserGoals';
+import { useAuth } from '@/contexts/auth';
+import { useEffect, useState } from 'react';
 
 export interface NutritionDataType {
   calories: { 
@@ -29,6 +32,8 @@ export interface NutritionDataType {
 export const useMacroData = () => {
   // Use the shared data from useNutritionTracker
   const { nutritionData } = useNutritionTracker();
+  const { user } = useAuth();
+  const { goals, isLoading } = useUserGoals();
 
   // Match colors with Index page
   const macroColors = {
@@ -45,6 +50,14 @@ export const useMacroData = () => {
     fat: { name: 'Lipides', unit: 'g', icon: Nut },
     carbs: { name: 'Glucides', unit: 'g', icon: Wheat }
   };
+
+  // Si l'utilisateur est connecté, sync avec les objectifs de Supabase
+  useEffect(() => {
+    if (user && !isLoading && goals) {
+      // Laissons useNutritionTracker gérer cette mise à jour
+      console.log("Objectifs nutritionnels chargés depuis Supabase", goals);
+    }
+  }, [user, goals, isLoading]);
 
   const getPercentage = (key: string) => {
     return Math.min(Math.round((nutritionData[key as keyof typeof nutritionData].current / 

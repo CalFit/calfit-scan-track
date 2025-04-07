@@ -1,5 +1,8 @@
+
 import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
+import { useUserGoals } from './useUserGoals';
+import { useAuth } from '@/contexts/auth';
 
 export interface MacroTargets {
   calories: number;
@@ -16,7 +19,7 @@ export interface UserSettings {
 
 // Valeurs par défaut
 const defaultSettings: UserSettings = {
-  name: "Alexandre",
+  name: "Utilisateur",
   macroTargets: {
     calories: 2200,
     protein: 120,
@@ -31,6 +34,8 @@ const SETTINGS_STORAGE_KEY = 'calfit-user-settings';
 
 export function useUserSettings() {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const { goals, saveUserGoals, isLoading: isLoadingGoals } = useUserGoals();
   const [settings, setSettings] = useState<UserSettings>(defaultSettings);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -40,7 +45,8 @@ export function useUserSettings() {
       try {
         const storedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
         if (storedSettings) {
-          setSettings(JSON.parse(storedSettings));
+          const parsedSettings = JSON.parse(storedSettings);
+          setSettings(parsedSettings);
         }
       } catch (error) {
         console.error('Erreur lors du chargement des paramètres:', error);
@@ -52,11 +58,27 @@ export function useUserSettings() {
     loadSettings();
   }, []);
 
-  // Sauvegarder les paramètres dans le stockage local
-  const saveSettings = (newSettings: UserSettings) => {
+  // Mettre à jour les objectifs macro depuis Supabase si l'utilisateur est connecté
+  useEffect(() => {
+    if (!isLoadingGoals && goals && user) {
+      setSettings(prevSettings => ({
+        ...prevSettings,
+        macroTargets: goals
+      }));
+    }
+  }, [isLoadingGoals, goals, user]);
+
+  // Sauvegarder les paramètres dans le stockage local et Supabase si connecté
+  const saveSettings = async (newSettings: UserSettings) => {
     try {
+      // Sauvegarder dans localStorage
       localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(newSettings));
       setSettings(newSettings);
+      
+      // Si l'utilisateur est connecté, sauvegarder les macros dans Supabase
+      if (user) {
+        await saveUserGoals(newSettings.macroTargets);
+      }
       
       toast({
         title: "Modifications sauvegardées",
@@ -80,7 +102,7 @@ export function useUserSettings() {
   };
 
   // Mettre à jour un paramètre spécifique
-  const updateSettings = (partialSettings: Partial<UserSettings>) => {
+  const updateSettings = async (partialSettings: Partial<UserSettings>) => {
     const newSettings = {
       ...settings,
       ...partialSettings

@@ -1,8 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { initialNutritionData, initialMeals } from '@/data/initialNutritionData';
 import { FoodItem } from '@/components/meals/MealList';
 import { useUserSettings } from '@/hooks/useUserSettings';
+import { MacroTargets } from './useUserSettings';
 
 type MealType = 'breakfast' | 'lunch' | 'dinner';
 
@@ -59,6 +61,29 @@ export function useNutritionTracker() {
       }
     }));
   }, [settings.macroTargets]);
+  
+  // Fonction pour mettre à jour les objectifs de manière explicite
+  const updateTargets = (targets: MacroTargets) => {
+    setNutritionData(prev => ({
+      ...prev,
+      calories: {
+        ...prev.calories,
+        target: targets.calories
+      },
+      protein: {
+        ...prev.protein,
+        target: targets.protein
+      },
+      fat: {
+        ...prev.fat,
+        target: targets.fat
+      },
+      carbs: {
+        ...prev.carbs,
+        target: targets.carbs
+      }
+    }));
+  };
   
   const isPerfectBalance = () => {
     const proteinPercentage = nutritionData.protein.current / nutritionData.protein.target;
@@ -153,6 +178,7 @@ export function useNutritionTracker() {
     isPerfectBalance,
     setActiveMeal,
     updateNutritionData,
+    updateTargets,
     setMeals,
     handleDateChange,
     getRecentFoodsForMeal

@@ -9,6 +9,9 @@ import { calculateNutritionalProgram } from './utils';
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import { useUserGoals } from '@/hooks/useUserGoals';
+import { useAuth } from '@/contexts/auth';
 
 // Composants refactorisés
 import QuestionnaireHeader from './QuestionnaireHeader';
@@ -26,21 +29,63 @@ const NutritionalQuestionnaire: React.FC = () => {
   
   // Hooks
   const { settings, updateSettings } = useUserSettings();
+  const { user } = useAuth();
+  const { profile } = useUserProfile();
+  const { saveUserGoals } = useUserGoals();
   const { toast } = useToast();
   
   // Définition des étapes
   const steps = ["Informations personnelles", "Objectifs & Activité", "Préférences alimentaires", "Allergies", "Résultats", "Suivi hebdomadaire"];
   
+  // Préparer les valeurs par défaut avec les données du profil si disponibles
+  const getDefaultValues = () => {
+    let defaultValues = {...defaultQuestionnaireValues};
+    
+    // Utiliser les données du profil si disponibles
+    if (profile) {
+      if (profile.age) defaultValues.age = profile.age;
+      if (profile.height) defaultValues.height = profile.height;
+      if (profile.weight) defaultValues.currentWeight = profile.weight;
+      if (profile.body_fat_percentage) defaultValues.bodyFatPercentage = profile.body_fat_percentage;
+    }
+    
+    defaultValues.name = settings.name || defaultQuestionnaireValues.name;
+    
+    return defaultValues;
+  };
+  
   // Configuration du formulaire
   const form = useForm<QuestionnaireFormData>({
     resolver: zodResolver(nutritionalQuestionnaireSchema),
-    defaultValues: {
-      ...defaultQuestionnaireValues,
-      name: settings.name || defaultQuestionnaireValues.name
-    },
+    defaultValues: getDefaultValues(),
   });
+  
+  // Charger les valeurs par défaut lorsque le profil est chargé
+  useEffect(() => {
+    if (profile) {
+      form.reset(getDefaultValues());
+    }
+  }, [profile]);
+  
   const formValues = form.getValues();
   const watchedFormValues = form.watch();
+  
+  // Vérifier si des résultats ont été sauvegardés précédemment
+  useEffect(() => {
+    // Si les macros sont déjà définies dans les paramètres, considérer que le questionnaire a déjà été rempli
+    if (settings.macroTargets && settings.macroTargets.calories > 0 && !resultsCalculated) {
+      setResultsCalculated(true);
+      setCalculatedMacros(settings.macroTargets);
+      
+      // Calculer également le programme nutritionnel basé sur les valeurs actuelles du formulaire
+      try {
+        const program = calculateNutritionalProgram(watchedFormValues);
+        setNutritionalProgram(program);
+      } catch (error) {
+        console.error("Erreur lors du calcul du programme nutritionnel:", error);
+      }
+    }
+  }, [settings.macroTargets, resultsCalculated]);
   
   // Calculer le programme nutritionnel chaque fois que les données du formulaire changent
   useEffect(() => {
@@ -75,7 +120,7 @@ const NutritionalQuestionnaire: React.FC = () => {
   
   // Fonction pour refaire le questionnaire
   const handleRestartQuestionnaire = () => {
-    form.reset(defaultQuestionnaireValues);
+    form.reset(getDefaultValues());
     setStep(0);
     setResultsCalculated(false);
     setCalculatedMacros(null);
@@ -119,10 +164,10 @@ const NutritionalQuestionnaire: React.FC = () => {
   };
   
   // Fonction pour sauvegarder les paramètres
-  const onSaveSettings = () => {
+  const onSaveSettings = async () => {
     if (calculatedMacros && calculatedMacros.calories > 0) {
-      // Mise à jour des objectifs macros dans les paramètres utilisateur
-      updateSettings({
+      // Mise à jour des objectifs macros dans les paramètres utilisateur locaux
+      await updateSettings({
         name: watchedFormValues.name,
         macroTargets: {
           calories: calculatedMacros.calories,
@@ -131,6 +176,17 @@ const NutritionalQuestionnaire: React.FC = () => {
           carbs: calculatedMacros.carbs,
         }
       });
+      
+      // Si l'utilisateur est connecté, sauvegarder également dans Supabase
+      if (user) {
+        // Sauvegarder les objectifs nutritionnels
+        await saveUserGoals({
+          calories: calculatedMacros.calories,
+          protein: calculatedMacros.protein,
+          fat: calculatedMacros.fat,
+          carbs: calculatedMacros.carbs,
+        });
+      }
       
       setShowConfirmDialog(false);
       

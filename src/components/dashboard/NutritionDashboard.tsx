@@ -3,6 +3,9 @@ import CalfitAvatar from '@/components/Avatar';
 import CircularMacroGauge from '@/components/ui/CircularMacroGauge';
 import { CaloriesCard } from '@/components/dashboard/CaloriesCard';
 import { useNutritionTracker } from '@/hooks/useNutritionTracker';
+import { useAuth } from '@/contexts/auth';
+import { useEffect } from 'react';
+import { useUserGoals } from '@/hooks/useUserGoals';
 
 interface NutritionDashboardProps {
   calories?: { current: number; target: number };
@@ -22,7 +25,16 @@ const NutritionDashboard = ({
   isPerfectBalance = false
 }: NutritionDashboardProps) => {
   // If props aren't provided, use data from useNutritionTracker
-  const { nutritionData, avatarPulse, isPerfectBalance: isBalanced } = useNutritionTracker();
+  const { nutritionData, avatarPulse, isPerfectBalance: isBalanced, updateTargets } = useNutritionTracker();
+  const { user } = useAuth();
+  const { goals, isLoading: isLoadingGoals } = useUserGoals();
+
+  // Synchroniser les objectifs nutritionnels depuis Supabase
+  useEffect(() => {
+    if (user && !isLoadingGoals && goals) {
+      updateTargets(goals);
+    }
+  }, [user, goals, isLoadingGoals, updateTargets]);
 
   // Use provided props or fall back to nutritionData
   const caloriesData = calories || nutritionData.calories;

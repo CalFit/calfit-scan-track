@@ -1,62 +1,28 @@
-
 import { useState, useEffect } from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
 import { useTheme } from '@/providers/ThemeProvider';
 import { Settings, Sun, Moon, User, Calculator } from 'lucide-react';
 import { useUserSettings } from '@/hooks/useUserSettings';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import NutritionalQuestionnaire from '@/components/NutritionalQuestionnaire';
 import GoalsTab from '@/components/settings/GoalsTab';
+import ProfileTab from '@/components/settings/ProfileTab';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const SettingsPage = () => {
-  const { settings, saveSettings, isLoading } = useUserSettings();
-  const [localSettings, setLocalSettings] = useState(settings);
-  const [hasChanges, setHasChanges] = useState(false);
+  const { settings, isLoading } = useUserSettings();
   const { theme, setTheme } = useTheme();
-
-  // Mettre à jour les valeurs locales lorsque les paramètres sont chargés
-  useEffect(() => {
-    if (!isLoading) {
-      setLocalSettings(settings);
-    }
-  }, [settings, isLoading]);
-
-  // Vérifier s'il y a des modifications non enregistrées
-  useEffect(() => {
-    if (!isLoading) {
-      const isDifferent =
-        localSettings?.name !== settings?.name ||
-        localSettings?.notifications !== settings?.notifications;
-
-      setHasChanges(isDifferent);
-    }
-  }, [localSettings, settings, isLoading]);
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalSettings(prev => ({
-      ...prev,
-      name: e.target.value
-    }));
-  };
-
-  const handleNotificationsChange = () => {
-    setLocalSettings(prev => ({
-      ...prev,
-      notifications: !prev.notifications
-    }));
-  };
-
-  const handleSaveChanges = () => {
-    saveSettings(localSettings);
-  };
 
   if (isLoading) {
     return (
       <MainLayout>
-        <div className="flex justify-center items-center h-full">
-          <span className="text-white">Chargement des paramètres...</span>
+        <div className="space-y-6">
+          <header>
+            <Skeleton className="h-10 w-56 mb-2" />
+            <Skeleton className="h-6 w-80 mb-6" />
+          </header>
+          <Skeleton className="h-12 w-full mb-6" />
+          <Skeleton className="h-80 w-full" />
         </div>
       </MainLayout>
     );
@@ -82,37 +48,7 @@ const SettingsPage = () => {
 
           {/* Onglet Profil */}
           <TabsContent value="profile">
-            <div className="calfit-card">
-              <div className="bg-calfit-blue/20 p-4 border-b border-gray-200 dark:border-gray-800">
-                <div className="flex items-center">
-                  <User className="text-calfit-blue w-5 h-5 mr-2" />
-                  <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Informations générales</h3>
-                </div>
-              </div>
-              <div className="p-4 space-y-4">
-                <div>
-                  <label htmlFor="name" className={`block text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
-                    Nom d'utilisateur
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={localSettings?.name || ''}
-                    onChange={handleNameChange}
-                    className={`mt-1 block w-full p-2 border ${theme === 'dark' ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300'} rounded-md shadow-sm`}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Notifications</span>
-                  <Switch
-                    checked={localSettings?.notifications || false}
-                    onCheckedChange={handleNotificationsChange}
-                  />
-                </div>
-              </div>
-            </div>
+            <ProfileTab />
           </TabsContent>
 
           {/* Onglet Objectifs */}
@@ -159,17 +95,6 @@ const SettingsPage = () => {
             </div>
           </TabsContent>
         </Tabs>
-
-        <div className="text-center mt-6">
-          <Button
-            className={`${!hasChanges ? 'opacity-50 cursor-not-allowed' : ''}`}
-            onClick={handleSaveChanges}
-            disabled={!hasChanges}
-            variant="default"
-          >
-            Enregistrer les modifications
-          </Button>
-        </div>
       </div>
     </MainLayout>
   );

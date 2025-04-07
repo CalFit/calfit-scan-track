@@ -1,7 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { MacroTargets } from '@/hooks/useUserSettings';
+import { useUserGoals } from './useUserGoals';
+import { useAuth } from '@/contexts/auth';
 
 // Interface pour les pourcentages de macros
 interface MacroPercentages {
@@ -13,6 +16,8 @@ interface MacroPercentages {
 export function useGoals() {
   const { toast } = useToast();
   const { settings, updateSettings } = useUserSettings();
+  const { user } = useAuth();
+  const { goals, saveUserGoals } = useUserGoals();
   const [macroTargets, setMacroTargets] = useState<MacroTargets>(settings.macroTargets);
   const [percentages, setPercentages] = useState<MacroPercentages>({
     protein: 0,
@@ -138,15 +143,23 @@ export function useGoals() {
   };
 
   // Sauvegarder les changements
-  const saveChanges = () => {
-    updateSettings({ macroTargets });
-    setOriginalValues(macroTargets);
-    setHasChanges(false);
-    
-    toast({
-      title: "Objectifs sauvegardés",
-      description: "Vos objectifs nutritionnels ont été mis à jour.",
-    });
+  const saveChanges = async () => {
+    // Mettre à jour les paramètres locaux et dans Supabase si connecté
+    const success = await updateSettings({ macroTargets });
+    if (success) {
+      // Si l'utilisateur est connecté, sauvegarder également dans Supabase
+      if (user) {
+        await saveUserGoals(macroTargets);
+      }
+      
+      setOriginalValues(macroTargets);
+      setHasChanges(false);
+      
+      toast({
+        title: "Objectifs sauvegardés",
+        description: "Vos objectifs nutritionnels ont été mis à jour.",
+      });
+    }
   };
 
   // Réinitialiser aux valeurs d'origine
