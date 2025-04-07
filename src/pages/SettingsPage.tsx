@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
 import { useTheme } from '@/providers/ThemeProvider';
-import { Settings, Sun, Moon, User, Calculator } from 'lucide-react';
+import { Settings, Sun, Moon, User, Calculator, Target } from 'lucide-react';
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import NutritionalQuestionnaire from '@/components/NutritionalQuestionnaire';
+import GoalsTab from '@/components/settings/GoalsTab';
 
 const SettingsPage = () => {
   const { settings, saveSettings, isLoading } = useUserSettings();
@@ -88,6 +89,7 @@ const SettingsPage = () => {
         <Tabs defaultValue="profile" className="w-full">
           <TabsList className="mb-6 w-full">
             <TabsTrigger value="profile" className="flex-1">Profil</TabsTrigger>
+            <TabsTrigger value="goals" className="flex-1">Objectifs</TabsTrigger>
             <TabsTrigger value="calculator" className="flex-1">Calculateur</TabsTrigger>
             <TabsTrigger value="appearance" className="flex-1">Apparence</TabsTrigger>
           </TabsList>
@@ -188,6 +190,11 @@ const SettingsPage = () => {
                 </div>
               </div>
             </div>
+          </TabsContent>
+
+          {/* Nouvel onglet Objectifs */}
+          <TabsContent value="goals">
+            <GoalsTab />
           </TabsContent>
 
           {/* Onglet Calculateur */}
