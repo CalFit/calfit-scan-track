@@ -124,10 +124,12 @@ const NutritionalQuestionnaire: React.FC = () => {
     form.reset(getDefaultValues());
     
     // Réinitialiser les états locaux
-    setStep(0);
     setResultsCalculated(false);
     setCalculatedMacros(null);
     setNutritionalProgram(null);
+    
+    // Réinitialiser l'étape au début
+    setStep(0);
     
     // Force le rechargement des données depuis Supabase
     if (user) {

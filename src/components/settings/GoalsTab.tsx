@@ -1,14 +1,18 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Calculator } from 'lucide-react';
 import { useTheme } from '@/providers/ThemeProvider';
 import { useGoals } from '@/hooks/useGoals';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { useMacroData } from '@/hooks/useMacroData';
+import { useUserGoals } from '@/hooks/useUserGoals';
+import { useAuth } from '@/contexts/auth';
 
 const GoalsTab = () => {
   const { theme } = useTheme();
+  const { user } = useAuth();
+  const { goals, loadUserGoals } = useUserGoals();
   const { 
     macroTargets, 
     percentages, 
@@ -17,11 +21,28 @@ const GoalsTab = () => {
     handlePercentChange, 
     handleCaloriesChange,
     saveChanges,
-    resetToOriginal
+    resetToOriginal,
+    initializeGoals
   } = useGoals();
   
   const { macroLabels, macroColors } = useMacroData();
   const isDarkTheme = theme === 'dark';
+  
+  // S'assurer que les objectifs sont chargés et synchronisés
+  useEffect(() => {
+    if (user) {
+      loadUserGoals().then(() => {
+        console.log("Goals loaded from Supabase");
+      });
+    }
+  }, [user]);
+  
+  // Initialiser les objectifs à partir des données Supabase
+  useEffect(() => {
+    if (goals) {
+      initializeGoals(goals);
+    }
+  }, [goals]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>, 

@@ -27,6 +27,14 @@ export function useGoals() {
   const [originalValues, setOriginalValues] = useState<MacroTargets>(settings.macroTargets);
   const [hasChanges, setHasChanges] = useState(false);
 
+  // Initialiser avec de nouvelles valeurs (utilisé pour synchroniser avec Supabase)
+  const initializeGoals = (newGoals: MacroTargets) => {
+    setMacroTargets(newGoals);
+    setOriginalValues(newGoals);
+    calculatePercentagesFromGrams(newGoals);
+    setHasChanges(false);
+  };
+
   // Calculer les pourcentages initiaux
   useEffect(() => {
     // S'assurer que nous avons des données valides
@@ -182,6 +190,7 @@ export function useGoals() {
     handlePercentChange,
     handleCaloriesChange,
     saveChanges,
-    resetToOriginal
+    resetToOriginal,
+    initializeGoals
   };
 }

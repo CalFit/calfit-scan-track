@@ -21,18 +21,18 @@ export function useUserGoals() {
       setIsLoading(true);
       setError(null);
 
-      // Récupérer les objectifs depuis Supabase en utilisant any pour contourner les limitations de type
-      const { data, error } = await supabase
+      // Récupérer les objectifs depuis Supabase
+      const { data, error: fetchError } = await supabase
         .from('user_goals')
         .select('*')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
-      if (error) {
-        console.error("Erreur lors du chargement des objectifs:", error);
-        // Si les objectifs n'existent pas encore, ce n'est pas une erreur à afficher
-        if (error.code !== 'PGRST116') {
-          throw error;
+      if (fetchError) {
+        console.error("Erreur lors du chargement des objectifs:", fetchError);
+        // Si ce n'est pas une erreur "not found", traiter comme une vraie erreur
+        if (fetchError.code !== 'PGRST116') {
+          throw fetchError;
         }
       }
 
@@ -43,6 +43,10 @@ export function useUserGoals() {
           fat: data.fat,
           carbs: data.carbs
         });
+      } else {
+        // Pas de données trouvées, mais ce n'est pas une erreur
+        setGoals(null);
+        console.log("Aucun objectif trouvé pour cet utilisateur");
       }
     } catch (err: any) {
       console.error("Erreur lors du chargement des objectifs:", err);
@@ -72,7 +76,7 @@ export function useUserGoals() {
         .from('user_goals')
         .select('id')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
       if (checkError && checkError.code !== 'PGRST116') {
         throw checkError;
@@ -127,6 +131,35 @@ export function useUserGoals() {
     }
   };
 
+  // Fonction pour réinitialiser les objectifs nutritionnels
+  const resetUserGoals = async () => {
+    if (!user) return false;
+
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      // Option 1: Supprimer les objectifs existants
+      const { error: deleteError } = await supabase
+        .from('user_goals')
+        .delete()
+        .eq('id', user.id);
+
+      if (deleteError) throw deleteError;
+
+      // Réinitialiser l'état local
+      setGoals(null);
+
+      return true;
+    } catch (err: any) {
+      console.error("Erreur lors de la réinitialisation des objectifs:", err);
+      setError("Impossible de réinitialiser vos objectifs nutritionnels");
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Configuration de la subscription en temps réel
   useEffect(() => {
     if (!user) return;
@@ -146,7 +179,18 @@ export function useUserGoals() {
         }, 
         (payload) => {
           console.log('Changement détecté dans user_goals:', payload);
-          // Recharger les objectifs
+          
+          // Si c'est une suppression, mettre goals à null
+          if (payload.eventType === 'DELETE') {
+            setGoals(null);
+            toast({
+              title: "Objectifs réinitialisés",
+              description: "Vos objectifs nutritionnels ont été réinitialisés.",
+            });
+            return;
+          }
+          
+          // Recharger les objectifs pour les autres types d'événements
           loadUserGoals();
           
           // Notification de mise à jour (uniquement pour les mises à jour, pas pour la première charge)
@@ -154,6 +198,11 @@ export function useUserGoals() {
             toast({
               title: "Objectifs mis à jour",
               description: "Vos objectifs nutritionnels ont été synchronisés.",
+            });
+          } else if (payload.eventType === 'INSERT') {
+            toast({
+              title: "Objectifs créés",
+              description: "Vos objectifs nutritionnels ont été créés et synchronisés.",
             });
           }
         }
@@ -171,6 +220,7 @@ export function useUserGoals() {
     isLoading,
     error,
     saveUserGoals,
-    loadUserGoals
+    loadUserGoals,
+    resetUserGoals
   };
 }
