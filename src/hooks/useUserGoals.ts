@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/contexts/auth';
 import { MacroTargets } from '@/hooks/useUserSettings';
+import { UserGoal } from '@/types/supabase-types';
 
 export function useUserGoals() {
   const { toast } = useToast();
@@ -20,10 +21,10 @@ export function useUserGoals() {
       setIsLoading(true);
       setError(null);
 
-      // Récupérer les objectifs depuis Supabase
+      // Récupérer les objectifs depuis Supabase en utilisant any pour contourner les limitations de type
       const { data, error } = await supabase
         .from('user_goals')
-        .select('calories, protein, fat, carbs')
+        .select('*')
         .eq('id', user.id)
         .single();
 
@@ -67,11 +68,15 @@ export function useUserGoals() {
       setError(null);
 
       // Vérifier si les objectifs existent déjà
-      const { data: existingGoals } = await supabase
+      const { data: existingGoals, error: checkError } = await supabase
         .from('user_goals')
         .select('id')
         .eq('id', user.id)
         .single();
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        throw checkError;
+      }
 
       let result;
 
@@ -91,15 +96,13 @@ export function useUserGoals() {
         // Insérer de nouveaux objectifs
         result = await supabase
           .from('user_goals')
-          .insert([
-            {
-              id: user.id,
-              calories: newGoals.calories,
-              protein: newGoals.protein,
-              fat: newGoals.fat,
-              carbs: newGoals.carbs
-            }
-          ]);
+          .insert({
+            id: user.id,
+            calories: newGoals.calories,
+            protein: newGoals.protein,
+            fat: newGoals.fat,
+            carbs: newGoals.carbs
+          });
       }
 
       if (result.error) throw result.error;

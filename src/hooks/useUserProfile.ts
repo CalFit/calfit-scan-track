@@ -3,15 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/contexts/auth';
-
-export interface UserProfile {
-  id: string;
-  age: number | null;
-  height: number | null;
-  weight: number | null;
-  body_fat_percentage: number | null;
-  updated_at: string | null;
-}
+import { UserProfile } from '@/types/supabase-types';
 
 export function useUserProfile() {
   const { toast } = useToast();
@@ -70,11 +62,15 @@ export function useUserProfile() {
       setError(null);
 
       // Vérifier si le profil existe déjà
-      const { data: existingProfile } = await supabase
+      const { data: existingProfile, error: checkError } = await supabase
         .from('user_profiles')
         .select('id')
         .eq('id', user.id)
         .single();
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        throw checkError;
+      }
 
       let result;
 
@@ -91,13 +87,11 @@ export function useUserProfile() {
         // Insérer un nouveau profil
         result = await supabase
           .from('user_profiles')
-          .insert([
-            {
-              id: user.id,
-              ...updatedProfile,
-              updated_at: new Date().toISOString(),
-            },
-          ]);
+          .insert({
+            id: user.id,
+            ...updatedProfile,
+            updated_at: new Date().toISOString(),
+          });
       }
 
       if (result.error) throw result.error;

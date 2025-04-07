@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
 import { useTheme } from '@/providers/ThemeProvider';
@@ -8,6 +9,7 @@ import NutritionalQuestionnaire from '@/components/NutritionalQuestionnaire';
 import GoalsTab from '@/components/settings/GoalsTab';
 import ProfileTab from '@/components/settings/ProfileTab';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Switch } from '@/components/ui/switch';
 
 const SettingsPage = () => {
   const { settings, isLoading } = useUserSettings();
