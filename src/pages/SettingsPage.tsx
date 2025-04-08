@@ -14,6 +14,14 @@ import { Switch } from '@/components/ui/switch';
 const SettingsPage = () => {
   const { settings, isLoading } = useUserSettings();
   const { theme, setTheme } = useTheme();
+  // State pour générer une clé unique et forcer la réinitialisation du composant
+  const [questionnaireKey, setQuestionnaireKey] = useState(Date.now());
+
+  // Gestionnaire pour réinitialiser le questionnaire
+  const handleQuestionnaireReset = () => {
+    // Générer une nouvelle clé pour forcer la réinitialisation du composant
+    setQuestionnaireKey(Date.now());
+  };
 
   if (isLoading) {
     return (
@@ -68,7 +76,11 @@ const SettingsPage = () => {
                 </div>
               </div>
               <div className="p-4">
-                <NutritionalQuestionnaire />
+                {/* L'utilisation d'une clé force React à recréer le composant quand la clé change */}
+                <NutritionalQuestionnaire 
+                  key={questionnaireKey} 
+                  onReset={handleQuestionnaireReset} 
+                />
               </div>
             </div>
           </TabsContent>

@@ -19,7 +19,11 @@ import QuestionnaireNavigation from './QuestionnaireNavigation';
 import ConfirmationDialog from './ConfirmationDialog';
 import StepRenderer from './StepRenderer';
 
-const NutritionalQuestionnaire: React.FC = () => {
+interface NutritionalQuestionnaireProps {
+  onReset?: () => void; // Nouvelle prop pour notifier le parent quand le questionnaire est réinitialisé
+}
+
+const NutritionalQuestionnaire: React.FC<NutritionalQuestionnaireProps> = ({ onReset }) => {
   // États
   const [step, setStep] = useState(0);
   const [calculatedMacros, setCalculatedMacros] = useState<CalculatedMacros | null>(null);
@@ -31,7 +35,7 @@ const NutritionalQuestionnaire: React.FC = () => {
   const { settings, updateSettings } = useUserSettings();
   const { user } = useAuth();
   const { profile, loadUserProfile } = useUserProfile();
-  const { saveUserGoals, goals, loadUserGoals } = useUserGoals();
+  const { saveUserGoals, goals, loadUserGoals, resetUserGoals } = useUserGoals();
   const { toast } = useToast();
   
   // Définition des étapes
@@ -130,12 +134,15 @@ const NutritionalQuestionnaire: React.FC = () => {
     
     // Réinitialiser l'étape au début
     setStep(0);
-    
-    // Force le rechargement des données depuis Supabase
+
+    // Si l'utilisateur est connecté, réinitialiser les objectifs dans Supabase
     if (user) {
+      await resetUserGoals();
       await loadUserProfile();
-      await loadUserGoals();
     }
+    
+    // Notifier le composant parent que le questionnaire a été réinitialisé
+    if (onReset) onReset();
     
     toast({
       title: "Questionnaire réinitialisé",
