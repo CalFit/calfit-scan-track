@@ -66,6 +66,8 @@ const NutritionalQuestionnaire: React.FC<NutritionalQuestionnaireProps> = ({ onR
   
   // Effet pour réinitialiser explicitement l'état lors de changements de clé
   useEffect(() => {
+    console.log("NutritionalQuestionnaire monté ou clé changée, réinitialisation complète");
+    
     // Réinitialiser à l'étape 0 à chaque fois que le composant est monté ou que la clé change
     setStep(0);
     setResultsCalculated(false);
@@ -74,6 +76,9 @@ const NutritionalQuestionnaire: React.FC<NutritionalQuestionnaireProps> = ({ onR
     
     // Réinitialiser le formulaire avec les valeurs par défaut
     form.reset(getDefaultValues());
+    
+    // Charger le profil utilisateur si nécessaire
+    loadUserProfile();
     
     // Log de débogage
     console.log("NutritionalQuestionnaire réinitialisé");
@@ -139,6 +144,8 @@ const NutritionalQuestionnaire: React.FC<NutritionalQuestionnaireProps> = ({ onR
   
   // Fonction pour refaire le questionnaire
   const handleRestartQuestionnaire = async () => {
+    console.log("Début de la réinitialisation complète du questionnaire");
+    
     // Réinitialiser le formulaire aux valeurs par défaut
     form.reset(getDefaultValues());
     
@@ -157,7 +164,10 @@ const NutritionalQuestionnaire: React.FC<NutritionalQuestionnaireProps> = ({ onR
     }
     
     // Notifier le composant parent que le questionnaire a été réinitialisé
-    if (onReset) onReset();
+    if (onReset) {
+      console.log("Notification au parent de la réinitialisation du questionnaire");
+      onReset();
+    }
     
     toast({
       title: "Questionnaire réinitialisé",

@@ -25,6 +25,15 @@ const SettingsPage = () => {
   // State pour contrôler si le questionnaire est visible
   const [questionnaireMounted, setQuestionnaireMounted] = useState(true);
 
+  // Vérifier si nous devons basculer vers l'onglet calculateur lors du chargement initial
+  useEffect(() => {
+    const showCalculator = localStorage.getItem('showCalculator');
+    if (showCalculator === 'true') {
+      setActiveTab("calculator");
+      localStorage.removeItem('showCalculator'); // Nettoyer après utilisation
+    }
+  }, []);
+
   // Gestionnaire pour réinitialiser le questionnaire
   const handleQuestionnaireReset = () => {
     console.log("Réinitialisation du questionnaire...");
@@ -35,13 +44,19 @@ const SettingsPage = () => {
     // Attendre que le composant soit démonté, puis le remonter avec une nouvelle clé
     setTimeout(() => {
       // Générer une nouvelle clé pour forcer la réinitialisation du composant
-      setQuestionnaireKey(Date.now());
+      const newKey = Date.now();
+      setQuestionnaireKey(newKey);
+      
+      console.log("Nouvelle clé générée:", newKey);
       
       // Remonter le composant
       setQuestionnaireMounted(true);
       
       // Basculer automatiquement vers l'onglet du calculateur
       setActiveTab("calculator");
+      
+      // Stocker dans localStorage pour conserver l'onglet actif même après rechargement
+      localStorage.setItem('showCalculator', 'true');
       
       // Afficher un toast pour informer l'utilisateur
       toast({
@@ -50,7 +65,7 @@ const SettingsPage = () => {
         duration: 3000,
       });
       
-      console.log("Questionnaire réinitialisé avec la clé:", Date.now());
+      console.log("Questionnaire réinitialisé avec la clé:", newKey);
     }, 50); // Un court délai pour s'assurer que React a le temps de démonter le composant
   };
 
