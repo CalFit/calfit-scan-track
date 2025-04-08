@@ -10,17 +10,32 @@ import GoalsTab from '@/components/settings/GoalsTab';
 import ProfileTab from '@/components/settings/ProfileTab';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
+import { useToast } from '@/hooks/use-toast';
 
 const SettingsPage = () => {
   const { settings, isLoading } = useUserSettings();
   const { theme, setTheme } = useTheme();
+  const { toast } = useToast();
+  
   // State pour générer une clé unique et forcer la réinitialisation du composant
   const [questionnaireKey, setQuestionnaireKey] = useState(Date.now());
+  // State pour définir l'onglet actif
+  const [activeTab, setActiveTab] = useState("profile");
 
   // Gestionnaire pour réinitialiser le questionnaire
   const handleQuestionnaireReset = () => {
     // Générer une nouvelle clé pour forcer la réinitialisation du composant
     setQuestionnaireKey(Date.now());
+    
+    // Basculer automatiquement vers l'onglet du calculateur
+    setActiveTab("calculator");
+    
+    // Afficher un toast pour informer l'utilisateur
+    toast({
+      title: "Questionnaire prêt",
+      description: "Vous pouvez maintenant recommencer le questionnaire",
+      duration: 3000,
+    });
   };
 
   if (isLoading) {
@@ -48,7 +63,7 @@ const SettingsPage = () => {
           </p>
         </header>
 
-        <Tabs defaultValue="profile" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="mb-6 w-full">
             <TabsTrigger value="profile" className="flex-1">Profil</TabsTrigger>
             <TabsTrigger value="goals" className="flex-1">Objectifs</TabsTrigger>
