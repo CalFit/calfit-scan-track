@@ -20,7 +20,7 @@ import ConfirmationDialog from './ConfirmationDialog';
 import StepRenderer from './StepRenderer';
 
 interface NutritionalQuestionnaireProps {
-  onReset?: () => void; // Nouvelle prop pour notifier le parent quand le questionnaire est réinitialisé
+  onReset?: () => void; // Prop pour notifier le parent quand le questionnaire est réinitialisé
 }
 
 const NutritionalQuestionnaire: React.FC<NutritionalQuestionnaireProps> = ({ onReset }) => {
