@@ -11,6 +11,7 @@ import ProfileTab from '@/components/settings/ProfileTab';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
 
 const SettingsPage = () => {
   const { settings, isLoading } = useUserSettings();
@@ -18,24 +19,39 @@ const SettingsPage = () => {
   const { toast } = useToast();
   
   // State pour générer une clé unique et forcer la réinitialisation du composant
-  const [questionnaireKey, setQuestionnaireKey] = useState(Date.now());
+  const [questionnaireKey, setQuestionnaireKey] = useState<number>(Date.now());
   // State pour définir l'onglet actif
   const [activeTab, setActiveTab] = useState("profile");
+  // State pour contrôler si le questionnaire est visible
+  const [questionnaireMounted, setQuestionnaireMounted] = useState(true);
 
   // Gestionnaire pour réinitialiser le questionnaire
   const handleQuestionnaireReset = () => {
-    // Générer une nouvelle clé pour forcer la réinitialisation du composant
-    setQuestionnaireKey(Date.now());
+    console.log("Réinitialisation du questionnaire...");
+
+    // Démonter le composant
+    setQuestionnaireMounted(false);
     
-    // Basculer automatiquement vers l'onglet du calculateur
-    setActiveTab("calculator");
-    
-    // Afficher un toast pour informer l'utilisateur
-    toast({
-      title: "Questionnaire prêt",
-      description: "Vous pouvez maintenant recommencer le questionnaire",
-      duration: 3000,
-    });
+    // Attendre que le composant soit démonté, puis le remonter avec une nouvelle clé
+    setTimeout(() => {
+      // Générer une nouvelle clé pour forcer la réinitialisation du composant
+      setQuestionnaireKey(Date.now());
+      
+      // Remonter le composant
+      setQuestionnaireMounted(true);
+      
+      // Basculer automatiquement vers l'onglet du calculateur
+      setActiveTab("calculator");
+      
+      // Afficher un toast pour informer l'utilisateur
+      toast({
+        title: "Questionnaire prêt",
+        description: "Vous pouvez maintenant recommencer le questionnaire",
+        duration: 3000,
+      });
+      
+      console.log("Questionnaire réinitialisé avec la clé:", Date.now());
+    }, 50); // Un court délai pour s'assurer que React a le temps de démonter le composant
   };
 
   if (isLoading) {
@@ -85,17 +101,36 @@ const SettingsPage = () => {
           <TabsContent value="calculator">
             <div className="calfit-card">
               <div className="bg-calfit-blue/20 p-4 border-b border-gray-200 dark:border-gray-800">
-                <div className="flex items-center">
-                  <Calculator className="text-calfit-blue w-5 h-5 mr-2" />
-                  <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Calculateur de besoins nutritionnels</h3>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Calculator className="text-calfit-blue w-5 h-5 mr-2" />
+                    <h3 className={`text-lg font-semibold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+                      Calculateur de besoins nutritionnels
+                    </h3>
+                  </div>
+                  {settings.macroTargets && settings.macroTargets.calories > 0 && (
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={handleQuestionnaireReset} 
+                      className="text-sm"
+                    >
+                      Refaire le questionnaire
+                    </Button>
+                  )}
                 </div>
               </div>
               <div className="p-4">
-                {/* L'utilisation d'une clé force React à recréer le composant quand la clé change */}
-                <NutritionalQuestionnaire 
-                  key={questionnaireKey} 
-                  onReset={handleQuestionnaireReset} 
-                />
+                {questionnaireMounted ? (
+                  <NutritionalQuestionnaire 
+                    key={questionnaireKey} 
+                    onReset={handleQuestionnaireReset}
+                  />
+                ) : (
+                  <div className="flex justify-center items-center h-40">
+                    <p className="text-muted-foreground">Chargement du questionnaire...</p>
+                  </div>
+                )}
               </div>
             </div>
           </TabsContent>

@@ -64,6 +64,21 @@ const NutritionalQuestionnaire: React.FC<NutritionalQuestionnaireProps> = ({ onR
     defaultValues: getDefaultValues(),
   });
   
+  // Effet pour réinitialiser explicitement l'état lors de changements de clé
+  useEffect(() => {
+    // Réinitialiser à l'étape 0 à chaque fois que le composant est monté ou que la clé change
+    setStep(0);
+    setResultsCalculated(false);
+    setCalculatedMacros(null);
+    setNutritionalProgram(null);
+    
+    // Réinitialiser le formulaire avec les valeurs par défaut
+    form.reset(getDefaultValues());
+    
+    // Log de débogage
+    console.log("NutritionalQuestionnaire réinitialisé");
+  }, []); // Le tableau de dépendances vide signifie que cet effet s'exécute uniquement lors du montage initial
+  
   // Charger les valeurs par défaut lorsque le profil est chargé
   useEffect(() => {
     if (profile) {
@@ -149,6 +164,9 @@ const NutritionalQuestionnaire: React.FC<NutritionalQuestionnaireProps> = ({ onR
       description: "Vous pouvez maintenant recommencer le questionnaire.",
       duration: 3000,
     });
+    
+    // Log pour débogage
+    console.log("Questionnaire réinitialisé manuellement");
   };
   
   // Fonction pour passer à l'étape suivante
