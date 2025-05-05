@@ -26,7 +26,7 @@ const RecentFoodsList: React.FC<RecentFoodsListProps> = ({
       fat: recentFood.fat,
       carbs: recentFood.carbs,
       serving_unit: recentFood.serving_unit,
-      created_at: new Date().toISOString(), // Ces champs ne sont pas importants pour l'ajout
+      created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       is_favorite: false,
       barcode: null,

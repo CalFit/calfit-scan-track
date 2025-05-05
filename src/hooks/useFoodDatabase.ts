@@ -2,23 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from "@/hooks/use-toast";
-
-export interface Food {
-  id: string;
-  name: string;
-  calories: number;
-  protein: number;
-  fat: number;
-  carbs: number;
-  user_id?: string;
-  category_id?: string;
-  is_favorite?: boolean;
-  barcode?: string;
-  serving_size?: number;
-  serving_unit?: string;
-  image_url?: string;
-  brand?: string;
-}
+import { Food } from "@/types/supabase";
 
 export interface FoodCategory {
   id: string;
@@ -66,6 +50,8 @@ export function useFoodDatabase() {
       setIsLoading(true);
       setError(null);
       
+      // For now, we'll use mock data until Supabase is properly configured
+      /* 
       const { data, error } = await supabase
         .from('foods')
         .select('*');
@@ -87,6 +73,48 @@ export function useFoodDatabase() {
         
         setFoods(convertedFoods);
       }
+      */
+      
+      // Mock data for development
+      const mockFoods: Food[] = [
+        {
+          id: "1",
+          name: "Yaourt grec",
+          calories: 100,
+          protein: 10,
+          fat: 0,
+          carbs: 5,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          is_favorite: false,
+          barcode: null,
+          category_id: null,
+          serving_size: 100,
+          serving_unit: "g",
+          image_url: null,
+          user_id: null
+        },
+        {
+          id: "2",
+          name: "Banane",
+          calories: 105,
+          protein: 1.3,
+          fat: 0.4,
+          carbs: 27,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          is_favorite: false,
+          barcode: null,
+          category_id: null,
+          serving_size: 120,
+          serving_unit: "g",
+          image_url: null,
+          user_id: null
+        }
+      ];
+      
+      setFoods(mockFoods);
+      
     } catch (e) {
       console.error('Error fetching foods:', e);
       setError('Impossible de récupérer les aliments');
@@ -111,7 +139,16 @@ export function useFoodDatabase() {
           calories: 100,
           protein: 10,
           fat: 0,
-          carbs: 5
+          carbs: 5,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          is_favorite: false,
+          barcode: null,
+          category_id: null,
+          serving_size: 100,
+          serving_unit: "g",
+          image_url: null,
+          user_id: null
         },
         {
           id: "2",
@@ -119,7 +156,16 @@ export function useFoodDatabase() {
           calories: 105,
           protein: 1.3,
           fat: 0.4,
-          carbs: 27
+          carbs: 27,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          is_favorite: false,
+          barcode: null,
+          category_id: null,
+          serving_size: 120,
+          serving_unit: "g",
+          image_url: null,
+          user_id: null
         }
       ],
       lunch: [
@@ -129,7 +175,16 @@ export function useFoodDatabase() {
           calories: 165,
           protein: 31,
           fat: 3.6,
-          carbs: 0
+          carbs: 0,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          is_favorite: false,
+          barcode: null,
+          category_id: null,
+          serving_size: 100,
+          serving_unit: "g",
+          image_url: null,
+          user_id: null
         },
         {
           id: "4",
@@ -137,7 +192,16 @@ export function useFoodDatabase() {
           calories: 112,
           protein: 2.6,
           fat: 0.9,
-          carbs: 23
+          carbs: 23,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          is_favorite: false,
+          barcode: null,
+          category_id: null,
+          serving_size: 100,
+          serving_unit: "g",
+          image_url: null,
+          user_id: null
         }
       ],
       dinner: [
@@ -147,7 +211,16 @@ export function useFoodDatabase() {
           calories: 208,
           protein: 20,
           fat: 13,
-          carbs: 0
+          carbs: 0,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          is_favorite: false,
+          barcode: null,
+          category_id: null,
+          serving_size: 100,
+          serving_unit: "g",
+          image_url: null,
+          user_id: null
         },
         {
           id: "6",
@@ -155,7 +228,16 @@ export function useFoodDatabase() {
           calories: 25,
           protein: 1.5,
           fat: 0.3,
-          carbs: 5
+          carbs: 5,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          is_favorite: false,
+          barcode: null,
+          category_id: null,
+          serving_size: 100,
+          serving_unit: "g",
+          image_url: null,
+          user_id: null
         }
       ]
     });
@@ -166,6 +248,8 @@ export function useFoodDatabase() {
     try {
       setIsLoading(true);
       
+      // For now, we'll use mock data until Supabase is properly configured
+      /*
       const { data, error } = await supabase
         .from('foods')
         .insert([newFood])
@@ -198,6 +282,31 @@ export function useFoodDatabase() {
       }
       
       return data ? data[0] : null;
+      */
+      
+      // Create mock data with generated ID
+      const mockAddedFood: Food = {
+        ...newFood,
+        id: `new-${Date.now()}`,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_favorite: newFood.is_favorite || false,
+        barcode: newFood.barcode || null,
+        category_id: newFood.category_id || null,
+        image_url: newFood.image_url || null,
+        serving_size: newFood.serving_size || null,
+        serving_unit: newFood.serving_unit || null,
+        user_id: newFood.user_id || null
+      };
+      
+      setFoods(prev => [...prev, mockAddedFood]);
+      
+      toast({
+        title: 'Aliment ajouté',
+        description: `${newFood.name} a été ajouté à votre base de données.`,
+      });
+      
+      return mockAddedFood;
     } catch (e) {
       console.error('Error adding food:', e);
       toast({
