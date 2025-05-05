@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import MainLayout from '@/components/layouts/MainLayout';
-import { ArrowLeft, Search, ScanBarcode, History, Clock } from 'lucide-react';
+import { ArrowLeft, Search, ScanBarcode, History, Clock, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useFoodDatabase } from '@/hooks/useFoodDatabase';
 import { useNavigate, useLocation } from 'react-router-dom';
